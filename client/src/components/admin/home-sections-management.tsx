@@ -36,6 +36,7 @@ interface CreateHomeSectionData {
   backgroundColor: string;
   textColor: string;
   festivalImage?: string;
+  showCountdown: boolean; // Toggle for countdown timer
   countdownStartDate?: string;
   countdownEndDate?: string;
   countdownTitle?: string;
@@ -287,6 +288,7 @@ function CreateSectionDialog({
     displayOrder: 0,
     backgroundColor: "#fff8e1",
     textColor: "#8b4513",
+    showCountdown: false,
     countdownStartDate: "",
     countdownEndDate: "",
     countdownTitle: "",
@@ -491,6 +493,80 @@ function CreateSectionDialog({
                 <SelectItem value="tilted-grid">🎯 Tilted Grid - 1x5 Desktop Layout with 30° Tilted Sides</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Countdown Timer Toggle - Available for all layout types */}
+          <div className="space-y-4 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <Label htmlFor="showCountdown" className="font-medium text-blue-800">
+                  ⏰ Enable Countdown Timer
+                </Label>
+                <p className="text-xs text-blue-600">
+                  Add a countdown timer to create urgency and excitement for your section
+                </p>
+              </div>
+              <Switch
+                id="showCountdown"
+                checked={formData.showCountdown}
+                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showCountdown: checked }))}
+                data-testid="switch-countdown"
+              />
+            </div>
+
+            {formData.showCountdown && (
+              <div className="space-y-4 pt-2 border-t border-blue-200">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="countdownStartDate">Countdown Start Date & Time</Label>
+                    <Input
+                      id="countdownStartDate"
+                      type="datetime-local"
+                      value={formData.countdownStartDate}
+                      onChange={(e) => setFormData(prev => ({ ...prev, countdownStartDate: e.target.value }))}
+                      className="border-blue-300 focus:border-blue-500"
+                      data-testid="input-countdown-start"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="countdownEndDate">Countdown End Date & Time</Label>
+                    <Input
+                      id="countdownEndDate"
+                      type="datetime-local"
+                      value={formData.countdownEndDate}
+                      onChange={(e) => setFormData(prev => ({ ...prev, countdownEndDate: e.target.value }))}
+                      className="border-blue-300 focus:border-blue-500"
+                      data-testid="input-countdown-end"
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="countdownTitle">Countdown Title</Label>
+                    <Input
+                      id="countdownTitle"
+                      value={formData.countdownTitle}
+                      onChange={(e) => setFormData(prev => ({ ...prev, countdownTitle: e.target.value }))}
+                      placeholder="e.g., Sale Ends In, Limited Time Offer"
+                      className="border-blue-300 focus:border-blue-500"
+                      data-testid="input-countdown-title"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="countdownDescription">Countdown Description</Label>
+                    <Input
+                      id="countdownDescription"
+                      value={formData.countdownDescription}
+                      onChange={(e) => setFormData(prev => ({ ...prev, countdownDescription: e.target.value }))}
+                      placeholder="e.g., Don't miss out on these amazing deals!"
+                      className="border-blue-300 focus:border-blue-500"
+                      data-testid="input-countdown-description"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {formData.layoutType === 'festival' ? (
