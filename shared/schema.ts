@@ -958,6 +958,9 @@ export const insertHomeSectionSchema = createInsertSchema(homeSections).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  countdownStartDate: z.coerce.date().optional(),
+  countdownEndDate: z.coerce.date().optional(),
 });
 
 export const insertHomeSectionItemSchema = createInsertSchema(homeSectionItems).omit({
