@@ -3280,17 +3280,95 @@ export default function Home() {
                 )}
               </section>
 
-              {/* Countdown Timer Component */}
-              <CountdownTimer />
+              {/* Countdown & Offers Section */}
+              <section className="py-16 bg-gradient-to-br from-orange-50/50 to-amber-50/50">
+                <div className="max-w-7xl mx-auto px-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                    {/* Countdown Timer */}
+                    <motion.div
+                      initial={{ opacity: 0, x: -30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.8 }}
+                    >
+                      <CountdownTimer
+                        targetDate={new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)} // 7 days from now
+                        title="Festival Sale Ends In"
+                        description="Don't miss out on these amazing deals!"
+                      />
+                    </motion.div>
 
-              {/* Offer Banner Component */}
-              <OfferBanner />
+                    {/* Featured Offer Banner */}
+                    <motion.div
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.8, delay: 0.2 }}
+                      className="bg-gradient-to-br from-orange-500 to-amber-600 rounded-lg"
+                    >
+                      <OfferBanner
+                        title="Limited Time Offer"
+                        description="Extra savings on your favorite jewelry pieces. Shop now before time runs out!"
+                        discountPercent={50}
+                        validUntil={new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)}
+                        festivalName="Diwali"
+                      />
+                    </motion.div>
+                  </div>
+                </div>
+              </section>
 
               {/* Seasonal Collection Component */}
-              <SeasonalCollection products={section.items.map(item => item.product)} selectedCurrency={selectedCurrency} />
+              <SeasonalCollection
+                title="Festival Collections"
+                description="Curated jewelry collections perfect for this festive season"
+                collections={[
+                  {
+                    name: "Diwali Gold Collection",
+                    image: "/attached_assets/gold_collection_luxury.png",
+                    itemCount: section.items.length || 12,
+                    specialPrice: "Starting ₹15,999"
+                  },
+                  {
+                    name: "Festival Silver Sets",
+                    image: "/attached_assets/silver_collection_luxury.png",
+                    itemCount: section.items.length || 8,
+                    specialPrice: "Starting ₹3,999"
+                  },
+                  {
+                    name: "Bridal Specials",
+                    image: "/attached_assets/bridal_collections_luxury.png",
+                    itemCount: section.items.length || 6,
+                    specialPrice: "Starting ₹25,999"
+                  }
+                ]}
+              />
 
               {/* Festival Offers Component */}
-              <FestivalOffers products={section.items.map(item => item.product)} selectedCurrency={selectedCurrency} />
+              <FestivalOffers
+                offers={[
+                  {
+                    title: "Diwali Gold Rush",
+                    description: "Extra 30% off on all gold jewelry. Perfect for gifting this festive season.",
+                    discount: "30% OFF",
+                    conditions: "Minimum purchase of ₹25,000. Valid on gold jewelry only.",
+                    validUntil: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+                    highlight: true
+                  },
+                  {
+                    title: "Silver Sparkle",
+                    description: "Beautiful silver collections at unbeatable prices.",
+                    discount: "25% OFF",
+                    conditions: "On silver jewelry above ₹5,000",
+                    validUntil: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000)
+                  },
+                  {
+                    title: "Diamond Dazzle",
+                    description: "Shine bright with our diamond collection.",
+                    discount: "40% OFF",
+                    conditions: "On selected diamond pieces",
+                    validUntil: new Date(Date.now() + 12 * 24 * 60 * 60 * 1000)
+                  }
+                ]}
+              />
             </div>
           );
         }
