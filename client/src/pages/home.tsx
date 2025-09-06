@@ -3328,31 +3328,34 @@ export default function Home() {
                 </div>
               </section>
 
-              {/* Seasonal Collection Component */}
-              <SeasonalCollection
-                title="Festival Collections"
-                description="Curated jewelry collections perfect for this festive season"
-                collections={[
-                  {
-                    name: "Diwali Gold Collection",
-                    image: "/attached_assets/gold_collection_luxury.png",
-                    itemCount: section.items.length || 12,
-                    specialPrice: "Starting ₹15,999"
-                  },
-                  {
-                    name: "Festival Silver Sets",
-                    image: "/attached_assets/silver_collection_luxury.png",
-                    itemCount: section.items.length || 8,
-                    specialPrice: "Starting ₹3,999"
-                  },
-                  {
-                    name: "Bridal Specials",
-                    image: "/attached_assets/bridal_collections_luxury.png",
-                    itemCount: section.items.length || 6,
-                    specialPrice: "Starting ₹25,999"
-                  }
-                ]}
-              />
+              {/* Actual Products Added by Admin */}
+              <div className="container mx-auto px-4">
+                <div className="text-center mb-8">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{section.subtitle}</h3>
+                  <p className="text-gray-600">{section.description}</p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {section.items.map((item, index) => (
+                    <motion.div
+                      key={item.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: index * 0.1 }}
+                    >
+                      <ProductCard
+                        key={item.id}
+                        product={item.product}
+                        customImageUrl={item.customImageUrl || undefined}
+                        displayName={item.displayName || undefined}
+                        displayPriceInr={item.displayPriceInr || undefined}
+                        displayPriceBhd={item.displayPriceBhd || undefined}
+                        index={index}
+                      />
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
 
             </div>
           );
