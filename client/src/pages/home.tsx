@@ -2006,6 +2006,23 @@ function NewArrivalsSection({ section, selectedCurrency }: { section: HomeSectio
   );
 }
 
+// Universal countdown renderer for all layout types
+function renderCountdownSection(section: HomeSectionWithItems) {
+  if (!section.showCountdown || !section.countdownEndDate) {
+    return null;
+  }
+
+  return (
+    <div className="mb-8">
+      <CountdownTimer
+        targetDate={new Date(section.countdownEndDate)}
+        title={section.countdownTitle || "Limited Time Offer"}
+        description={section.countdownDescription || "Don't miss out on these amazing deals!"}
+      />
+    </div>
+  );
+}
+
 export default function Home() {
   const [selectedCurrency, setSelectedCurrency] = useState<Currency>('BHD');
 
