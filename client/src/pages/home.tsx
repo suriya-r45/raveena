@@ -3296,11 +3296,17 @@ export default function Home() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.8 }}
                     >
-                      <CountdownTimer
-                        targetDate={new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)} // 7 days from now
-                        title="Festival Sale Ends In"
-                        description="Don't miss out on these amazing deals!"
-                      />
+                      {section.countdownEndDate ? (
+                        <CountdownTimer
+                          targetDate={new Date(section.countdownEndDate)}
+                          title={section.countdownTitle || "Festival Sale Ends In"}
+                          description={section.countdownDescription || "Don't miss out on these amazing deals!"}
+                        />
+                      ) : (
+                        <div className="text-center p-6 text-gray-500">
+                          <p>No countdown timer configured. Admin can set dates in the home sections management.</p>
+                        </div>
+                      )}
                     </motion.div>
 
                     {/* Featured Offer Banner */}
