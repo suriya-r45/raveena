@@ -23,8 +23,7 @@ import ringsImage from '@assets/new_rings.png';
 import { 
   CountdownTimer, 
   OfferBanner, 
-  SeasonalCollection, 
-  FestivalOffers 
+  SeasonalCollection
 } from '@/components/festival-components';
 
 interface HomeSectionWithItems extends HomeSection {
@@ -3349,33 +3348,6 @@ export default function Home() {
                 ]}
               />
 
-              {/* Festival Offers Component */}
-              <FestivalOffers
-                offers={[
-                  {
-                    title: "Diwali Gold Rush",
-                    description: "Extra 30% off on all gold jewelry. Perfect for gifting this festive season.",
-                    discount: "30% OFF",
-                    conditions: "Minimum purchase of ₹25,000. Valid on gold jewelry only.",
-                    validUntil: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
-                    highlight: true
-                  },
-                  {
-                    title: "Silver Sparkle",
-                    description: "Beautiful silver collections at unbeatable prices.",
-                    discount: "25% OFF",
-                    conditions: "On silver jewelry above ₹5,000",
-                    validUntil: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000)
-                  },
-                  {
-                    title: "Diamond Dazzle",
-                    description: "Shine bright with our diamond collection.",
-                    discount: "40% OFF",
-                    conditions: "On selected diamond pieces",
-                    validUntil: new Date(Date.now() + 12 * 24 * 60 * 60 * 1000)
-                  }
-                ]}
-              />
             </div>
           );
         }
