@@ -482,9 +482,14 @@ function RoyalSecondaryHomePage({
       {/* Auto-Sliding Jewelry Gallery */}
       <JewelrySlider />
 
-      {/* Dynamic Home Sections - Admin Configured */}
+      {/* Dynamic Home Sections - Admin Configured (excluding special layouts) */}
       {homeSections.length > 0 && homeSections.map((section) => {
         if (section.items.length === 0) return null;
+        
+        // Skip special layouts - they're handled in the second mapping below
+        if (['festival-specials', 'split', 'diamond', 'festival', 'carousel', 'mosaic', 'magazine', 'new-arrivals', 'premium', 'zen', 'royal', 'curved-grid', 'tilted-grid'].includes(section.layoutType)) {
+          return null;
+        }
         
         let sectionProducts = section.items.map(item => {
           const product = allProducts.find(p => p.id === item.productId);
@@ -3260,7 +3265,9 @@ export default function Home() {
         }
 
         // Festival Specials layout - New layout with countdown timers, special offers, and seasonal collections
+        console.log('Section layout type:', section.layoutType, 'Section title:', section.title);
         if (section.layoutType === 'festival-specials') {
+          console.log('✅ Rendering festival-specials layout!');
           return (
             <div key={section.id} data-testid={`section-${section.title.toLowerCase().replace(/\s+/g, '-')}`}>
               {/* Festival Specials Header */}
