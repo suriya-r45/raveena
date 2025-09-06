@@ -36,6 +36,10 @@ interface CreateHomeSectionData {
   backgroundColor: string;
   textColor: string;
   festivalImage?: string;
+  countdownStartDate?: string;
+  countdownEndDate?: string;
+  countdownTitle?: string;
+  countdownDescription?: string;
 }
 
 interface AddSectionItemData {
@@ -282,7 +286,11 @@ function CreateSectionDialog({
     isActive: true,
     displayOrder: 0,
     backgroundColor: "#fff8e1",
-    textColor: "#8b4513"
+    textColor: "#8b4513",
+    countdownStartDate: "",
+    countdownEndDate: "",
+    countdownTitle: "",
+    countdownDescription: ""
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -318,7 +326,11 @@ function CreateSectionDialog({
         isActive: true,
         displayOrder: 0,
         backgroundColor: "#fff8e1",
-        textColor: "#8b4513"
+        textColor: "#8b4513",
+        countdownStartDate: "",
+        countdownEndDate: "",
+        countdownTitle: "",
+        countdownDescription: ""
       });
       setSelectedFile(null);
     } catch (error) {
@@ -343,6 +355,10 @@ function CreateSectionDialog({
       displayOrder: parseInt(formData.get('displayOrder') as string),
       backgroundColor: formData.get('backgroundColor') as string,
       textColor: formData.get('textColor') as string,
+      countdownStartDate: formData.get('countdownStartDate') as string || undefined,
+      countdownEndDate: formData.get('countdownEndDate') as string || undefined,
+      countdownTitle: formData.get('countdownTitle') as string || undefined,
+      countdownDescription: formData.get('countdownDescription') as string || undefined,
     };
 
     // Upload image if provided
@@ -514,6 +530,66 @@ function CreateSectionDialog({
                       onChange={(e) => setFormData(prev => ({ ...prev, textColor: e.target.value }))}
                     />
                   </div>
+                </div>
+              </div>
+            </>
+          ) : formData.layoutType === 'festival-specials' ? (
+            <>
+              <div className="space-y-4 bg-gradient-to-r from-orange-50 to-amber-50 p-4 rounded-lg border border-orange-200">
+                <h4 className="font-medium text-sm text-orange-800 flex items-center">
+                  🎊 Festival Specials - Countdown Timer Configuration
+                </h4>
+                <p className="text-xs text-orange-600">
+                  Configure the countdown timer for your festival specials section. Set custom start and end dates for your promotional countdown.
+                </p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="countdownStartDate">Countdown Start Date & Time *</Label>
+                    <Input
+                      id="countdownStartDate"
+                      type="datetime-local"
+                      value={formData.countdownStartDate}
+                      onChange={(e) => setFormData(prev => ({ ...prev, countdownStartDate: e.target.value }))}
+                      className="border-orange-300 focus:border-orange-500"
+                      data-testid="input-countdown-start"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="countdownEndDate">Countdown End Date & Time *</Label>
+                    <Input
+                      id="countdownEndDate"
+                      type="datetime-local"
+                      value={formData.countdownEndDate}
+                      onChange={(e) => setFormData(prev => ({ ...prev, countdownEndDate: e.target.value }))}
+                      className="border-orange-300 focus:border-orange-500"
+                      data-testid="input-countdown-end"
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="countdownTitle">Countdown Title</Label>
+                  <Input
+                    id="countdownTitle"
+                    value={formData.countdownTitle}
+                    onChange={(e) => setFormData(prev => ({ ...prev, countdownTitle: e.target.value }))}
+                    placeholder="e.g., Festival Sale Ends In"
+                    className="border-orange-300 focus:border-orange-500"
+                    data-testid="input-countdown-title"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="countdownDescription">Countdown Description</Label>
+                  <Input
+                    id="countdownDescription"
+                    value={formData.countdownDescription}
+                    onChange={(e) => setFormData(prev => ({ ...prev, countdownDescription: e.target.value }))}
+                    placeholder="e.g., Don't miss out on these limited-time offers!"
+                    className="border-orange-300 focus:border-orange-500"
+                    data-testid="input-countdown-description"
+                  />
                 </div>
               </div>
             </>
