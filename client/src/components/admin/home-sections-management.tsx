@@ -633,14 +633,32 @@ function CreateSectionDialog({
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="countdownEndDate">Countdown End Date & Time *</Label>
-                    <Input
-                      id="countdownEndDate"
-                      type="datetime-local"
-                      value={formData.countdownEndDate}
-                      onChange={(e) => setFormData(prev => ({ ...prev, countdownEndDate: e.target.value }))}
-                      className="border-orange-300 focus:border-orange-500"
-                      data-testid="input-countdown-end"
-                    />
+                    <div className="flex gap-2">
+                      <Input
+                        id="countdownEndDate"
+                        type="datetime-local"
+                        value={formData.countdownEndDate}
+                        onChange={(e) => setFormData(prev => ({ ...prev, countdownEndDate: e.target.value }))}
+                        className="flex-1 border-orange-300 focus:border-orange-500"
+                        data-testid="input-countdown-end"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          if (formData.countdownEndDate) {
+                            alert(`✅ Countdown end date confirmed: ${new Date(formData.countdownEndDate).toLocaleString()}`);
+                          } else {
+                            alert('⚠️ Please select a date and time first');
+                          }
+                        }}
+                        className="px-4 border-orange-300 text-orange-700 hover:bg-orange-50"
+                        data-testid="button-confirm-countdown-end"
+                      >
+                        OK
+                      </Button>
+                    </div>
                   </div>
                 </div>
                 

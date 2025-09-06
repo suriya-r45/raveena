@@ -2870,7 +2870,12 @@ export default function Home() {
 
         // 1x5 Tilted Grid Layout - Desktop 30-degree tilt effects
         if (section.layoutType === 'tilted-grid') {
-          return <TiltedGridSection key={section.id} section={section} selectedCurrency={selectedCurrency} />;
+          return (
+            <div key={section.id}>
+              {renderCountdownSection(section)}
+              <TiltedGridSection section={section} selectedCurrency={selectedCurrency} />
+            </div>
+          );
         }
 
         // 3D Curved Carousel - True perspective 3D circular arrangement
@@ -2886,6 +2891,10 @@ export default function Home() {
               className="relative bg-gradient-to-br from-neutral-50 via-white to-stone-50/80 overflow-hidden" 
               data-testid={`section-${section.title.toLowerCase().replace(/\s+/g, '-')}`}
             >
+              {/* Universal Countdown Section */}
+              <div className="relative z-20 container mx-auto px-4 pt-8">
+                {renderCountdownSection(section)}
+              </div>
               {/* Sophisticated Background Pattern */}
               <div className="absolute inset-0 opacity-[0.02]">
                 <div className="absolute inset-0" style={{
@@ -3127,6 +3136,10 @@ export default function Home() {
               className="w-full relative overflow-hidden -mt-0 -mb-8 m-0 p-0" 
               data-testid={`section-${section.title.toLowerCase().replace(/\s+/g, '-')}`}
             >
+              {/* Universal Countdown Section */}
+              <div className="relative z-20 container mx-auto px-4 pt-8">
+                {renderCountdownSection(section)}
+              </div>
               {section.festivalImage ? (
                 <div 
                   className="relative w-full min-h-[500px] sm:min-h-[600px] md:min-h-[700px] m-0 p-0"
@@ -3394,6 +3407,10 @@ export default function Home() {
                 background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 20%, #16213e 40%, #0f3460 60%, #533a7b 80%, #6a4c93 100%)',
               }}
             >
+              {/* Universal Countdown Section */}
+              <div className="relative z-20 container mx-auto px-4">
+                {renderCountdownSection(section)}
+              </div>
               {/* Enhanced Cosmic Background Effects */}
               <div className="absolute inset-0">
                 {/* Floating particles */}
@@ -3554,6 +3571,10 @@ export default function Home() {
               className="py-16 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800" 
               data-testid={`section-${section.title.toLowerCase().replace(/\s+/g, '-')}`}
             >
+              {/* Universal Countdown Section */}
+              <div className="relative z-20 container mx-auto px-4">
+                {renderCountdownSection(section)}
+              </div>
               <div className="max-w-7xl mx-auto px-6">
                 {/* Modern Header */}
                 <div className="text-center mb-16">
@@ -3695,6 +3716,11 @@ export default function Home() {
                 background: `linear-gradient(135deg, ${section.backgroundColor || '#fff8e1'} 0%, #f5f5dc 50%, #faf0e6 100%)`
               }}
             >              
+              {/* Universal Countdown Section */}
+              <div className="relative z-20 container mx-auto px-4">
+                {renderCountdownSection(section)}
+              </div>
+              
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 
                 {/* Header Section */}
