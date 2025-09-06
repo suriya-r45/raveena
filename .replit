@@ -8,7 +8,7 @@ packages = ["cairo", "pango", "libjpeg", "giflib", "librsvg", "pixman"]
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["JWT_SECRET=835684b64d6f2baf68c3b524948ec7203b68e1b48bea536899449ee0353bf5be", "npm", "run", "start"]
+run = ["npm", "run", "start"]
 build = ["npm", "run", "build"]
 
 [[ports]]
