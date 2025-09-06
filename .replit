@@ -39,7 +39,7 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "JWT_SECRET=835684b64d6f2baf68c3b524948ec7203b68e1b48bea536899449ee0353bf5be npm run dev"
+args = "JWT_SECRET=92538f54766fc263d5993bc7f3697055bb5735a19172450ef1e0cb0a0f09b6e0 npm run dev"
 waitForPort = 5000
 
 [agent]
