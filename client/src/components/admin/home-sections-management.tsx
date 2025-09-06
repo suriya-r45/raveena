@@ -30,7 +30,7 @@ interface CreateHomeSectionData {
   title: string;
   subtitle: string;
   description: string;
-  layoutType: 'grid' | 'featured' | 'mixed' | 'festival' | 'carousel' | 'mosaic' | 'magazine' | 'new-arrivals' | 'premium' | 'zen' | 'royal' | 'curved-grid' | 'tilted-grid';
+  layoutType: 'grid' | 'featured' | 'mixed' | 'festival' | 'festival-specials' | 'carousel' | 'mosaic' | 'magazine' | 'new-arrivals' | 'premium' | 'zen' | 'royal' | 'curved-grid' | 'tilted-grid';
   isActive: boolean;
   displayOrder: number;
   backgroundColor: string;
