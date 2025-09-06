@@ -913,7 +913,8 @@ export const homeSections = pgTable("home_sections", {
   backgroundColor: text("background_color").default("#fff8e1"),
   textColor: text("text_color").default("#8b4513"),
   festivalImage: text("festival_image"), // URL to festival banner image
-  // Countdown timer fields for festival-specials layout
+  // Countdown timer fields - now available for all layout types
+  showCountdown: boolean("show_countdown").notNull().default(false), // Toggle to enable/disable countdown
   countdownStartDate: timestamp("countdown_start_date"),
   countdownEndDate: timestamp("countdown_end_date"),
   countdownTitle: text("countdown_title"),
