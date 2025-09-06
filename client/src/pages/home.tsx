@@ -1136,6 +1136,11 @@ function CurvedCarouselSection({
         backgroundAttachment: 'fixed'
       }}
     >
+      {/* Universal Countdown Section */}
+      <div className="relative z-20 container mx-auto px-4">
+        {renderCountdownSection(section)}
+      </div>
+
       {/* Premium Luxury Background */}
       <div className="absolute inset-0 overflow-hidden">
         {/* High-End Layer Patterns */}
