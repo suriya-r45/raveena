@@ -2508,8 +2508,8 @@ export default function Home() {
                           <p className="text-gray-400">Curated exclusively for this offer</p>
                         </div>
 
-                        {/* Revolutionary Product Grid */}
-                        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+                        {/* Curved Product Grid - Matching CountdownTimer Style */}
+                        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 md:gap-8">
                           {section.items.slice(0, 4).map((item, index) => (
                             <motion.div
                               key={item.id}
@@ -2529,14 +2529,18 @@ export default function Home() {
                               data-testid={`card-product-${item.product.id}`}
                             >
                               <div className="relative">
-                                {/* Hover glow effect */}
-                                <div className="absolute -inset-4 bg-gradient-to-r from-amber-500/0 via-amber-500/20 to-amber-500/0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
+                                {/* Curved glow effect - matching timer style */}
+                                <div className="absolute -inset-1 md:-inset-2 bg-gradient-to-r from-amber-500/30 to-orange-500/30 rounded-xl md:rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                                 
-                                {/* Main card */}
-                                <div className="relative bg-gradient-to-b from-gray-900/50 to-black/50 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden">
+                                {/* Main card - curved style matching countdown timer */}
+                                <div className="relative bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl border border-amber-500/20 rounded-lg md:rounded-2xl overflow-hidden">
+                                  
+                                  {/* Corner accents - matching timer style */}
+                                  <div className="absolute top-1 left-1 md:top-2 md:left-2 w-2 h-2 md:w-3 md:h-3 border-l-2 border-t-2 border-amber-400/50 rounded-tl-lg"></div>
+                                  <div className="absolute bottom-1 right-1 md:bottom-2 md:right-2 w-2 h-2 md:w-3 md:h-3 border-r-2 border-b-2 border-amber-400/50 rounded-br-lg"></div>
                                   
                                   {/* Image container */}
-                                  <div className="aspect-square relative overflow-hidden">
+                                  <div className="aspect-square relative overflow-hidden rounded-t-lg md:rounded-t-2xl">
                                     <motion.img
                                       src={item.customImageUrl || item.product.images?.[0] || ringsImage}
                                       alt={item.product.name}
@@ -2548,20 +2552,20 @@ export default function Home() {
                                     {/* Gradient overlay */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                                     
-                                    {/* Offer badge - minimalist design */}
-                                    <div className="absolute top-4 right-4 bg-amber-400 text-black text-xs px-3 py-1 rounded-full font-bold">
+                                    {/* Offer badge - mobile optimized */}
+                                    <div className="absolute top-2 right-2 md:top-4 md:right-4 bg-amber-400 text-black text-xs px-2 py-1 md:px-3 md:py-1 rounded-full font-bold">
                                       OFFER
                                     </div>
                                   </div>
                                   
-                                  {/* Product info */}
-                                  <div className="p-6">
-                                    <h4 className="text-white font-medium text-lg mb-3 leading-tight">
+                                  {/* Product info - compact mobile padding */}
+                                  <div className="p-3 md:p-6">
+                                    <h4 className="text-white font-medium text-sm sm:text-base md:text-lg mb-2 md:mb-3 leading-tight">
                                       {item.displayName || item.product.name}
                                     </h4>
                                     
                                     <div className="flex items-center justify-between">
-                                      <div className="text-amber-400 font-bold text-xl">
+                                      <div className="text-amber-400 font-bold text-base sm:text-lg md:text-xl">
                                         {selectedCurrency === 'INR' ? '₹' : 'BD '}
                                         {selectedCurrency === 'INR' ? 
                                           parseFloat(item.product.priceInr).toLocaleString('en-IN') :
