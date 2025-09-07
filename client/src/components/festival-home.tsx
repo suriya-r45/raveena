@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { Product } from '@shared/schema';
@@ -7,106 +7,404 @@ import Footer from '@/components/footer';
 import ProductCard from '@/components/product-card';
 import WhatsAppFloat from '@/components/whatsapp-float';
 import { Currency } from '@/lib/currency';
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { 
-  FestivalHero, 
-  CountdownTimer, 
-  OfferBanner, 
-  SeasonalCollection, 
-  FestivalOffers 
-} from '@/components/festival-components';
-import { motion } from "framer-motion";
-import { Sparkles, Crown, Gift, Star } from "lucide-react";
+  Sparkles, 
+  Crown, 
+  Gift, 
+  Star, 
+  Diamond, 
+  Gem, 
+  Heart, 
+  Award, 
+  Zap, 
+  ArrowRight, 
+  Play, 
+  ShoppingBag,
+  Phone,
+  MapPin,
+  Clock,
+  Check,
+  Users,
+  TrendingUp,
+  Shield
+} from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
-// Sample festival data - in real app, this would come from API/admin
-const festivalData = {
-  currentFestival: {
-    name: "Diwali",
-    title: "Golden Celebrations",
-    subtitle: "Illuminate your festivities with timeless elegance",
-    specialOffer: "Up to 50% OFF + Free Gold Plating",
-    backgroundImage: "/api/placeholder/1920/1080",
-    endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days from now
+// Import existing jewelry images
+import luxuryNecklaceImage from '@assets/luxury-necklace.png';
+import earringsLuxuryImage from '@assets/earrings_luxury.png';
+import ringsLuxuryImage from '@assets/rings_luxury.png';
+import braceletsHeroImage from '@assets/bracelets_hero.png';
+import goldCollectionImage from '@assets/gold_collection_luxury.png';
+import diamondCollectionImage from '@assets/diamond_collection_luxury_new.png';
+import bridalCollectionsImage from '@assets/bridal_new.png';
+import royalGoldImage from '@assets/Royal_gold_jewelry_collection_e293857a.png';
+import goldCoinsImage from '@assets/HD_luxury_gold_coins_31016b54.png';
+
+// Luxury Collections Data with real images
+const luxuryCollections = [
+  {
+    id: 1,
+    name: "Royal Gold Collection",
+    description: "Handcrafted masterpieces in pure gold",
+    image: royalGoldImage,
+    itemCount: 156,
+    startingPrice: "₹25,999",
+    category: "GOLD",
+    gradient: "from-amber-400 via-yellow-500 to-amber-600",
+    badge: "BESTSELLER"
   },
-  offers: [
+  {
+    id: 2,
+    name: "Diamond Elegance",
+    description: "Brilliant diamonds, timeless design", 
+    image: diamondCollectionImage,
+    itemCount: 89,
+    startingPrice: "₹45,999",
+    category: "DIAMOND",
+    gradient: "from-blue-400 via-cyan-500 to-blue-600",
+    badge: "EXCLUSIVE"
+  },
+  {
+    id: 3,
+    name: "Bridal Heritage",
+    description: "Traditional meets contemporary elegance",
+    image: bridalCollectionsImage,
+    itemCount: 124,
+    startingPrice: "₹35,999",
+    category: "BRIDAL",
+    gradient: "from-rose-400 via-pink-500 to-rose-600",
+    badge: "TRENDING"
+  },
+  {
+    id: 4,
+    name: "Premium Earrings",
+    description: "Exquisite designs for every occasion",
+    image: earringsLuxuryImage,
+    itemCount: 78,
+    startingPrice: "₹12,999",
+    category: "EARRINGS",
+    gradient: "from-purple-400 via-violet-500 to-purple-600",
+    badge: "NEW"
+  }
+];
+
+const testimonials = [
+  {
+    id: 1,
+    name: "Priya Sharma",
+    location: "Mumbai",
+    rating: 5,
+    text: "Absolutely stunning jewelry! The craftsmanship is exceptional and the service was outstanding.",
+    product: "Diamond Necklace Set",
+    verified: true
+  },
+  {
+    id: 2,
+    name: "Rajesh Kumar",
+    location: "Delhi",
+    rating: 5,
+    text: "Perfect choice for my daughter's wedding. The quality exceeded our expectations.",
+    product: "Bridal Gold Set",
+    verified: true
+  },
+  {
+    id: 3,
+    name: "Anita Patel",
+    location: "Ahmedabad",
+    rating: 5,
+    text: "Beautiful designs and excellent value. Will definitely shop here again!",
+    product: "Gold Earrings",
+    verified: true
+  }
+];
+
+const whyChooseUs = [
+  {
+    icon: Shield,
+    title: "100% Certified",
+    description: "All jewelry comes with authenticity certificates"
+  },
+  {
+    icon: Award,
+    title: "Premium Quality",
+    description: "Handcrafted by skilled artisans with attention to detail"
+  },
+  {
+    icon: Users,
+    title: "50,000+ Happy Customers",
+    description: "Trusted by families across the country"
+  },
+  {
+    icon: Clock,
+    title: "Lifetime Support",
+    description: "Free maintenance and repairs for life"
+  }
+];
+
+// Hero Section Component
+function UltraModernHero() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 500], [0, 150]);
+  
+  const heroSlides = [
     {
-      title: "Diwali Gold Rush",
-      description: "Extra 30% off on all gold jewelry. Perfect for gifting this festive season.",
-      discount: "30% OFF",
-      conditions: "Minimum purchase of ₹25,000. Valid on gold jewelry only.",
-      validUntil: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
-      highlight: true
+      title: "Luxury Redefined",
+      subtitle: "Discover Our Exclusive Collection",
+      image: luxuryNecklaceImage,
+      cta: "Explore Now"
     },
     {
-      title: "Silver Sparkle",
-      description: "Beautiful silver collections at unbeatable prices.",
-      discount: "25% OFF",
-      conditions: "On silver jewelry above ₹5,000",
-      validUntil: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000)
+      title: "Timeless Elegance", 
+      subtitle: "Handcrafted Perfection",
+      image: goldCollectionImage,
+      cta: "Shop Collection"
     },
     {
-      title: "Diamond Dazzle",
-      description: "Shine bright with our diamond collection.",
-      discount: "40% OFF",
-      conditions: "On selected diamond pieces",
-      validUntil: new Date(Date.now() + 12 * 24 * 60 * 60 * 1000)
-    },
-    {
-      title: "Free Gift Wrapping",
-      description: "Complimentary luxury gift wrapping for all purchases.",
-      discount: "FREE",
-      conditions: "No minimum purchase required",
-      validUntil: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000)
-    },
-    {
-      title: "Exchange Bonus",
-      description: "Get extra value when you exchange your old jewelry.",
-      discount: "₹5,000 EXTRA",
-      conditions: "On jewelry exchange above ₹20,000",
-      validUntil: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000)
+      title: "Brilliant Moments",
+      subtitle: "Diamond Excellence", 
+      image: diamondCollectionImage,
+      cta: "Discover Diamonds"
     }
-  ],
-  seasonalCollections: [
-    {
-      name: "Diwali Gold Collection",
-      image: "/api/placeholder/400/500",
-      itemCount: 45,
-      specialPrice: "Starting ₹15,999"
-    },
-    {
-      name: "Festival Silver Sets",
-      image: "/api/placeholder/400/500", 
-      itemCount: 32,
-      specialPrice: "Starting ₹3,999"
-    },
-    {
-      name: "Bridal Specials",
-      image: "/api/placeholder/400/500",
-      itemCount: 28,
-      specialPrice: "Starting ₹25,999"
-    },
-    {
-      name: "Diamond Delights",
-      image: "/api/placeholder/400/500",
-      itemCount: 18,
-      specialPrice: "Starting ₹45,999"
-    },
-    {
-      name: "Kids Festive Jewelry",
-      image: "/api/placeholder/400/500",
-      itemCount: 22,
-      specialPrice: "Starting ₹2,999"
-    },
-    {
-      name: "Men's Gold Chains",
-      image: "/api/placeholder/400/500",
-      itemCount: 15,
-      specialPrice: "Starting ₹12,999"
-    }
-  ]
-};
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [heroSlides.length]);
+
+  return (
+    <section className="relative min-h-screen overflow-hidden bg-black">
+      {/* Animated Background */}
+      <motion.div 
+        className="absolute inset-0"
+        style={{ y }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black" />
+        <div className="absolute inset-0">
+          {/* Floating Particles */}
+          {[...Array(50)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                y: [0, -100, 0],
+                opacity: [0, 1, 0],
+                scale: [0, 1, 0],
+              }}
+              transition={{
+                duration: 3 + Math.random() * 2,
+                repeat: Infinity,
+                delay: Math.random() * 5,
+              }}
+            />
+          ))}
+        </div>
+        
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="h-full w-full bg-[linear-gradient(to_right,#ffffff1a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff1a_1px,transparent_1px)] bg-[size:60px_60px]" />
+        </div>
+      </motion.div>
+
+      {/* Content */}
+      <div className="relative z-10 h-screen flex items-center">
+        <div className="container mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Text Content */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1 }}
+              className="text-center lg:text-left"
+            >
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full px-4 py-2 mb-6"
+              >
+                <Diamond className="w-4 h-4 text-amber-400" />
+                <span className="text-white/90 text-sm font-medium">LUXURY COLLECTION 2024</span>
+              </motion.div>
+              
+              <AnimatePresence mode="wait">
+                <motion.h1
+                  key={currentSlide}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -30 }}
+                  transition={{ duration: 0.8 }}
+                  className="text-6xl lg:text-8xl font-black text-white mb-6 leading-tight"
+                >
+                  {heroSlides[currentSlide].title}
+                </motion.h1>
+              </AnimatePresence>
+              
+              <AnimatePresence mode="wait">
+                <motion.p
+                  key={currentSlide}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="text-2xl text-white/80 mb-8 font-light"
+                >
+                  {heroSlides[currentSlide].subtitle}
+                </motion.p>
+              </AnimatePresence>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+              >
+                <Button 
+                  size="lg"
+                  className="bg-gradient-to-r from-amber-400 to-yellow-500 text-black font-bold px-8 py-4 text-lg hover:from-amber-500 hover:to-yellow-600 transform hover:scale-105 transition-all duration-300"
+                  data-testid="button-hero-cta"
+                >
+                  <span>{heroSlides[currentSlide].cta}</span>
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+                <Button 
+                  size="lg"
+                  variant="outline"
+                  className="border-white/30 text-white hover:bg-white/10 backdrop-blur-sm px-8 py-4 text-lg"
+                  data-testid="button-watch-story"
+                >
+                  <Play className="mr-2 w-5 h-5" />
+                  Watch Our Story
+                </Button>
+              </motion.div>
+              
+              {/* Stats */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 }}
+                className="flex justify-center lg:justify-start gap-8 mt-12"
+              >
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-white mb-1">50K+</div>
+                  <div className="text-white/60 text-sm">Happy Customers</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-white mb-1">1000+</div>
+                  <div className="text-white/60 text-sm">Unique Designs</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-white mb-1">25+</div>
+                  <div className="text-white/60 text-sm">Years Legacy</div>
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* Image Showcase */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1, delay: 0.3 }}
+              className="relative"
+            >
+              <div className="relative aspect-square max-w-lg mx-auto">
+                {/* Glow Effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 rounded-full blur-3xl transform scale-150" />
+                
+                {/* Main Image Container */}
+                <div className="relative z-10 aspect-square rounded-3xl overflow-hidden border border-white/10 backdrop-blur-xl">
+                  <AnimatePresence mode="wait">
+                    <motion.img
+                      key={currentSlide}
+                      src={heroSlides[currentSlide].image}
+                      alt={heroSlides[currentSlide].title}
+                      className="w-full h-full object-cover"
+                      initial={{ opacity: 0, scale: 1.1 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.8 }}
+                    />
+                  </AnimatePresence>
+                  
+                  {/* Overlay Gradients */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-transparent to-blue-500/10" />
+                </div>
+                
+                {/* Floating Elements */}
+                <motion.div
+                  className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-amber-400/30 to-yellow-500/30 rounded-full blur-xl"
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.3, 0.6, 0.3],
+                  }}
+                  transition={{ duration: 4, repeat: Infinity }}
+                />
+                <motion.div
+                  className="absolute -bottom-6 -left-6 w-32 h-32 bg-gradient-to-tr from-blue-400/20 to-purple-500/20 rounded-full blur-2xl"
+                  animate={{
+                    scale: [1.2, 1, 1.2],
+                    opacity: [0.2, 0.4, 0.2],
+                  }}
+                  transition={{ duration: 6, repeat: Infinity, delay: 2 }}
+                />
+              </div>
+              
+              {/* Slide Indicators */}
+              <div className="flex justify-center space-x-2 mt-8">
+                {heroSlides.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentSlide(index)}
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                      index === currentSlide 
+                        ? 'bg-gradient-to-r from-amber-400 to-yellow-500 w-8' 
+                        : 'bg-white/30 hover:bg-white/50'
+                    }`}
+                    data-testid={`indicator-slide-${index}`}
+                  />
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Scroll Indicator */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.2 }}
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white/60 text-center"
+      >
+        <div className="text-sm mb-2">Scroll to explore</div>
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+          className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center"
+        >
+          <div className="w-1 h-3 bg-white/60 rounded-full mt-2" />
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+}
 
 export default function FestivalHomePage() {
   const [selectedCurrency, setSelectedCurrency] = useState<Currency>(Currency.INR);
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
+  const { scrollY } = useScroll();
+  const opacity = useTransform(scrollY, [0, 300], [1, 0]);
 
   // Fetch products for featured sections
   const { data: allProducts = [] } = useQuery({
@@ -114,7 +412,7 @@ export default function FestivalHomePage() {
     queryFn: () => apiRequest('/api/products')
   });
 
-  // Ensure products is an array and filter for festival sections
+  // Ensure products is an array and filter for sections
   const products = Array.isArray(allProducts) ? allProducts as Product[] : [];
   
   const featuredProducts = products
@@ -129,193 +427,468 @@ export default function FestivalHomePage() {
     .filter(product => product.metalType === 'GOLD' || product.metalType === 'GOLD_18K' || product.metalType === 'GOLD_22K')
     .slice(0, 8);
 
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-black text-white overflow-x-hidden">
       <Header 
         selectedCurrency={selectedCurrency} 
         onCurrencyChange={setSelectedCurrency} 
       />
       
-      {/* Festival Hero Section */}
-      <FestivalHero
-        title={festivalData.currentFestival.title}
-        subtitle={festivalData.currentFestival.subtitle}
-        backgroundImage={festivalData.currentFestival.backgroundImage}
-        festivalName={festivalData.currentFestival.name}
-        specialOffer={festivalData.currentFestival.specialOffer}
-      />
+      {/* Ultra Modern Hero Section */}
+      <UltraModernHero />
 
-      {/* Countdown & Offers Section */}
-      <section className="py-16 bg-gradient-to-br from-orange-50/50 to-amber-50/50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-            {/* Countdown Timer */}
+      {/* Luxury Collections Showcase */}
+      <section className="py-24 bg-gradient-to-br from-gray-900 via-black to-gray-900 relative overflow-hidden">
+        {/* Background Elements */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(120,119,198,0.3),transparent)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+        </div>
+        
+        <div className="container mx-auto px-6 relative z-10">
+          {/* Section Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
+          >
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ scale: 0 }}
+              whileInView={{ scale: 1 }}
+              transition={{ type: "spring", delay: 0.2 }}
+              className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full px-6 py-3 mb-8"
+            >
+              <Crown className="w-5 h-5 text-amber-400" />
+              <span className="text-white/80 font-medium tracking-wider text-sm">LUXURY COLLECTIONS</span>
+            </motion.div>
+            
+            <h2 className="text-5xl lg:text-7xl font-black text-white mb-6 leading-tight">
+              Crafted for
+              <span className="block bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
+                Perfection
+              </span>
+            </h2>
+            
+            <p className="text-xl text-white/70 max-w-2xl mx-auto leading-relaxed">
+              Discover our curated collections where traditional craftsmanship meets contemporary design.
+            </p>
+          </motion.div>
+
+          {/* Collections Grid */}
+          <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {luxuryCollections.map((collection, index) => (
+              <motion.div
+                key={collection.id}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: index * 0.2 }}
+                whileHover={{ y: -8 }}
+                className="group cursor-pointer"
+                data-testid={`collection-card-${collection.id}`}
+              >
+                <div className="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 overflow-hidden hover:border-white/20 transition-all duration-500">
+                  {/* Background Glow */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${collection.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
+                  
+                  {/* Badge */}
+                  <div className="absolute top-6 right-6 z-10">
+                    <Badge className={`bg-gradient-to-r ${collection.gradient} text-white border-none font-bold`}>
+                      {collection.badge}
+                    </Badge>
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="relative z-10 flex flex-col lg:flex-row items-center gap-8">
+                    {/* Image */}
+                    <div className="relative flex-shrink-0">
+                      <div className="w-64 h-64 lg:w-48 lg:h-48 relative">
+                        {/* Glow Effect */}
+                        <div className={`absolute inset-0 bg-gradient-to-r ${collection.gradient} opacity-20 rounded-2xl blur-xl scale-110`} />
+                        
+                        {/* Image Container */}
+                        <div className="relative w-full h-full rounded-2xl overflow-hidden border border-white/10">
+                          <img
+                            src={collection.image}
+                            alt={collection.name}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+                        </div>
+                        
+                        {/* Floating Stats */}
+                        <motion.div
+                          className="absolute -bottom-4 -right-4 bg-black/80 backdrop-blur-xl border border-white/20 rounded-xl px-4 py-2"
+                          initial={{ scale: 0 }}
+                          whileInView={{ scale: 1 }}
+                          transition={{ delay: index * 0.2 + 0.5, type: "spring" }}
+                        >
+                          <div className="text-center">
+                            <div className={`text-lg font-bold bg-gradient-to-r ${collection.gradient} bg-clip-text text-transparent`}>
+                              {collection.itemCount}+
+                            </div>
+                            <div className="text-xs text-white/60">Designs</div>
+                          </div>
+                        </motion.div>
+                      </div>
+                    </div>
+                    
+                    {/* Info */}
+                    <div className="flex-1 text-center lg:text-left">
+                      <h3 className="text-3xl font-bold text-white mb-3 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:bg-clip-text group-hover:from-amber-400 group-hover:to-yellow-500 transition-all duration-500">
+                        {collection.name}
+                      </h3>
+                      
+                      <p className="text-white/70 mb-6 leading-relaxed">
+                        {collection.description}
+                      </p>
+                      
+                      <div className="flex items-center justify-center lg:justify-start gap-4 mb-6">
+                        <div className="text-center">
+                          <div className={`text-2xl font-bold bg-gradient-to-r ${collection.gradient} bg-clip-text text-transparent`}>
+                            {collection.startingPrice}
+                          </div>
+                          <div className="text-sm text-white/60">Starting from</div>
+                        </div>
+                        <div className="w-px h-12 bg-white/20" />
+                        <div className="text-center">
+                          <div className="text-lg font-semibold text-white">{collection.category}</div>
+                          <div className="text-sm text-white/60">Category</div>
+                        </div>
+                      </div>
+                      
+                      <Button 
+                        className={`bg-gradient-to-r ${collection.gradient} text-white font-semibold px-6 py-3 hover:shadow-lg hover:scale-105 transition-all duration-300`}
+                        data-testid={`button-explore-${collection.id}`}
+                      >
+                        <span>Explore Collection</span>
+                        <ArrowRight className="ml-2 w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us Section */}
+      <section className="py-24 bg-gradient-to-br from-black via-gray-900 to-black relative">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-5xl font-black text-white mb-6">
+              Why Choose
+              <span className="block bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">
+                Palaniappa?
+              </span>
+            </h2>
+            <p className="text-xl text-white/70 max-w-2xl mx-auto">
+              Experience excellence in every aspect of your jewelry journey
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {whyChooseUs.map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                whileHover={{ y: -8 }}
+                className="text-center group"
+                data-testid={`feature-${index}`}
+              >
+                <div className="relative mb-6">
+                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-amber-400/20 to-yellow-500/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <item.icon className="w-10 h-10 text-amber-400" />
+                  </div>
+                  <div className="absolute inset-0 w-20 h-20 mx-auto bg-gradient-to-br from-amber-400/10 to-yellow-500/10 rounded-2xl blur-xl scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </div>
+                
+                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors duration-300">
+                  {item.title}
+                </h3>
+                
+                <p className="text-white/70 leading-relaxed">
+                  {item.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Customer Testimonials */}
+      <section className="py-24 bg-gradient-to-br from-gray-900 via-black to-gray-900 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(168,85,247,0.1),transparent)]" />
+        </div>
+        
+        <div className="container mx-auto px-6 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-5xl font-black text-white mb-6">
+              What Our
+              <span className="block bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Customers Say
+              </span>
+            </h2>
+            <p className="text-xl text-white/70 max-w-2xl mx-auto">
+              Real stories from our satisfied customers
+            </p>
+          </motion.div>
+
+          <div className="max-w-4xl mx-auto">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTestimonial}
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                transition={{ duration: 0.5 }}
+                className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 lg:p-12 text-center"
+                data-testid={`testimonial-${activeTestimonial}`}
+              >
+                <div className="flex justify-center mb-6">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-6 h-6 text-amber-400 fill-current" />
+                  ))}
+                </div>
+                
+                <blockquote className="text-2xl text-white mb-8 leading-relaxed font-light italic">
+                  "{testimonials[activeTestimonial].text}"
+                </blockquote>
+                
+                <div className="flex items-center justify-center gap-4">
+                  <div className="text-center">
+                    <div className="text-xl font-bold text-white">
+                      {testimonials[activeTestimonial].name}
+                    </div>
+                    <div className="text-white/60 flex items-center justify-center gap-2">
+                      <MapPin className="w-4 h-4" />
+                      {testimonials[activeTestimonial].location}
+                    </div>
+                  </div>
+                  
+                  {testimonials[activeTestimonial].verified && (
+                    <div className="flex items-center gap-1 bg-green-500/20 border border-green-500/30 rounded-full px-3 py-1">
+                      <Check className="w-4 h-4 text-green-400" />
+                      <span className="text-green-400 text-sm font-medium">Verified</span>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="mt-4 text-white/50 text-sm">
+                  Purchase: {testimonials[activeTestimonial].product}
+                </div>
+              </motion.div>
+            </AnimatePresence>
+            
+            {/* Testimonial Indicators */}
+            <div className="flex justify-center space-x-2 mt-8">
+              {testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setActiveTestimonial(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    index === activeTestimonial 
+                      ? 'bg-gradient-to-r from-purple-400 to-pink-400 w-8' 
+                      : 'bg-white/30 hover:bg-white/50'
+                  }`}
+                  data-testid={`testimonial-indicator-${index}`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Products Showcase */}
+      {featuredProducts.length > 0 && (
+        <section className="py-24 bg-black relative overflow-hidden">
+          <div className="absolute inset-0">
+            <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_35%,rgba(255,255,255,.05)_50%,transparent_65%)] animate-pulse" />
+          </div>
+          
+          <div className="container mx-auto px-6 relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
+              className="text-center mb-16"
             >
-              <CountdownTimer
-                targetDate={festivalData.currentFestival.endDate}
-                title="Festival Sale Ends In"
-                description="Don't miss out on these amazing deals!"
-              />
+              <h2 className="text-5xl font-black text-white mb-6">
+                Featured
+                <span className="block bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">
+                  Masterpieces
+                </span>
+              </h2>
+              <p className="text-xl text-white/70 max-w-2xl mx-auto">
+                Handpicked selections from our finest collections
+              </p>
             </motion.div>
 
-            {/* Featured Offer Banner */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredProducts.slice(0, 4).map((product, index) => (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  whileHover={{ y: -8 }}
+                  className="group"
+                  data-testid={`featured-product-${product.id}`}
+                >
+                  <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300">
+                    <ProductCard product={product} currency={selectedCurrency} />
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="text-center mt-12"
             >
-              <OfferBanner
-                title="Limited Time Offer"
-                description="Extra savings on your favorite jewelry pieces. Shop now before time runs out!"
-                discountPercent={50}
-                validUntil={festivalData.currentFestival.endDate}
-                festivalName={festivalData.currentFestival.name}
-              />
+              <Button 
+                size="lg"
+                className="bg-gradient-to-r from-amber-400 to-yellow-500 text-black font-bold px-8 py-4 hover:from-amber-500 hover:to-yellow-600 transition-all duration-300"
+                data-testid="button-view-all-products"
+              >
+                <ShoppingBag className="mr-2 w-5 h-5" />
+                View All Products
+              </Button>
             </motion.div>
           </div>
-        </div>
-      </section>
-
-      {/* Festival Offers Grid */}
-      <FestivalOffers offers={festivalData.offers} />
-
-      {/* Seasonal Collections */}
-      <SeasonalCollection
-        title="Festival Collections"
-        description="Curated jewelry collections perfect for this festive season"
-        collections={festivalData.seasonalCollections}
-      />
-
-      {/* Featured Products Section */}
-      <section className="py-16 px-6">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-12"
-          >
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Star className="w-6 h-6 text-orange-600" />
-              <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: 'Playfair Display, serif' }}>
-                Featured Pieces
-              </h2>
-              <Star className="w-6 h-6 text-orange-600" />
-            </div>
-            <p className="text-lg text-gray-600">Handpicked favorites for the festive season</p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredProducts.map((product, index) => (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-                <ProductCard product={product} currency={selectedCurrency} />
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* New Arrivals Section */}
-      <section className="py-16 px-6 bg-gradient-to-br from-amber-50/30 to-orange-50/30">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-12"
-          >
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Sparkles className="w-6 h-6 text-orange-600" />
-              <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: 'Playfair Display, serif' }}>
-                New Arrivals
-              </h2>
-              <Sparkles className="w-6 h-6 text-orange-600" />
-            </div>
-            <p className="text-lg text-gray-600">Latest additions to our festival collection</p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {newArrivalProducts.map((product, index) => (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-                <ProductCard product={product} currency={selectedCurrency} />
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Gold Collection Spotlight */}
-      <section className="py-16 px-6">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-12"
-          >
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Crown className="w-6 h-6 text-orange-600" />
-              <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: 'Playfair Display, serif' }}>
-                Gold Collection
-              </h2>
-              <Crown className="w-6 h-6 text-orange-600" />
-            </div>
-            <p className="text-lg text-gray-600">Premium gold jewelry for your special celebrations</p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {goldProducts.map((product, index) => (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-                <ProductCard product={product} currency={selectedCurrency} />
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Call to Action Section */}
-      <section className="py-16 px-6 bg-gradient-to-r from-orange-600 to-amber-600 text-white">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="py-24 bg-gradient-to-br from-amber-600 via-yellow-500 to-amber-600 text-black relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_35%,rgba(0,0,0,.1)_50%,transparent_65%)]" />
+          {[...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-2 bg-black/10 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                y: [0, -30, 0],
+                opacity: [0, 0.5, 0],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                delay: Math.random() * 2,
+              }}
+            />
+          ))}
+        </div>
+        
+        <div className="container mx-auto px-6 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
+            whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
+            className="text-center max-w-4xl mx-auto"
           >
-            <Gift className="w-16 h-16 mx-auto mb-6 opacity-90" />
-            <h2 className="text-4xl md:text-5xl font-light mb-6" style={{ fontFamily: 'Playfair Display, serif' }}>
-              Ready to Celebrate?
-            </h2>
-            <p className="text-xl mb-8 opacity-90">
-              Visit our store or browse online to find the perfect jewelry for your festivities. 
-              Our experts are ready to help you create magical moments.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-white text-orange-600 hover:bg-gray-100 px-8 py-4 rounded-lg font-semibold text-lg transition-colors">
-                Visit Store
-              </button>
-              <button className="border-2 border-white text-white hover:bg-white hover:text-orange-600 px-8 py-4 rounded-lg font-semibold text-lg transition-colors">
-                Call Now
-              </button>
+            <div className="mb-8">
+              <motion.div
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                transition={{ type: "spring", delay: 0.2 }}
+                className="inline-flex items-center gap-2 bg-black/10 backdrop-blur-xl border border-black/20 rounded-full px-6 py-3 mb-8"
+              >
+                <Heart className="w-5 h-5 text-red-600" />
+                <span className="text-black/80 font-medium tracking-wider text-sm">EXPERIENCE LUXURY</span>
+              </motion.div>
+              
+              <h2 className="text-5xl lg:text-7xl font-black text-black mb-6 leading-tight">
+                Ready to Create
+                <span className="block text-white drop-shadow-lg">
+                  Memories?
+                </span>
+              </h2>
+              
+              <p className="text-xl text-black/80 mb-12 leading-relaxed max-w-2xl mx-auto">
+                Visit our showroom or connect with our experts to find the perfect piece that tells your unique story.
+              </p>
             </div>
+            
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              <Button 
+                size="lg"
+                className="bg-black text-white hover:bg-gray-800 font-bold px-8 py-4 text-lg transition-all duration-300 hover:scale-105"
+                data-testid="button-visit-showroom"
+              >
+                <MapPin className="mr-2 w-5 h-5" />
+                Visit Showroom
+              </Button>
+              
+              <Button 
+                size="lg"
+                variant="outline"
+                className="border-black/30 text-black hover:bg-black/10 backdrop-blur-sm px-8 py-4 text-lg font-bold transition-all duration-300"
+                data-testid="button-call-expert"
+              >
+                <Phone className="mr-2 w-5 h-5" />
+                Call Expert
+              </Button>
+              
+              <Button 
+                size="lg"
+                variant="outline"
+                className="border-black/30 text-black hover:bg-black/10 backdrop-blur-sm px-8 py-4 text-lg font-bold transition-all duration-300"
+                data-testid="button-browse-online"
+              >
+                <Zap className="mr-2 w-5 h-5" />
+                Browse Online
+              </Button>
+            </div>
+            
+            {/* Contact Info */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="flex flex-wrap justify-center gap-8 mt-12 text-black/70"
+            >
+              <div className="flex items-center gap-2">
+                <Clock className="w-5 h-5" />
+                <span className="font-medium">Mon-Sat: 10AM-8PM</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Phone className="w-5 h-5" />
+                <span className="font-medium">+91 98765 43210</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5" />
+                <span className="font-medium">50K+ Happy Customers</span>
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </section>
