@@ -2455,7 +2455,13 @@ For any queries, please contact us.`;
         description: validatedData.description || undefined,
         carrier: validatedData.carrier || undefined,
         maxDays: validatedData.maxDays || undefined,
-        perKgCost: validatedData.perKgCost || undefined
+        perKgCost: validatedData.perKgCost || undefined,
+        freeShippingThreshold: validatedData.freeShippingThreshold || undefined,
+        currency: validatedData.currency || undefined,
+        trackingAvailable: validatedData.trackingAvailable ?? undefined,
+        signatureRequired: validatedData.signatureRequired ?? undefined,
+        insuranceIncluded: validatedData.insuranceIncluded ?? undefined,
+        maxWeight: validatedData.maxWeight || undefined
       });
       res.status(201).json(method);
     } catch (error) {
@@ -2476,7 +2482,13 @@ For any queries, please contact us.`;
         description: validatedData.description || undefined,
         carrier: validatedData.carrier || undefined,
         maxDays: validatedData.maxDays || undefined,
-        perKgCost: validatedData.perKgCost || undefined
+        perKgCost: validatedData.perKgCost || undefined,
+        freeShippingThreshold: validatedData.freeShippingThreshold || undefined,
+        currency: validatedData.currency || undefined,
+        trackingAvailable: validatedData.trackingAvailable ?? undefined,
+        signatureRequired: validatedData.signatureRequired ?? undefined,
+        insuranceIncluded: validatedData.insuranceIncluded ?? undefined,
+        maxWeight: validatedData.maxWeight || undefined
       });
       if (!method) {
         return res.status(404).json({ error: 'Shipping method not found' });
@@ -2566,7 +2578,16 @@ For any queries, please contact us.`;
         trackingNumber: validatedData.trackingNumber || undefined,
         recipientEmail: validatedData.recipientEmail || undefined,
         packageDimensions: validatedData.packageDimensions || undefined,
-        packageCurrency: validatedData.packageCurrency || undefined
+        packageCurrency: validatedData.packageCurrency || undefined,
+        isFragile: validatedData.isFragile ?? undefined,
+        requiresSignature: validatedData.requiresSignature ?? undefined,
+        insuranceCost: validatedData.insuranceCost || undefined,
+        estimatedDeliveryDate: validatedData.estimatedDeliveryDate || undefined,
+        actualDeliveryDate: validatedData.actualDeliveryDate || undefined,
+        trackingEvents: validatedData.trackingEvents as any || undefined,
+        lastTrackingUpdate: validatedData.lastTrackingUpdate || undefined,
+        notes: validatedData.notes || undefined,
+        specialInstructions: validatedData.specialInstructions || undefined
       });
       res.status(201).json(shipment);
     } catch (error) {
