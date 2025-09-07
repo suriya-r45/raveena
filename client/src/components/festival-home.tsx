@@ -43,6 +43,154 @@ import bridalCollectionsImage from '@assets/bridal_new.png';
 import royalGoldImage from '@assets/Royal_gold_jewelry_collection_e293857a.png';
 import goldCoinsImage from '@assets/HD_luxury_gold_coins_31016b54.png';
 
+// Enhanced Animation Components
+function FloatingElements() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {/* Floating Sparkles */}
+      {[...Array(30)].map((_, i) => (
+        <motion.div
+          key={`sparkle-${i}`}
+          className="absolute"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+          }}
+          animate={{
+            y: [-20, -100, -20],
+            x: [-10, 10, -10],
+            rotate: [0, 360],
+            scale: [0.5, 1.5, 0.5],
+            opacity: [0, 1, 0],
+          }}
+          transition={{
+            duration: Math.random() * 8 + 6,
+            repeat: Infinity,
+            delay: Math.random() * 3,
+            ease: "easeInOut",
+          }}
+        >
+          <Sparkles className="w-3 h-3 text-amber-400/40" />
+        </motion.div>
+      ))}
+      
+      {/* Floating Diamonds */}
+      {[...Array(15)].map((_, i) => (
+        <motion.div
+          key={`diamond-${i}`}
+          className="absolute text-blue-400/30"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+          }}
+          animate={{
+            y: [0, -80],
+            rotate: [0, 180],
+            scale: [0.3, 1.2, 0.3],
+            opacity: [0, 0.8, 0],
+          }}
+          transition={{
+            duration: Math.random() * 10 + 8,
+            repeat: Infinity,
+            delay: Math.random() * 4,
+            ease: "easeInOut",
+          }}
+        >
+          <Diamond className="w-4 h-4" />
+        </motion.div>
+      ))}
+      
+      {/* Floating Hearts */}
+      {[...Array(10)].map((_, i) => (
+        <motion.div
+          key={`heart-${i}`}
+          className="absolute text-pink-400/20"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+          }}
+          animate={{
+            y: [10, -120, 10],
+            x: [-5, 5, -5],
+            rotate: [0, 15, -15, 0],
+            scale: [0.4, 1.3, 0.4],
+            opacity: [0, 0.6, 0],
+          }}
+          transition={{
+            duration: Math.random() * 12 + 10,
+            repeat: Infinity,
+            delay: Math.random() * 5,
+            ease: "easeInOut",
+          }}
+        >
+          <Heart className="w-3 h-3" />
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+// Animated Background Gradient
+function AnimatedGradientBg() {
+  return (
+    <motion.div
+      className="absolute inset-0"
+      animate={{
+        background: [
+          "radial-gradient(circle at 20% 50%, rgba(251, 191, 36, 0.15) 0%, rgba(0, 0, 0, 0) 50%), radial-gradient(circle at 80% 20%, rgba(139, 69, 19, 0.1) 0%, rgba(0, 0, 0, 0) 50%), radial-gradient(circle at 40% 80%, rgba(168, 85, 247, 0.05) 0%, rgba(0, 0, 0, 0) 50%)",
+          "radial-gradient(circle at 80% 50%, rgba(251, 191, 36, 0.15) 0%, rgba(0, 0, 0, 0) 50%), radial-gradient(circle at 20% 20%, rgba(168, 85, 247, 0.1) 0%, rgba(0, 0, 0, 0) 50%), radial-gradient(circle at 60% 80%, rgba(139, 69, 19, 0.05) 0%, rgba(0, 0, 0, 0) 50%)",
+          "radial-gradient(circle at 40% 30%, rgba(168, 85, 247, 0.15) 0%, rgba(0, 0, 0, 0) 50%), radial-gradient(circle at 70% 70%, rgba(251, 191, 36, 0.1) 0%, rgba(0, 0, 0, 0) 50%), radial-gradient(circle at 20% 90%, rgba(139, 69, 19, 0.05) 0%, rgba(0, 0, 0, 0) 50%)",
+          "radial-gradient(circle at 20% 50%, rgba(251, 191, 36, 0.15) 0%, rgba(0, 0, 0, 0) 50%), radial-gradient(circle at 80% 20%, rgba(139, 69, 19, 0.1) 0%, rgba(0, 0, 0, 0) 50%), radial-gradient(circle at 40% 80%, rgba(168, 85, 247, 0.05) 0%, rgba(0, 0, 0, 0) 50%)"
+        ]
+      }}
+      transition={{
+        duration: 20,
+        repeat: Infinity,
+        ease: "linear"
+      }}
+    />
+  );
+}
+
+// Typing Effect Animation
+function TypingEffect({ text, className, delay = 0 }: { text: string; className?: string; delay?: number }) {
+  const [displayText, setDisplayText] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [showCursor, setShowCursor] = useState(true);
+
+  useEffect(() => {
+    const startTimeout = setTimeout(() => {
+      if (currentIndex < text.length) {
+        const timeout = setTimeout(() => {
+          setDisplayText(prev => prev + text[currentIndex]);
+          setCurrentIndex(prev => prev + 1);
+        }, 80);
+        return () => clearTimeout(timeout);
+      } else {
+        setShowCursor(false);
+      }
+    }, delay);
+    
+    return () => clearTimeout(startTimeout);
+  }, [currentIndex, text, delay]);
+
+  useEffect(() => {
+    const cursorInterval = setInterval(() => {
+      setShowCursor(prev => !prev);
+    }, 500);
+    return () => clearInterval(cursorInterval);
+  }, []);
+
+  return (
+    <span className={className}>
+      {displayText}
+      {showCursor && currentIndex < text.length && (
+        <span className="animate-pulse">|</span>
+      )}
+    </span>
+  );
+}
+
 // Luxury Collections Data with real images
 const luxuryCollections = [
   {
@@ -180,39 +328,56 @@ function UltraModernHero() {
 
   return (
     <section className="relative min-h-screen overflow-hidden bg-black">
-      {/* Animated Background */}
+      {/* Enhanced Animated Background */}
+      <AnimatedGradientBg />
+      <FloatingElements />
+      
       <motion.div 
         className="absolute inset-0"
         style={{ y }}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black" />
+        
+        {/* Enhanced Grid Pattern with Animation */}
+        <motion.div 
+          className="absolute inset-0 opacity-10"
+          animate={{
+            backgroundPosition: ['0% 0%', '100% 100%'],
+          }}
+          transition={{
+            duration: 30,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        >
+          <div className="h-full w-full bg-[linear-gradient(to_right,#ffffff1a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff1a_1px,transparent_1px)] bg-[size:60px_60px]" />
+        </motion.div>
+        
+        {/* Enhanced Pulsing Rings */}
         <div className="absolute inset-0">
-          {/* Floating Particles */}
-          {[...Array(50)].map((_, i) => (
+          {[...Array(5)].map((_, i) => (
             <motion.div
-              key={i}
-              className="absolute w-1 h-1 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full"
+              key={`ring-${i}`}
+              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
               style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
+                width: `${200 + i * 100}px`,
+                height: `${200 + i * 100}px`,
               }}
               animate={{
-                y: [0, -100, 0],
-                opacity: [0, 1, 0],
-                scale: [0, 1, 0],
+                scale: [1, 1.2, 1],
+                opacity: [0.1, 0.3, 0.1],
+                rotate: [0, 360],
               }}
               transition={{
-                duration: 3 + Math.random() * 2,
+                duration: 8 + i * 2,
                 repeat: Infinity,
-                delay: Math.random() * 5,
+                delay: i * 0.5,
+                ease: "easeInOut",
               }}
-            />
+            >
+              <div className="w-full h-full rounded-full border border-amber-400/20" />
+            </motion.div>
           ))}
-        </div>
-        
-        {/* Grid Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="h-full w-full bg-[linear-gradient(to_right,#ffffff1a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff1a_1px,transparent_1px)] bg-[size:60px_60px]" />
         </div>
       </motion.div>
 
@@ -483,28 +648,83 @@ export default function FestivalHomePage() {
             </p>
           </motion.div>
 
-          {/* Collections Grid */}
+          {/* Enhanced Collections Grid with Advanced Animations */}
           <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
             {luxuryCollections.map((collection, index) => (
               <motion.div
                 key={collection.id}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.2 }}
-                whileHover={{ y: -8 }}
-                className="group cursor-pointer"
+                initial={{ opacity: 0, y: 100, scale: 0.8, rotateX: 45 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+                transition={{ 
+                  duration: 1.2, 
+                  delay: index * 0.3,
+                  ease: "backOut",
+                  type: "spring",
+                  bounce: 0.4
+                }}
+                whileHover={{ 
+                  y: -12, 
+                  scale: 1.02,
+                  rotateY: 5,
+                  transition: { duration: 0.3 }
+                }}
+                className="group cursor-pointer perspective-1000"
                 data-testid={`collection-card-${collection.id}`}
               >
-                <div className="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 overflow-hidden hover:border-white/20 transition-all duration-500">
-                  {/* Background Glow */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${collection.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
+                <div className="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 overflow-hidden hover:border-white/20 transition-all duration-500 transform-gpu">
+                  {/* Enhanced Background Glow with Animation */}
+                  <motion.div 
+                    className={`absolute inset-0 bg-gradient-to-br ${collection.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500 blur-3xl`}
+                    whileHover={{
+                      scale: [1, 1.2, 1.1],
+                      opacity: [0, 0.15, 0.1]
+                    }}
+                    transition={{ duration: 0.6 }}
+                  />
                   
-                  {/* Badge */}
-                  <div className="absolute top-6 right-6 z-10">
-                    <Badge className={`bg-gradient-to-r ${collection.gradient} text-white border-none font-bold`}>
-                      {collection.badge}
-                    </Badge>
+                  {/* Animated Sparkle Effect */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    {[...Array(8)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className="absolute w-1 h-1 bg-amber-400 rounded-full"
+                        style={{
+                          left: `${20 + (i * 10)}%`,
+                          top: `${20 + (i * 8)}%`,
+                        }}
+                        initial={{ scale: 0, opacity: 0 }}
+                        whileInView={{ 
+                          scale: [0, 1.5, 0],
+                          opacity: [0, 1, 0]
+                        }}
+                        transition={{
+                          duration: 2,
+                          delay: 0.5 + (i * 0.1),
+                          repeat: Infinity,
+                          repeatDelay: 3
+                        }}
+                      />
+                    ))}
                   </div>
+                  
+                  {/* Enhanced Badge with Animation */}
+                  <motion.div 
+                    className="absolute top-6 right-6 z-10"
+                    initial={{ scale: 0, rotate: -180 }}
+                    whileInView={{ scale: 1, rotate: 0 }}
+                    transition={{ delay: 0.5 + index * 0.1, type: "spring", bounce: 0.5 }}
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                  >
+                    <Badge className={`bg-gradient-to-r ${collection.gradient} text-white border-none font-bold relative overflow-hidden`}>
+                      <motion.div
+                        className="absolute inset-0 bg-white/20"
+                        initial={{ x: '-100%' }}
+                        whileHover={{ x: '100%' }}
+                        transition={{ duration: 0.6 }}
+                      />
+                      <span className="relative z-10">{collection.badge}</span>
+                    </Badge>
+                  </motion.div>
                   
                   {/* Content */}
                   <div className="relative z-10 flex flex-col lg:flex-row items-center gap-8">
