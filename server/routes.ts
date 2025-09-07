@@ -2453,7 +2453,9 @@ For any queries, please contact us.`;
       const method = await storage.createShippingMethod({
         ...validatedData,
         description: validatedData.description || undefined,
-        carrier: validatedData.carrier || undefined
+        carrier: validatedData.carrier || undefined,
+        maxDays: validatedData.maxDays || undefined,
+        perKgCost: validatedData.perKgCost || undefined
       });
       res.status(201).json(method);
     } catch (error) {
@@ -2472,7 +2474,9 @@ For any queries, please contact us.`;
       const method = await storage.updateShippingMethod(id, {
         ...validatedData,
         description: validatedData.description || undefined,
-        carrier: validatedData.carrier || undefined
+        carrier: validatedData.carrier || undefined,
+        maxDays: validatedData.maxDays || undefined,
+        perKgCost: validatedData.perKgCost || undefined
       });
       if (!method) {
         return res.status(404).json({ error: 'Shipping method not found' });
@@ -2560,7 +2564,9 @@ For any queries, please contact us.`;
       const shipment = await storage.createShipment({
         ...validatedData,
         trackingNumber: validatedData.trackingNumber || undefined,
-        recipientEmail: validatedData.recipientEmail || undefined
+        recipientEmail: validatedData.recipientEmail || undefined,
+        packageDimensions: validatedData.packageDimensions || undefined,
+        packageCurrency: validatedData.packageCurrency || undefined
       });
       res.status(201).json(shipment);
     } catch (error) {
