@@ -543,6 +543,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test endpoint to show beautiful product showcase page
+  app.get("/api/products/test/showcase", async (req, res) => {
+    try {
+      const { generateStandaloneProductPage } = await import("./utils/product-card-generator.js");
+      
+      // Create test product data
+      const testProductData: ProductBarcodeData = {
+        productCode: "PJ-RN-BIRR-2025-002",
+        productName: "Silver 925 Birthstone Rings",
+        purity: "925",
+        grossWeight: "6.00 g",
+        netWeight: "6.00 g", 
+        stones: "None",
+        goldRate: "N/A",
+        approxPrice: "₹570"
+      };
+
+      // Generate the beautiful standalone page
+      const pagePath = await generateStandaloneProductPage(testProductData);
+      
+      // Get the base URL for the current environment
+      const baseUrl = process.env.REPL_URL || process.env.BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
+      const fullUrl = `${baseUrl}${pagePath}`;
+      
+      res.json({ 
+        message: "Beautiful product showcase created!",
+        url: fullUrl,
+        path: pagePath,
+        testData: testProductData
+      });
+    } catch (error) {
+      console.error("Error creating test showcase:", error);
+      res.status(500).json({ message: "Failed to create test showcase", error: error.message });
+    }
+  });
+
+  // Endpoint to regenerate QR code for existing products
+  app.post("/api/products/:id/regenerate-qr", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const productId = req.params.id;
+      const product = await storage.getProduct(productId);
+      
+      if (!product) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+
+      // Create barcode data from product
+      const barcodeData: ProductBarcodeData = {
+        productCode: product.productCode,
+        productName: product.name,
+        purity: product.purity || '22K',
+        grossWeight: `${product.grossWeight} g`,
+        netWeight: `${product.netWeight} g`,
+        stones: product.stones || 'None',
+        goldRate: product.goldRateAtCreation ? `₹${product.goldRateAtCreation} / g` : 'N/A',
+        approxPrice: `₹${product.priceInr.toLocaleString('en-IN')} (excluding charges)`
+      };
+
+      // Generate new QR code with beautiful product showcase
+      const qrCodePath = await generateQRCode(barcodeData, product.productCode, product.images[0]);
+      
+      res.json({ 
+        message: "QR code regenerated with beautiful product showcase!",
+        productCode: product.productCode,
+        productName: product.name,
+        qrCodePath: qrCodePath
+      });
+    } catch (error) {
+      console.error("Error regenerating QR code:", error);
+      res.status(500).json({ message: "Failed to regenerate QR code", error: error.message });
+    }
+  });
+
   app.put("/api/products/:id", authenticateToken, requireAdmin, upload.array('images', 5), async (req, res) => {
     try {
       const productData = insertProductSchema.parse(req.body);
