@@ -27,7 +27,13 @@ import {
   Check,
   Users,
   TrendingUp,
-  Shield
+  Shield,
+  Medal,
+  BookOpen,
+  Camera,
+  Eye,
+  Search,
+  Calendar
 } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -1150,6 +1156,378 @@ export default function FestivalHomePage() {
                 </ul>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Awards and Certifications */}
+      <section className="py-32 bg-gradient-to-br from-black via-slate-900 to-gray-900 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_40%,rgba(34,197,94,0.1),transparent)]" />
+        </div>
+        
+        <div className="container mx-auto px-6 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-20"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              whileInView={{ scale: 1 }}
+              transition={{ type: "spring", delay: 0.2 }}
+              className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full px-6 py-3 mb-8"
+            >
+              <Medal className="w-5 h-5 text-green-400" />
+              <span className="text-white/80 font-medium tracking-wider text-sm">TRUSTED EXCELLENCE</span>
+            </motion.div>
+            
+            <h2 className="text-5xl lg:text-7xl font-black text-white mb-6 leading-tight">
+              Award-Winning
+              <span className="block bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                Craftsmanship
+              </span>
+            </h2>
+            
+            <p className="text-xl text-white/70 max-w-3xl mx-auto leading-relaxed">
+              Our commitment to excellence has been recognized by industry leaders and trusted organizations worldwide
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+            {[
+              {
+                icon: Award,
+                title: "BIS Certified",
+                subtitle: "Hallmark Guarantee",
+                description: "All gold jewelry certified by Bureau of Indian Standards"
+              },
+              {
+                icon: Shield,
+                title: "ISO 9001:2015",
+                subtitle: "Quality Management",
+                description: "International standard for quality management systems"
+              },
+              {
+                icon: Star,
+                title: "Jewellers Association",
+                subtitle: "Member Since 2000",
+                description: "Proud member of National Jewellers Association"
+              },
+              {
+                icon: Crown,
+                title: "Excellence Award",
+                subtitle: "Best Craftsmanship 2023",
+                description: "Recognized for outstanding jewelry design and quality"
+              }
+            ].map((award, index) => (
+              <motion.div
+                key={award.title}
+                initial={{ opacity: 0, y: 30, rotateY: -45 }}
+                whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
+                transition={{ duration: 0.8, delay: index * 0.1 }}
+                whileHover={{ 
+                  y: -10, 
+                  rotateY: 10,
+                  transition: { duration: 0.3 }
+                }}
+                viewport={{ once: true }}
+                className="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 text-center hover:border-green-400/30 hover:bg-white/10 transition-all duration-500"
+                style={{ transformStyle: 'preserve-3d' }}
+              >
+                <motion.div
+                  initial={{ scale: 0, rotate: -180 }}
+                  whileInView={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", delay: 0.3 + index * 0.1 }}
+                  className="w-20 h-20 bg-gradient-to-r from-green-400 to-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500"
+                >
+                  <award.icon className="w-10 h-10 text-white" />
+                </motion.div>
+                
+                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-green-300 transition-colors duration-300">
+                  {award.title}
+                </h3>
+                
+                <div className="text-green-400 font-medium text-sm mb-3">
+                  {award.subtitle}
+                </div>
+                
+                <p className="text-white/70 text-sm leading-relaxed group-hover:text-white/90 transition-colors duration-300">
+                  {award.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Latest News and Updates */}
+      <section className="py-32 bg-gradient-to-br from-gray-900 via-black to-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_40%,rgba(59,130,246,0.1),transparent)]" />
+        </div>
+        
+        <div className="container mx-auto px-6 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-20"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              whileInView={{ scale: 1 }}
+              transition={{ type: "spring", delay: 0.2 }}
+              className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full px-6 py-3 mb-8"
+            >
+              <BookOpen className="w-5 h-5 text-blue-400" />
+              <span className="text-white/80 font-medium tracking-wider text-sm">LATEST UPDATES</span>
+            </motion.div>
+            
+            <h2 className="text-5xl lg:text-7xl font-black text-white mb-6 leading-tight">
+              News &
+              <span className="block bg-gradient-to-r from-blue-400 to-cyan-500 bg-clip-text text-transparent">
+                Insights
+              </span>
+            </h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                category: "Collection Launch",
+                title: "Diwali Special Collection 2024",
+                excerpt: "Explore our latest festive collection featuring traditional designs with contemporary elegance.",
+                date: "Oct 15, 2024",
+                readTime: "3 min read",
+                image: goldCollectionImage
+              },
+              {
+                category: "Care Tips",
+                title: "How to Maintain Your Gold Jewelry",
+                excerpt: "Expert tips on keeping your precious jewelry looking brilliant and lasting for generations.",
+                date: "Oct 10, 2024",
+                readTime: "5 min read",
+                image: luxuryNecklaceImage
+              },
+              {
+                category: "Trends",
+                title: "2024 Bridal Jewelry Trends",
+                excerpt: "Discover the latest trends in bridal jewelry that modern brides are choosing for their special day.",
+                date: "Oct 5, 2024",
+                readTime: "4 min read",
+                image: earringsLuxuryImage
+              }
+            ].map((article, index) => (
+              <motion.article
+                key={article.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.15 }}
+                whileHover={{ y: -10 }}
+                viewport={{ once: true }}
+                className="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden hover:border-blue-400/30 hover:bg-white/10 transition-all duration-500 cursor-pointer"
+              >
+                {/* Article Image */}
+                <div className="relative h-64 overflow-hidden">
+                  <img 
+                    src={article.image} 
+                    alt={article.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  
+                  {/* Category Badge */}
+                  <div className="absolute top-4 left-4">
+                    <span className="bg-blue-500/90 backdrop-blur-xl border border-blue-400/30 rounded-full px-4 py-2 text-white text-xs font-medium">
+                      {article.category}
+                    </span>
+                  </div>
+                </div>
+                
+                {/* Article Content */}
+                <div className="p-8">
+                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-blue-300 transition-colors duration-300 line-clamp-2">
+                    {article.title}
+                  </h3>
+                  
+                  <p className="text-white/70 text-sm leading-relaxed mb-6 line-clamp-3 group-hover:text-white/90 transition-colors duration-300">
+                    {article.excerpt}
+                  </p>
+                  
+                  <div className="flex items-center justify-between text-white/60 text-xs">
+                    <time className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4" />
+                      {article.date}
+                    </time>
+                    <span className="flex items-center gap-2">
+                      <Clock className="w-4 h-4" />
+                      {article.readTime}
+                    </span>
+                  </div>
+                  
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ delay: 0.5 + index * 0.1 }}
+                    className="flex items-center text-white/80 group-hover:text-blue-300 transition-colors duration-300 mt-4"
+                  >
+                    <span className="text-sm font-medium mr-2">Read More</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                  </motion.div>
+                </div>
+              </motion.article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Virtual Showroom Preview */}
+      <section className="py-32 bg-gradient-to-br from-slate-900 via-gray-900 to-black relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_20%,rgba(168,85,247,0.1),transparent)]" />
+        </div>
+        
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Content */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1 }}
+              viewport={{ once: true }}
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                transition={{ type: "spring", delay: 0.2 }}
+                className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full px-6 py-3 mb-8"
+              >
+                <Camera className="w-5 h-5 text-purple-400" />
+                <span className="text-white/80 font-medium tracking-wider text-sm">VIRTUAL EXPERIENCE</span>
+              </motion.div>
+              
+              <h2 className="text-5xl lg:text-6xl font-black text-white mb-8 leading-tight">
+                Explore Our
+                <span className="block bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+                  Virtual Showroom
+                </span>
+              </h2>
+              
+              <div className="space-y-6 text-white/80 text-lg leading-relaxed mb-12">
+                <p>
+                  Step into our immersive virtual showroom and experience our jewelry collections like never before. Browse through our extensive catalog with 360° views and detailed close-ups.
+                </p>
+                <p>
+                  Get a realistic preview of how each piece looks and feels, making your shopping experience more engaging and confident.
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-6 mb-12">
+                {[
+                  { icon: Eye, label: "360° Product Views", description: "See every detail from all angles" },
+                  { icon: Zap, label: "AR Try-On", description: "Virtual try-on experience" },
+                  { icon: Search, label: "Zoom & Inspect", description: "Examine craftsmanship closely" },
+                  { icon: Heart, label: "Wishlist & Compare", description: "Save and compare favorites" }
+                ].map((feature, index) => (
+                  <motion.div
+                    key={feature.label}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 + index * 0.1 }}
+                    className="flex items-start gap-3"
+                  >
+                    <div className="w-12 h-12 bg-gradient-to-r from-purple-400 to-pink-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <feature.icon className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="text-white font-medium text-sm mb-1">{feature.label}</div>
+                      <div className="text-white/60 text-xs">{feature.description}</div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+              
+              <motion.button
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-bold py-4 px-8 rounded-2xl transition-all duration-300 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40"
+              >
+                Launch Virtual Showroom
+              </motion.button>
+            </motion.div>
+            
+            {/* Visual */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1, delay: 0.3 }}
+              viewport={{ once: true }}
+              className="relative"
+            >
+              <div className="relative aspect-square max-w-lg mx-auto">
+                {/* Main Showcase */}
+                <div className="relative z-10 aspect-square rounded-3xl overflow-hidden border border-purple-400/20 backdrop-blur-xl">
+                  <img
+                    src={ringsLuxuryImage}
+                    alt="Virtual Showroom Preview"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-pink-500/10" />
+                  
+                  {/* Interactive Elements */}
+                  <div className="absolute top-6 right-6">
+                    <motion.div
+                      animate={{ scale: [1, 1.2, 1], opacity: [0.7, 1, 0.7] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="w-12 h-12 bg-white/20 backdrop-blur-xl border border-white/30 rounded-full flex items-center justify-center"
+                    >
+                      <Camera className="w-6 h-6 text-white" />
+                    </motion.div>
+                  </div>
+                  
+                  <div className="absolute bottom-6 left-6">
+                    <motion.div
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{ duration: 3, repeat: Infinity, delay: 1 }}
+                      className="bg-purple-500/90 backdrop-blur-xl border border-purple-400/50 rounded-xl px-4 py-2"
+                    >
+                      <div className="text-white text-sm font-medium">360° View Available</div>
+                    </motion.div>
+                  </div>
+                </div>
+                
+                {/* Floating UI Elements */}
+                <motion.div
+                  className="absolute -top-8 -left-8 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-4"
+                  animate={{
+                    y: [-10, 10, -10],
+                    rotate: [-5, 5, -5],
+                  }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <Eye className="w-8 h-8 text-purple-400" />
+                </motion.div>
+                
+                <motion.div
+                  className="absolute -bottom-6 -right-6 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-4"
+                  animate={{
+                    y: [10, -10, 10],
+                    rotate: [5, -5, 5],
+                  }}
+                  transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <Search className="w-8 h-8 text-pink-400" />
+                </motion.div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
