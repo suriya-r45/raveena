@@ -1481,7 +1481,6 @@ Premium quality, timeless beauty.`;
 
       // For now, create as a bill since we haven't migrated the schema yet
       const bill = await storage.createBill({
-        billNumber: orderNumber,
         customerName: orderData.customerName,
         customerEmail: orderData.customerEmail,
         customerPhone: orderData.customerPhone,
@@ -2380,7 +2379,7 @@ For any queries, please contact us.`;
       const validatedData = insertShippingZoneSchema.parse(req.body);
       const zone = await storage.createShippingZone({
         ...validatedData,
-        countries: validatedData.countries
+        countries: validatedData.countries as string[]
       });
       res.status(201).json(zone);
     } catch (error) {
@@ -2398,7 +2397,7 @@ For any queries, please contact us.`;
       const validatedData = insertShippingZoneSchema.partial().parse(req.body);
       const zone = await storage.updateShippingZone(id, {
         ...validatedData,
-        countries: validatedData.countries
+        countries: validatedData.countries as string[] | undefined
       });
       if (!zone) {
         return res.status(404).json({ error: 'Shipping zone not found' });
@@ -2453,7 +2452,7 @@ For any queries, please contact us.`;
       const validatedData = insertShippingMethodSchema.parse(req.body);
       const method = await storage.createShippingMethod({
         ...validatedData,
-        description: validatedData.description,
+        description: validatedData.description || undefined,
         carrier: validatedData.carrier || undefined
       });
       res.status(201).json(method);
@@ -2472,7 +2471,7 @@ For any queries, please contact us.`;
       const validatedData = insertShippingMethodSchema.partial().parse(req.body);
       const method = await storage.updateShippingMethod(id, {
         ...validatedData,
-        description: validatedData.description,
+        description: validatedData.description || undefined,
         carrier: validatedData.carrier || undefined
       });
       if (!method) {
@@ -2560,7 +2559,7 @@ For any queries, please contact us.`;
       const validatedData = insertShipmentSchema.parse(req.body);
       const shipment = await storage.createShipment({
         ...validatedData,
-        trackingNumber: validatedData.trackingNumber,
+        trackingNumber: validatedData.trackingNumber || undefined,
         recipientEmail: validatedData.recipientEmail || undefined
       });
       res.status(201).json(shipment);
