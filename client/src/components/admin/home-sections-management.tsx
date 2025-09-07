@@ -30,7 +30,7 @@ interface CreateHomeSectionData {
   title: string;
   subtitle: string;
   description: string;
-  layoutType: 'grid' | 'featured' | 'mixed' | 'festival' | 'festival-specials' | 'carousel' | 'mosaic' | 'magazine' | 'new-arrivals' | 'premium' | 'zen' | 'royal' | 'curved-grid' | 'tilted-grid';
+  layoutType: 'grid' | 'featured' | 'mixed' | 'festival' | 'festival-specials' | 'carousel' | 'mosaic' | 'magazine' | 'new-arrivals' | 'premium' | 'zen' | 'royal' | 'curved-grid' | 'tilted-grid' | 'countdown-offers';
   isActive: boolean;
   displayOrder: number;
   backgroundColor: string;
@@ -491,6 +491,7 @@ function CreateSectionDialog({
                 <SelectItem value="zen">🧘 Zen - Minimalist Floating Cards</SelectItem>
                 <SelectItem value="curved-grid">🌊 3D Grid - Elegant 3D Product Showcase</SelectItem>
                 <SelectItem value="tilted-grid">🎯 Tilted Grid - 1x5 Desktop Layout with 30° Tilted Sides</SelectItem>
+                <SelectItem value="countdown-offers">⏰ Countdown Offers - Ultra Modern Banner with Countdown</SelectItem>
               </SelectContent>
             </Select>
           </div>

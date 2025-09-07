@@ -486,7 +486,7 @@ function RoyalSecondaryHomePage({
         if (section.items.length === 0) return null;
         
         // Skip special layouts - they're handled in the second mapping below
-        if (['festival-specials', 'split', 'diamond', 'festival', 'carousel', 'mosaic', 'magazine', 'new-arrivals', 'premium', 'zen', 'royal', 'curved-grid', 'tilted-grid'].includes(section.layoutType)) {
+        if (['festival-specials', 'split', 'diamond', 'festival', 'carousel', 'mosaic', 'magazine', 'new-arrivals', 'premium', 'zen', 'royal', 'curved-grid', 'tilted-grid', 'countdown-offers'].includes(section.layoutType)) {
           return null;
         }
         
@@ -2318,6 +2318,214 @@ export default function Home() {
       {/* Custom Admin Sections */}
       {homeSections.length > 0 && homeSections.map((section) => {
         if (section.items.length === 0) return null;
+        
+        // Countdown Offers Banner - Ultra Modern Style with Customizable Banner
+        if (section.layoutType === 'countdown-offers') {
+          return (
+            <section 
+              key={section.id} 
+              className="w-full relative py-16 md:py-20 overflow-hidden" 
+              data-testid={`section-${section.title.toLowerCase().replace(/\s+/g, '-')}`}
+              style={{
+                background: `
+                  linear-gradient(135deg, #0f0f23 0%, #1a1a3e 25%, #2d2d5f 50%, #4a4a80 75%, #6767a1 100%),
+                  radial-gradient(ellipse 800px 400px at 30% 20%, rgba(139, 69, 19, 0.15) 0%, transparent 60%),
+                  radial-gradient(ellipse 600px 300px at 70% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%)
+                `,
+                position: 'relative'
+              }}
+            >
+              {/* Premium Background Patterns */}
+              <div className="absolute inset-0 opacity-20">
+                <div 
+                  className="absolute inset-0"
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3Ccircle cx='10' cy='10' r='1'/%3E%3Ccircle cx='50' cy='20' r='1.5'/%3E%3Ccircle cx='15' cy='50' r='1'/%3E%3Ccircle cx='45' cy='45' r='1.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                    animation: 'float 30s ease-in-out infinite'
+                  }} 
+                />
+              </div>
+
+              <div className="relative z-10 container mx-auto px-4">
+                {/* Modern Countdown Timer */}
+                {section.showCountdown && section.countdownEndDate && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                    className="text-center mb-12"
+                  >
+                    <div className="inline-block">
+                      <div className="bg-gradient-to-r from-amber-500/20 to-orange-600/20 backdrop-blur-sm border border-amber-500/30 rounded-2xl p-6 shadow-2xl">
+                        <h3 className="text-2xl md:text-3xl font-bold text-amber-400 mb-4" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                          {section.countdownTitle || 'Limited Time Offer'}
+                        </h3>
+                        <CountdownTimer 
+                          targetDate={new Date(section.countdownEndDate)}
+                          title={section.countdownTitle || 'Limited Time Offer'}
+                          description={section.countdownDescription}
+                        />
+                        {section.countdownDescription && (
+                          <p className="text-amber-200 mt-3 text-lg">
+                            {section.countdownDescription}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Main Banner Content */}
+                <motion.div
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
+                  className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
+                >
+                  {/* Left Side - Content */}
+                  <div className="space-y-8">
+                    {/* Premium Badge */}
+                    <motion.div
+                      initial={{ opacity: 0, x: -30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.8, delay: 0.6 }}
+                      className="inline-flex items-center gap-3 bg-gradient-to-r from-amber-500/20 to-orange-600/20 backdrop-blur-sm border border-amber-500/30 rounded-full px-6 py-3"
+                    >
+                      <Sparkles className="h-5 w-5 text-amber-400" />
+                      <span className="text-amber-200 font-medium tracking-wide">EXCLUSIVE COLLECTION</span>
+                    </motion.div>
+
+                    {/* Main Heading */}
+                    <motion.h1
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 1, delay: 0.8 }}
+                      className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight"
+                      style={{ fontFamily: 'Cormorant Garamond, serif' }}
+                    >
+                      <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500">
+                        {section.title}
+                      </span>
+                    </motion.h1>
+
+                    {/* Description */}
+                    {section.description && (
+                      <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1, delay: 1 }}
+                        className="text-xl md:text-2xl text-gray-300 font-light leading-relaxed max-w-xl"
+                        style={{ fontFamily: 'Cormorant Garamond, serif' }}
+                      >
+                        {section.description}
+                      </motion.p>
+                    )}
+
+                    {/* Offer Details */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 1, delay: 1.2 }}
+                      className="space-y-4"
+                    >
+                      <div className="flex items-center gap-4 text-amber-200">
+                        <div className="flex items-center gap-2">
+                          <Diamond className="h-5 w-5 text-amber-400" />
+                          <span className="font-medium">Up to 30% OFF</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Heart className="h-5 w-5 text-pink-400" />
+                          <span className="font-medium">Free Shipping</span>
+                        </div>
+                      </div>
+                      
+                      {/* CTA Button */}
+                      <motion.div
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="pt-4"
+                      >
+                        <Button
+                          className="group relative overflow-hidden bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold px-8 py-4 text-lg rounded-full shadow-2xl border-0 transition-all duration-300"
+                          onClick={() => window.location.href = '/collections'}
+                          data-testid="button-explore-offers"
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                          <div className="relative flex items-center gap-3">
+                            <Gem className="h-6 w-6" />
+                            <span>Explore Offers</span>
+                            <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                          </div>
+                        </Button>
+                      </motion.div>
+                    </motion.div>
+                  </div>
+
+                  {/* Right Side - Featured Products */}
+                  <motion.div
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 1.2, delay: 0.5 }}
+                    className="relative"
+                  >
+                    {section.items && section.items.length > 0 && (
+                      <div className="relative">
+                        {/* Main Product Showcase */}
+                        <div className="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm border border-white/20 rounded-3xl p-8 shadow-2xl">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            {section.items.slice(0, 4).map((item, index) => (
+                              <motion.div
+                                key={item.id}
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.6, delay: 1 + (index * 0.15) }}
+                                className="group cursor-pointer"
+                                onClick={() => handleViewAllClick(item.product.category)}
+                                data-testid={`card-product-${item.product.id}`}
+                              >
+                                <div className="bg-white/90 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                                  <div className="aspect-square relative overflow-hidden">
+                                    <img
+                                      src={item.customImageUrl || item.product.images?.[0] || ringsImage}
+                                      alt={item.product.name}
+                                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                    />
+                                    <div className="absolute top-3 right-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs px-2 py-1 rounded-full font-bold">
+                                      OFFER
+                                    </div>
+                                  </div>
+                                  <div className="p-4">
+                                    <h4 className="font-semibold text-gray-800 text-sm mb-2 line-clamp-1">
+                                      {item.displayName || item.product.name}
+                                    </h4>
+                                    <div className="flex items-center justify-between">
+                                      <div className="text-lg font-bold text-amber-600">
+                                        {selectedCurrency === 'INR' ? '₹' : 'BD '}
+                                        {selectedCurrency === 'INR' ? 
+                                          parseFloat(item.product.priceInr).toLocaleString('en-IN') :
+                                          parseFloat(item.product.priceBhd).toLocaleString('en-BH', { minimumFractionDigits: 3 })
+                                        }
+                                      </div>
+                                      <Star className="h-4 w-4 text-amber-500 fill-current" />
+                                    </div>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            ))}
+                          </div>
+
+                          {/* Floating Elements */}
+                          <div className="absolute -top-6 -right-6 w-12 h-12 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full blur-lg opacity-60 animate-pulse"></div>
+                          <div className="absolute -bottom-4 -left-4 w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full blur-lg opacity-50 animate-pulse" style={{ animationDelay: '1s' }}></div>
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                </motion.div>
+              </div>
+            </section>
+          );
+        }
         
         // Split layout rendering - Elegant Design matching reference image
         if (section.layoutType === 'split') {
