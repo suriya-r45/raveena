@@ -47,6 +47,29 @@
   --golden-600: hsl(38, 65%, 45%);
   --golden-700: hsl(35, 60%, 35%);
   
+  /* Ultra Premium Color Variables */
+  --amber-50: hsl(48, 100%, 96%);
+  --amber-100: hsl(48, 96%, 89%);
+  --amber-200: hsl(48, 97%, 77%);
+  --amber-300: hsl(46, 97%, 65%);
+  --amber-400: hsl(43, 96%, 56%);
+  --amber-500: hsl(38, 92%, 50%);
+  --amber-600: hsl(32, 95%, 44%);
+  --amber-700: hsl(26, 90%, 37%);
+  --amber-800: hsl(23, 83%, 31%);
+  --amber-900: hsl(22, 78%, 26%);
+  
+  /* Premium Brown Palette */
+  --brown-800: hsl(25, 47%, 15%);
+  --brown-700: hsl(30, 47%, 20%);
+  --brown-600: hsl(35, 47%, 25%);
+  --brown-500: hsl(40, 47%, 30%);
+  
+  /* Luxury Effects */
+  --premium-shadow: 0 4px 25px rgba(218, 165, 32, 0.15);
+  --premium-glow: 0 0 40px rgba(255, 215, 0, 0.2);
+  --luxury-border: linear-gradient(90deg, transparent, rgba(218,165,32,0.4), transparent);
+  
   /* Elegant Shadows */
   --elegant-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   --elegant-shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.12);
@@ -195,6 +218,56 @@
   }
   50% {
     transform: translateY(-10px) rotate(1deg);
+  }
+}
+
+/* ULTRA PREMIUM HEADER ANIMATIONS */
+@keyframes premium-shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes glow-pulse {
+  0% {
+    box-shadow: 0 0 5px rgba(218, 165, 32, 0.3);
+    opacity: 0.6;
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(218, 165, 32, 0.6);
+    opacity: 0.9;
+  }
+}
+
+@keyframes luxury-float {
+  0%, 100% {
+    transform: translateY(0px) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-2px) scale(1.01) rotate(0.5deg);
+  }
+  50% {
+    transform: translateY(-3px) scale(1.02) rotate(1deg);
+  }
+  75% {
+    transform: translateY(-2px) scale(1.01) rotate(0.5deg);
+  }
+}
+
+@keyframes golden-breathing {
+  0%, 100% {
+    filter: brightness(1) saturate(1);
+    transform: scale(1);
+  }
+  50% {
+    filter: brightness(1.1) saturate(1.2);
+    transform: scale(1.02);
   }
 }
 
