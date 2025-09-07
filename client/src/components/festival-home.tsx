@@ -453,26 +453,6 @@ function UltraModernHero() {
                 </Button>
               </motion.div>
               
-              {/* Stats */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8 }}
-                className="flex justify-center lg:justify-start gap-8 mt-12"
-              >
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-white mb-1">50K+</div>
-                  <div className="text-white/60 text-sm">Happy Customers</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-white mb-1">1000+</div>
-                  <div className="text-white/60 text-sm">Unique Designs</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-white mb-1">25+</div>
-                  <div className="text-white/60 text-sm">Years Legacy</div>
-                </div>
-              </motion.div>
             </motion.div>
 
             {/* Image Showcase */}
@@ -852,94 +832,6 @@ export default function FestivalHomePage() {
         </div>
       </section>
 
-      {/* Customer Testimonials */}
-      <section className="py-24 bg-gradient-to-br from-gray-900 via-black to-gray-900 relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(168,85,247,0.1),transparent)]" />
-        </div>
-        
-        <div className="container mx-auto px-6 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-5xl font-black text-white mb-6">
-              What Our
-              <span className="block bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Customers Say
-              </span>
-            </h2>
-            <p className="text-xl text-white/70 max-w-2xl mx-auto">
-              Real stories from our satisfied customers
-            </p>
-          </motion.div>
-
-          <div className="max-w-4xl mx-auto">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTestimonial}
-                initial={{ opacity: 0, x: 100 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -100 }}
-                transition={{ duration: 0.5 }}
-                className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 lg:p-12 text-center"
-                data-testid={`testimonial-${activeTestimonial}`}
-              >
-                <div className="flex justify-center mb-6">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-6 h-6 text-amber-400 fill-current" />
-                  ))}
-                </div>
-                
-                <blockquote className="text-2xl text-white mb-8 leading-relaxed font-light italic">
-                  "{testimonials[activeTestimonial].text}"
-                </blockquote>
-                
-                <div className="flex items-center justify-center gap-4">
-                  <div className="text-center">
-                    <div className="text-xl font-bold text-white">
-                      {testimonials[activeTestimonial].name}
-                    </div>
-                    <div className="text-white/60 flex items-center justify-center gap-2">
-                      <MapPin className="w-4 h-4" />
-                      {testimonials[activeTestimonial].location}
-                    </div>
-                  </div>
-                  
-                  {testimonials[activeTestimonial].verified && (
-                    <div className="flex items-center gap-1 bg-green-500/20 border border-green-500/30 rounded-full px-3 py-1">
-                      <Check className="w-4 h-4 text-green-400" />
-                      <span className="text-green-400 text-sm font-medium">Verified</span>
-                    </div>
-                  )}
-                </div>
-                
-                <div className="mt-4 text-white/50 text-sm">
-                  Purchase: {testimonials[activeTestimonial].product}
-                </div>
-              </motion.div>
-            </AnimatePresence>
-            
-            {/* Testimonial Indicators */}
-            <div className="flex justify-center space-x-2 mt-8">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setActiveTestimonial(index)}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    index === activeTestimonial 
-                      ? 'bg-gradient-to-r from-purple-400 to-pink-400 w-8' 
-                      : 'bg-white/30 hover:bg-white/50'
-                  }`}
-                  data-testid={`testimonial-indicator-${index}`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Featured Products Showcase */}
       {featuredProducts.length > 0 && (
@@ -1044,13 +936,13 @@ export default function FestivalHomePage() {
                 className="inline-flex items-center gap-2 bg-black/10 backdrop-blur-xl border border-black/20 rounded-full px-6 py-3 mb-8"
               >
                 <Heart className="w-5 h-5 text-red-600" />
-                <span className="text-black/80 font-medium tracking-wider text-sm">EXPERIENCE LUXURY</span>
+                <span className="text-black/80 font-medium tracking-wider text-sm">VISIT US TODAY</span>
               </motion.div>
               
               <h2 className="text-5xl lg:text-7xl font-black text-black mb-6 leading-tight">
-                Ready to Create
+                Visit Our
                 <span className="block text-white drop-shadow-lg">
-                  Memories?
+                  Showroom
                 </span>
               </h2>
               
@@ -1104,10 +996,6 @@ export default function FestivalHomePage() {
               <div className="flex items-center gap-2">
                 <Phone className="w-5 h-5" />
                 <span className="font-medium">+91 98765 43210</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5" />
-                <span className="font-medium">50K+ Happy Customers</span>
               </div>
             </motion.div>
           </motion.div>
