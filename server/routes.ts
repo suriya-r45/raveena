@@ -11,7 +11,7 @@ import PDFDocument from "pdfkit";
 import Stripe from "stripe";
 import { MetalRatesService } from "./services/testmetalRatesService.js";
 import twilio from "twilio";
-import { generateProductCode, generateBarcode, generateQRCode, ProductBarcodeData } from "./utils/barcode";
+import { generateProductCode, generateBarcode, generateQRCode, ProductBarcodeData } from "./utils/barcode.js";
 import { recalculateAllMetalBasedProducts } from "./utils/pricing.js";
 import { createVintageProductImage } from "./utils/vintage-effects.js";
 import sharp from "sharp";
@@ -503,7 +503,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         isActive: productData.isActive ?? true
       });
 
-      // Generate barcode asynchronously (don't block response)
+      // Generate beautiful QR code and barcode asynchronously (don't block response)
       setImmediate(async () => {
         try {
           const barcodeData: ProductBarcodeData = {
@@ -517,10 +517,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
             approxPrice: `₹${productData.priceInr.toLocaleString('en-IN')} (excluding charges)`
           };
 
-          const { imagePath } = await generateBarcode(JSON.stringify(barcodeData), productCode);
-          await storage.updateProduct(product.id, { barcodeImageUrl: imagePath });
+          // Generate both traditional barcode and beautiful QR code
+          const [barcodeResult, qrCodePath] = await Promise.all([
+            generateBarcode(JSON.stringify(barcodeData), productCode),
+            generateQRCode(barcodeData, productCode, imageUrls[0]) // Pass first product image for showcase
+          ]);
+          
+          // Update product with both barcode and QR code paths
+          await storage.updateProduct(product.id, { 
+            barcodeImageUrl: barcodeResult.imagePath,
+            // You may want to add a qrCodeImageUrl field to the schema
+            // qrCodeImageUrl: qrCodePath
+          });
+
+          console.log(`🎉 Beautiful product showcase created for ${productCode}!`);
         } catch (error) {
-          console.warn('Async barcode generation failed:', error);
+          console.warn('Async barcode/QR generation failed:', error);
         }
       });
 
