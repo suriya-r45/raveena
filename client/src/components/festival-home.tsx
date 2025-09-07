@@ -1063,10 +1063,25 @@ export default function FestivalHomePage() {
       </section>
 
 
-      {/* Awards and Certifications */}
-      <section className="py-16 sm:py-24 lg:py-32 bg-gradient-to-br from-black via-slate-900 to-gray-900 relative overflow-hidden">
+      {/* Live Metal Rates Showcase */}
+      <section className="py-16 sm:py-24 lg:py-32 bg-gradient-to-br from-indigo-900 via-purple-900 to-black relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_40%,rgba(34,197,94,0.1),transparent)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_40%,rgba(99,102,241,0.1),transparent)]" />
+          <motion.div 
+            className="absolute inset-0 opacity-10"
+            animate={{
+              backgroundPosition: ['0% 0%', '100% 100%'],
+            }}
+            transition={{
+              duration: 40,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='20' cy='20' r='2'/%3E%3Ccircle cx='50' cy='50' r='3'/%3E%3Ccircle cx='80' cy='80' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+              backgroundSize: '100px 100px'
+            }}
+          />
         </div>
         
         <div className="container mx-auto px-6 relative z-10">
@@ -1075,7 +1090,7 @@ export default function FestivalHomePage() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-center mb-20"
+            className="text-center mb-12 sm:mb-20"
           >
             <motion.div
               initial={{ scale: 0 }}
@@ -1083,91 +1098,97 @@ export default function FestivalHomePage() {
               transition={{ type: "spring", delay: 0.2 }}
               className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full px-6 py-3 mb-8"
             >
-              <Medal className="w-5 h-5 text-green-400" />
-              <span className="text-white/80 font-medium tracking-wider text-sm">TRUSTED EXCELLENCE</span>
+              <TrendingUp className="w-5 h-5 text-indigo-400" />
+              <span className="text-white/80 font-medium tracking-wider text-sm">LIVE MARKET RATES</span>
             </motion.div>
             
             <h2 className="text-3xl sm:text-4xl lg:text-7xl font-black text-white mb-6 leading-tight">
-              Award-Winning
-              <span className="block bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
-                Craftsmanship
+              Live Market
+              <span className="block bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">
+                Metal Rates
               </span>
             </h2>
             
-            <p className="text-xl text-white/70 max-w-3xl mx-auto leading-relaxed">
-              Our commitment to excellence has been recognized by industry leaders and trusted organizations worldwide
+            <p className="text-lg sm:text-xl text-white/70 max-w-3xl mx-auto leading-relaxed">
+              Stay updated with real-time precious metal prices and make informed decisions for your jewelry investments
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-12 sm:mb-16">
             {[
               {
-                icon: Award,
-                title: "BIS Certified",
-                subtitle: "Hallmark Guarantee",
-                description: "All gold jewelry certified by Bureau of Indian Standards"
+                icon: Diamond,
+                title: "Gold 24K",
+                price: "₹6,890",
+                change: "+2.1%",
+                trend: "up"
               },
               {
-                icon: Shield,
-                title: "ISO 9001:2015",
-                subtitle: "Quality Management",
-                description: "International standard for quality management systems"
-              },
-              {
-                icon: Star,
-                title: "Jewellers Association",
-                subtitle: "Member Since 2000",
-                description: "Proud member of National Jewellers Association"
+                icon: Gem,
+                title: "Silver 999",
+                price: "₹89.50",
+                change: "+1.8%",
+                trend: "up"
               },
               {
                 icon: Crown,
-                title: "Excellence Award",
-                subtitle: "Best Craftsmanship 2023",
-                description: "Recognized for outstanding jewelry design and quality"
+                title: "Platinum",
+                price: "₹3,245",
+                change: "-0.5%",
+                trend: "down"
+              },
+              {
+                icon: Star,
+                title: "Palladium",
+                price: "₹5,680",
+                change: "+3.2%",
+                trend: "up"
               }
-            ].map((award, index) => (
+            ].map((metal, index) => (
               <motion.div
-                key={award.title}
-                initial={{ opacity: 0, y: 30, rotateY: -45 }}
-                whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
+                key={metal.title}
+                initial={{ opacity: 0, y: 30, scale: 0.8 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.8, delay: index * 0.1 }}
                 whileHover={{ 
                   y: -10, 
-                  rotateY: 10,
+                  scale: 1.05,
                   transition: { duration: 0.3 }
                 }}
                 viewport={{ once: true }}
-                className="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 text-center hover:border-green-400/30 hover:bg-white/10 transition-all duration-500"
-                style={{ transformStyle: 'preserve-3d' }}
+                className="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 sm:p-8 text-center hover:border-indigo-400/30 hover:bg-white/10 transition-all duration-500"
               >
                 <motion.div
                   initial={{ scale: 0, rotate: -180 }}
                   whileInView={{ scale: 1, rotate: 0 }}
                   transition={{ type: "spring", delay: 0.3 + index * 0.1 }}
-                  className="w-20 h-20 bg-gradient-to-r from-green-400 to-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500"
+                  className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500"
                 >
-                  <award.icon className="w-10 h-10 text-white" />
+                  <metal.icon className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                 </motion.div>
                 
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-green-300 transition-colors duration-300">
-                  {award.title}
+                <h3 className="text-lg sm:text-xl font-bold text-white mb-2 group-hover:text-indigo-300 transition-colors duration-300">
+                  {metal.title}
                 </h3>
                 
-                <div className="text-green-400 font-medium text-sm mb-3">
-                  {award.subtitle}
+                <div className="text-2xl sm:text-3xl font-black text-indigo-400 mb-2">
+                  {metal.price}
                 </div>
                 
-                <p className="text-white/70 text-sm leading-relaxed group-hover:text-white/90 transition-colors duration-300">
-                  {award.description}
-                </p>
+                <div className={`text-sm font-medium flex items-center justify-center gap-1 ${
+                  metal.trend === 'up' ? 'text-green-400' : 'text-red-400'
+                }`}>
+                  <TrendingUp className={`w-4 h-4 ${metal.trend === 'down' ? 'rotate-180' : ''}`} />
+                  {metal.change}
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Latest News and Updates */}
-      <section className="py-16 sm:py-24 lg:py-32 bg-gradient-to-br from-gray-900 via-black to-slate-900 relative overflow-hidden">
+      {/* Interactive Customer Journey */}
+      <section className="py-16 sm:py-24 lg:py-32 bg-gradient-to-br from-slate-900 via-gray-900 to-black relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_40%,rgba(59,130,246,0.1),transparent)]" />
         </div>
