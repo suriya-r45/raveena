@@ -2702,7 +2702,7 @@ export default function Home() {
                                         whileHover={{ color: "#f59e0b" }}
                                       >
                                         {item.displayName || item.product.name}
-                                    </h4>
+                                      </motion.h4>
                                     <div className="flex items-center justify-between">
                                       <div className="text-lg font-bold text-amber-600">
                                         {selectedCurrency === 'INR' ? '₹' : 'BD '}
@@ -2712,6 +2712,7 @@ export default function Home() {
                                         }
                                       </div>
                                       <Star className="h-4 w-4 text-amber-500 fill-current" />
+                                    </div>
                                     </div>
                                   </div>
                                 </div>
