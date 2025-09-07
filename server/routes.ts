@@ -205,11 +205,11 @@ const authenticateToken = (req: any, res: any, next: any) => {
   const token = authHeader && authHeader.split(' ')[1];
 
   if (token == null) {
-    return res.sendStatus(401);
+    return res.status(401).json({ message: 'Access token is required' });
   }
 
   jwt.verify(token, jwtSecret, (err: any, user: any) => {
-    if (err) return res.sendStatus(403);
+    if (err) return res.status(403).json({ message: 'Invalid or expired token' });
     req.user = user;
     next();
   });
