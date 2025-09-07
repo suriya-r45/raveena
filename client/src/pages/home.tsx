@@ -2428,16 +2428,6 @@ export default function Home() {
                       transition={{ duration: 1, delay: 1.2 }}
                       className="space-y-4"
                     >
-                      <div className="flex items-center gap-4 text-amber-200">
-                        <div className="flex items-center gap-2">
-                          <Diamond className="h-5 w-5 text-amber-400" />
-                          <span className="font-medium">Up to 30% OFF</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Heart className="h-5 w-5 text-pink-400" />
-                          <span className="font-medium">Free Shipping</span>
-                        </div>
-                      </div>
                       
                       {/* CTA Button */}
                       <motion.div
