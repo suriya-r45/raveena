@@ -526,6 +526,65 @@ export const videos = pgTable("videos", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Promotional Banners Table - Dedicated for countdown, discounts, offers and promotions
+export const promotionalBanners = pgTable("promotional_banners", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  subtitle: text("subtitle"),
+  description: text("description"),
+  bannerType: text("banner_type").notNull().default("discount"), // 'discount', 'offer', 'promotion', 'countdown', 'sale', 'festival'
+  discountPercent: integer("discount_percent"), // Discount percentage (e.g., 20 for 20% off)
+  discountAmount: decimal("discount_amount", { precision: 10, scale: 2 }), // Fixed discount amount
+  currency: text("currency").default("INR"), // Currency for discount amount
+  promoCode: text("promo_code"), // Promotional code if applicable
+  
+  // Countdown timer fields
+  hasCountdown: boolean("has_countdown").notNull().default(false),
+  countdownStartDate: timestamp("countdown_start_date"),
+  countdownEndDate: timestamp("countdown_end_date"),
+  countdownTitle: text("countdown_title"),
+  countdownText: text("countdown_text"), // Custom text for countdown like "Sale ends in:"
+  
+  // Image and visual elements
+  bannerImage: text("banner_image"), // Main banner image URL
+  mobileImage: text("mobile_image"), // Mobile-specific banner image
+  backgroundImage: text("background_image"), // Background image URL
+  backgroundColor: text("background_color").default("#f59e0b"), // Hex color for background
+  textColor: text("text_color").default("#ffffff"), // Hex color for text
+  accentColor: text("accent_color").default("#dc2626"), // Accent color for highlights
+  
+  // Layout and positioning
+  layoutType: text("layout_type").notNull().default("hero"), // 'hero', 'strip', 'card', 'fullwidth', 'sidebar'
+  position: text("position").default("top"), // 'top', 'middle', 'bottom', 'floating'
+  displayOrder: integer("display_order").default(0),
+  isFullWidth: boolean("is_full_width").notNull().default(true),
+  
+  // Display settings
+  isActive: boolean("is_active").notNull().default(true),
+  isSticky: boolean("is_sticky").notNull().default(false), // Sticky banner
+  showOnMobile: boolean("show_on_mobile").notNull().default(true),
+  showOnDesktop: boolean("show_on_desktop").notNull().default(true),
+  
+  // Target and conditions
+  targetPages: text("target_pages").array().default(sql`ARRAY['home']::text[]`), // Pages where banner should appear
+  minOrderValue: decimal("min_order_value", { precision: 10, scale: 2 }), // Minimum order for offer
+  maxUsage: integer("max_usage"), // Maximum usage limit
+  currentUsage: integer("current_usage").default(0), // Current usage count
+  
+  // CTA (Call to Action) settings
+  ctaText: text("cta_text").default("Shop Now"),
+  ctaLink: text("cta_link").default("/collections"),
+  ctaColor: text("cta_color").default("#ffffff"),
+  ctaBackgroundColor: text("cta_background_color").default("#dc2626"),
+  
+  // Scheduling
+  validFrom: timestamp("valid_from"),
+  validUntil: timestamp("valid_until"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Videos Relations
 export const videosRelations = relations(videos, ({ one }) => ({
   product: one(products, {
