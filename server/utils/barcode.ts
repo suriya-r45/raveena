@@ -5,6 +5,7 @@ import path from 'path';
 import { db } from '../db.js';
 import { products } from '../../shared/schema.js';
 import { sql } from 'drizzle-orm';
+import { generateStunningProductCard, generateStandaloneProductPage } from './product-card-generator.js';
 
 export interface ProductBarcodeData {
   productCode: string;
@@ -313,7 +314,7 @@ export async function generateBarcode(data: string, productCode: string): Promis
   }
 }
 
-export async function generateQRCode(data: ProductBarcodeData, productCode: string): Promise<string> {
+export async function generateQRCode(data: ProductBarcodeData, productCode: string, productImagePath?: string): Promise<string> {
   try {
     // Create uploads directory if it doesn't exist
     const uploadsDir = path.join(process.cwd(), 'uploads', 'qrcodes');
@@ -321,40 +322,58 @@ export async function generateQRCode(data: ProductBarcodeData, productCode: stri
       fs.mkdirSync(uploadsDir, { recursive: true });
     }
 
-    // Format data for QR code - text only, no URLs
-    const qrData = `🏷️ PALANIAPPA JEWELLERS
-📋 Product Code: ${data.productCode}
-💍 Product Name: ${data.productName}
-⚖️ Purity: ${data.purity}
-📊 Gross Weight: ${data.grossWeight}
-📈 Net Weight: ${data.netWeight}
-💎 Stone: ${data.stones}
-📉 Gold Rate: ${data.goldRate}
-💰 Approx Price: ${data.approxPrice}
+    // Generate a beautiful standalone product page instead of plain text
+    console.log('🎨 Creating stunning product showcase...');
+    const productPagePath = await generateStandaloneProductPage(data, productImagePath);
+    
+    // Create the full URL that works independently of Replit
+    // Get the current domain from environment or use localhost for development
+    const baseUrl = process.env.REPL_URL || process.env.BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
+    const fullProductUrl = `${baseUrl}${productPagePath}`;
+    
+    console.log(`✨ Product showcase created: ${fullProductUrl}`);
 
-📞 Contact: +91 994 206 1393
-💬 WhatsApp: +91 994 206 1393`;
-
-    // Generate QR code
+    // Generate QR code that links to the beautiful product page
     const filename = `qr-${productCode.replace(/[^a-zA-Z0-9]/g, '_')}-${Date.now()}.png`;
     const imagePath = path.join(uploadsDir, filename);
     
-    await QRCode.toFile(imagePath, qrData, {
-      width: 200,
+    await QRCode.toFile(imagePath, fullProductUrl, {
+      width: 300,
       margin: 4,
       color: {
-        dark: '#000000',  // Black dots
+        dark: '#8B7355',  // Elegant brown color matching the theme
         light: '#FFFFFF'  // White background
       },
       errorCorrectionLevel: 'H', // High error correction for better print quality
       type: 'png',
-      scale: 8  // Higher scale for crisp printing
+      scale: 10  // Higher scale for crisp printing
     });
 
+    console.log('🔗 QR Code generated successfully! Scanning will show beautiful product showcase');
     return `/uploads/qrcodes/${filename}`;
   } catch (error) {
-    console.error('Error generating QR code:', error);
-    throw new Error('Failed to generate QR code');
+    console.error('Error generating stunning QR code:', error);
+    throw new Error('Failed to generate product showcase QR code');
+  }
+}
+
+// Enhanced function for generating product cards as images
+export async function generateBeautifulProductCard(data: ProductBarcodeData, productCode: string, productImagePath?: string): Promise<string> {
+  try {
+    console.log('🎨 Creating stunning product card image...');
+    
+    // Generate a beautiful product card image
+    const productCardPath = await generateStunningProductCard({
+      productData: data,
+      productImagePath,
+      backgroundStyle: 'luxury-gold' // You can make this configurable
+    });
+    
+    console.log(`✨ Beautiful product card created: ${productCardPath}`);
+    return productCardPath;
+  } catch (error) {
+    console.error('Error generating beautiful product card:', error);
+    throw new Error('Failed to generate beautiful product card');
   }
 }
 
