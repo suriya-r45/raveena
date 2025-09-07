@@ -39,42 +39,198 @@ export function CountdownTimer({ targetDate, title, description }: CountdownTime
   }, [targetDate]);
 
   return (
-    <div className="countdown-timer p-6 text-center">
-      <div className="flex items-center justify-center gap-2 mb-4">
-        <Clock className="w-5 h-5 text-orange-600" />
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-      </div>
+    <div className="countdown-timer text-center">
+      {/* Timer Icon and Title */}
+      <motion.div 
+        className="flex items-center justify-center gap-3 mb-4"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+        >
+          <Clock className="w-6 h-6 text-amber-400" />
+        </motion.div>
+        <span className="text-amber-300 text-lg font-mono tracking-wide uppercase">
+          {title}
+        </span>
+      </motion.div>
+      
+      {/* Premium Countdown Display - Based on Reference Image */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1, delay: 0.2 }}
+        className="relative max-w-2xl mx-auto"
+      >
+        {/* Main timer container with white background like reference */}
+        <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-amber-200/30">
+          
+          {/* Top section with icon and title */}
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full flex items-center justify-center">
+              <Clock className="w-4 h-4 text-white" />
+            </div>
+            <span className="text-gray-700 font-medium tracking-wide">
+              {title}
+            </span>
+          </div>
+          
+          {/* Timer boxes grid - exactly like reference image */}
+          <div className="grid grid-cols-4 gap-4 mb-4">
+            {/* Days */}
+            <motion.div 
+              className="text-center"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.2 }}
+            >
+              <motion.div 
+                className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-2xl px-4 py-6 mb-3 shadow-lg"
+                animate={{ 
+                  boxShadow: [
+                    "0 4px 15px rgba(251, 146, 60, 0.3)",
+                    "0 6px 20px rgba(251, 146, 60, 0.4)",
+                    "0 4px 15px rgba(251, 146, 60, 0.3)"
+                  ]
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <motion.div 
+                  className="text-3xl md:text-4xl font-bold"
+                  key={timeLeft.days}
+                  initial={{ scale: 1.2, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {String(timeLeft.days).padStart(2, '0')}
+                </motion.div>
+              </motion.div>
+              <div className="text-sm text-gray-500 uppercase tracking-wider font-medium">
+                DAYS
+              </div>
+            </motion.div>
+
+            {/* Hours */}
+            <motion.div 
+              className="text-center"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.2 }}
+            >
+              <motion.div 
+                className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-2xl px-4 py-6 mb-3 shadow-lg"
+                animate={{ 
+                  boxShadow: [
+                    "0 4px 15px rgba(251, 146, 60, 0.3)",
+                    "0 6px 20px rgba(251, 146, 60, 0.4)",
+                    "0 4px 15px rgba(251, 146, 60, 0.3)"
+                  ]
+                }}
+                transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+              >
+                <motion.div 
+                  className="text-3xl md:text-4xl font-bold"
+                  key={timeLeft.hours}
+                  initial={{ scale: 1.2, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {String(timeLeft.hours).padStart(2, '0')}
+                </motion.div>
+              </motion.div>
+              <div className="text-sm text-gray-500 uppercase tracking-wider font-medium">
+                HOURS
+              </div>
+            </motion.div>
+
+            {/* Minutes */}
+            <motion.div 
+              className="text-center"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.2 }}
+            >
+              <motion.div 
+                className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-2xl px-4 py-6 mb-3 shadow-lg"
+                animate={{ 
+                  boxShadow: [
+                    "0 4px 15px rgba(251, 146, 60, 0.3)",
+                    "0 6px 20px rgba(251, 146, 60, 0.4)",
+                    "0 4px 15px rgba(251, 146, 60, 0.3)"
+                  ]
+                }}
+                transition={{ duration: 2, repeat: Infinity, delay: 1 }}
+              >
+                <motion.div 
+                  className="text-3xl md:text-4xl font-bold"
+                  key={timeLeft.minutes}
+                  initial={{ scale: 1.2, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {String(timeLeft.minutes).padStart(2, '0')}
+                </motion.div>
+              </motion.div>
+              <div className="text-sm text-gray-500 uppercase tracking-wider font-medium">
+                MINUTES
+              </div>
+            </motion.div>
+
+            {/* Seconds */}
+            <motion.div 
+              className="text-center"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.2 }}
+            >
+              <motion.div 
+                className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-2xl px-4 py-6 mb-3 shadow-lg"
+                animate={{ 
+                  boxShadow: [
+                    "0 4px 15px rgba(251, 146, 60, 0.3)",
+                    "0 6px 20px rgba(251, 146, 60, 0.4)",
+                    "0 4px 15px rgba(251, 146, 60, 0.3)"
+                  ]
+                }}
+                transition={{ duration: 2, repeat: Infinity, delay: 1.5 }}
+              >
+                <motion.div 
+                  className="text-3xl md:text-4xl font-bold"
+                  key={timeLeft.seconds}
+                  initial={{ scale: 1.2, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {String(timeLeft.seconds).padStart(2, '0')}
+                </motion.div>
+              </motion.div>
+              <div className="text-sm text-gray-500 uppercase tracking-wider font-medium">
+                SECONDS
+              </div>
+            </motion.div>
+          </div>
+          
+          {/* Bottom subtle text */}
+          <div className="text-center">
+            <span className="text-gray-400 text-sm tracking-wide">
+              Limited Time Offer
+            </span>
+          </div>
+        </div>
+        
+        {/* Golden border effect */}
+        <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 rounded-3xl opacity-20 blur-sm -z-10"></div>
+      </motion.div>
       
       {description && (
-        <p className="text-sm text-gray-600 mb-4">{description}</p>
+        <motion.p 
+          className="text-gray-300 mt-6 text-lg font-light max-w-xl mx-auto"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 0.8 }}
+        >
+          {description}
+        </motion.p>
       )}
-      
-      <div className="grid grid-cols-4 gap-4">
-        <div className="text-center">
-          <div className="bg-gradient-to-br from-orange-500 to-amber-600 text-white rounded-lg p-3 mb-2">
-            <div className="text-2xl font-bold">{timeLeft.days}</div>
-          </div>
-          <div className="text-xs text-gray-600 uppercase tracking-wide">Days</div>
-        </div>
-        <div className="text-center">
-          <div className="bg-gradient-to-br from-orange-500 to-amber-600 text-white rounded-lg p-3 mb-2">
-            <div className="text-2xl font-bold">{timeLeft.hours}</div>
-          </div>
-          <div className="text-xs text-gray-600 uppercase tracking-wide">Hours</div>
-        </div>
-        <div className="text-center">
-          <div className="bg-gradient-to-br from-orange-500 to-amber-600 text-white rounded-lg p-3 mb-2">
-            <div className="text-2xl font-bold">{timeLeft.minutes}</div>
-          </div>
-          <div className="text-xs text-gray-600 uppercase tracking-wide">Minutes</div>
-        </div>
-        <div className="text-center">
-          <div className="bg-gradient-to-br from-orange-500 to-amber-600 text-white rounded-lg p-3 mb-2">
-            <div className="text-2xl font-bold">{timeLeft.seconds}</div>
-          </div>
-          <div className="text-xs text-gray-600 uppercase tracking-wide">Seconds</div>
-        </div>
-      </div>
     </div>
   );
 }
