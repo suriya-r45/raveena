@@ -2319,174 +2319,389 @@ export default function Home() {
       {homeSections.length > 0 && homeSections.map((section) => {
         if (section.items.length === 0) return null;
         
-        // Countdown Offers Banner - Ultra Modern Style with Customizable Banner
+        // Countdown Offers Banner - Ultra Modern Style with Enhanced Animations
         if (section.layoutType === 'countdown-offers') {
           return (
             <section 
               key={section.id} 
-              className="w-full relative py-16 md:py-20 overflow-hidden" 
+              className="w-full relative py-16 md:py-24 overflow-hidden" 
               data-testid={`section-${section.title.toLowerCase().replace(/\s+/g, '-')}`}
               style={{
                 background: `
-                  linear-gradient(135deg, #0f0f23 0%, #1a1a3e 25%, #2d2d5f 50%, #4a4a80 75%, #6767a1 100%),
-                  radial-gradient(ellipse 800px 400px at 30% 20%, rgba(139, 69, 19, 0.15) 0%, transparent 60%),
-                  radial-gradient(ellipse 600px 300px at 70% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%)
+                  linear-gradient(135deg, #0a0a1f 0%, #1a1a3e 25%, #2d2d5f 50%, #4a4a80 75%, #6767a1 100%),
+                  radial-gradient(ellipse 1200px 600px at 30% 20%, rgba(139, 69, 19, 0.2) 0%, transparent 70%),
+                  radial-gradient(ellipse 800px 400px at 70% 80%, rgba(255, 215, 0, 0.15) 0%, transparent 60%),
+                  conic-gradient(from 45deg at 20% 50%, rgba(255, 215, 0, 0.1), transparent, rgba(255, 215, 0, 0.1))
                 `,
                 position: 'relative'
               }}
             >
-              {/* Premium Background Patterns */}
-              <div className="absolute inset-0 opacity-20">
+              {/* Animated Background Elements */}
+              <div className="absolute inset-0">
+                {/* Floating particles */}
+                {[...Array(20)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="absolute w-1 h-1 bg-amber-400/30 rounded-full"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      top: `${Math.random() * 100}%`,
+                    }}
+                    animate={{
+                      y: [0, -30, 0],
+                      opacity: [0.3, 1, 0.3],
+                      scale: [0.5, 1.2, 0.5],
+                    }}
+                    transition={{
+                      duration: 4 + Math.random() * 3,
+                      repeat: Infinity,
+                      delay: Math.random() * 5,
+                      ease: "easeInOut"
+                    }}
+                  />
+                ))}
+                
+                {/* Premium geometric pattern */}
                 <div 
-                  className="absolute inset-0"
+                  className="absolute inset-0 opacity-10"
                   style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3Ccircle cx='10' cy='10' r='1'/%3E%3Ccircle cx='50' cy='20' r='1.5'/%3E%3Ccircle cx='15' cy='50' r='1'/%3E%3Ccircle cx='45' cy='45' r='1.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                    animation: 'float 30s ease-in-out infinite'
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23fbbf24' fill-opacity='0.08'%3E%3Cpolygon points='60,30 90,90 30,90'/%3E%3Cpolygon points='60,30 90,90 30,90' transform='rotate(120 60 60)'/%3E%3Cpolygon points='60,30 90,90 30,90' transform='rotate(240 60 60)'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
                   }} 
+                />
+                
+                {/* Animated gradient orbs */}
+                <motion.div
+                  className="absolute top-10 left-10 w-64 h-64 bg-gradient-to-br from-amber-500/20 to-orange-600/20 rounded-full blur-3xl"
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.3, 0.6, 0.3],
+                  }}
+                  transition={{
+                    duration: 8,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                />
+                <motion.div
+                  className="absolute bottom-20 right-10 w-48 h-48 bg-gradient-to-tl from-blue-500/20 to-purple-600/20 rounded-full blur-3xl"
+                  animate={{
+                    scale: [1.2, 1, 1.2],
+                    opacity: [0.4, 0.7, 0.4],
+                  }}
+                  transition={{
+                    duration: 6,
+                    repeat: Infinity,
+                    delay: 2,
+                    ease: "easeInOut"
+                  }}
                 />
               </div>
 
               <div className="relative z-10 container mx-auto px-4">
-                {/* Modern Countdown Timer */}
+                {/* Enhanced Countdown Timer */}
                 {section.showCountdown && section.countdownEndDate && (
                   <motion.div
-                    initial={{ opacity: 0, y: -30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1, ease: "easeOut" }}
-                    className="text-center mb-12"
+                    initial={{ opacity: 0, y: -50, scale: 0.8 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ duration: 1.2, ease: "easeOut" }}
+                    className="text-center mb-16"
                   >
-                    <div className="inline-block">
-                      <div className="bg-gradient-to-r from-amber-500/20 to-orange-600/20 backdrop-blur-sm border border-amber-500/30 rounded-2xl p-6 shadow-2xl">
-                        <h3 className="text-2xl md:text-3xl font-bold text-amber-400 mb-4" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                    <motion.div 
+                      className="inline-block relative"
+                      whileHover={{ scale: 1.02 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {/* Glowing border effect */}
+                      <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 rounded-3xl blur opacity-30 animate-pulse"></div>
+                      
+                      <div className="relative bg-gradient-to-br from-amber-500/25 to-orange-600/25 backdrop-blur-xl border border-amber-400/40 rounded-3xl p-8 shadow-2xl">
+                        {/* Decorative corners */}
+                        <div className="absolute top-4 left-4 w-3 h-3 border-l-2 border-t-2 border-amber-400/60"></div>
+                        <div className="absolute top-4 right-4 w-3 h-3 border-r-2 border-t-2 border-amber-400/60"></div>
+                        <div className="absolute bottom-4 left-4 w-3 h-3 border-l-2 border-b-2 border-amber-400/60"></div>
+                        <div className="absolute bottom-4 right-4 w-3 h-3 border-r-2 border-b-2 border-amber-400/60"></div>
+                        
+                        <motion.h3 
+                          className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-orange-400 mb-6" 
+                          style={{ fontFamily: 'Cormorant Garamond, serif' }}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 0.5, duration: 0.8 }}
+                        >
                           {section.countdownTitle || 'Limited Time Offer'}
-                        </h3>
-                        <CountdownTimer 
-                          targetDate={new Date(section.countdownEndDate)}
-                          title={section.countdownTitle || 'Limited Time Offer'}
-                          description={section.countdownDescription}
-                        />
+                        </motion.h3>
+                        
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.7, duration: 0.8 }}
+                        >
+                          <CountdownTimer 
+                            targetDate={new Date(section.countdownEndDate)}
+                            title={section.countdownTitle || 'Limited Time Offer'}
+                            description={section.countdownDescription || undefined}
+                          />
+                        </motion.div>
+                        
                         {section.countdownDescription && (
-                          <p className="text-amber-200 mt-3 text-lg">
+                          <motion.p 
+                            className="text-amber-200/90 mt-4 text-lg font-light"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 1, duration: 0.8 }}
+                          >
                             {section.countdownDescription}
-                          </p>
+                          </motion.p>
                         )}
                       </div>
-                    </div>
+                    </motion.div>
                   </motion.div>
                 )}
 
-                {/* Main Banner Content */}
+                {/* Enhanced Main Banner Content */}
                 <motion.div
-                  initial={{ opacity: 0, y: 40 }}
+                  initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
-                  className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
+                  transition={{ duration: 1.5, delay: 0.4, ease: "easeOut" }}
+                  className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
                 >
-                  {/* Left Side - Content */}
-                  <div className="space-y-8">
-                    {/* Premium Badge */}
+                  {/* Left Side - Enhanced Content */}
+                  <div className="space-y-10">
+                    {/* Animated Premium Badge */}
                     <motion.div
-                      initial={{ opacity: 0, x: -30 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.8, delay: 0.6 }}
-                      className="inline-flex items-center gap-3 bg-gradient-to-r from-amber-500/20 to-orange-600/20 backdrop-blur-sm border border-amber-500/30 rounded-full px-6 py-3"
+                      initial={{ opacity: 0, x: -50, scale: 0.8 }}
+                      animate={{ opacity: 1, x: 0, scale: 1 }}
+                      transition={{ duration: 1, delay: 0.8, ease: "backOut" }}
+                      whileHover={{ scale: 1.05, x: 5 }}
+                      className="inline-flex items-center gap-3 bg-gradient-to-r from-amber-500/30 to-orange-600/30 backdrop-blur-xl border-2 border-amber-400/50 rounded-full px-8 py-4 shadow-lg"
                     >
-                      <Sparkles className="h-5 w-5 text-amber-400" />
-                      <span className="text-amber-200 font-medium tracking-wide">EXCLUSIVE COLLECTION</span>
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                      >
+                        <Sparkles className="h-6 w-6 text-amber-400" />
+                      </motion.div>
+                      <span className="text-amber-100 font-bold tracking-wider text-sm uppercase">
+                        Exclusive Collection
+                      </span>
+                      <motion.div
+                        animate={{ rotate: -360 }}
+                        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                      >
+                        <Sparkles className="h-4 w-4 text-orange-400" />
+                      </motion.div>
                     </motion.div>
 
-                    {/* Main Heading */}
-                    <motion.h1
-                      initial={{ opacity: 0, y: 30 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 1, delay: 0.8 }}
-                      className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight"
-                      style={{ fontFamily: 'Cormorant Garamond, serif' }}
+                    {/* Enhanced Main Heading with Stagger Effect */}
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 1.2, delay: 1 }}
                     >
-                      <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500">
-                        {section.title}
-                      </span>
-                    </motion.h1>
-
-                    {/* Description */}
-                    {section.description && (
-                      <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1, delay: 1 }}
-                        className="text-xl md:text-2xl text-gray-300 font-light leading-relaxed max-w-xl"
+                      <motion.h1
+                        className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight"
                         style={{ fontFamily: 'Cormorant Garamond, serif' }}
                       >
-                        {section.description}
-                      </motion.p>
+                        {section.title.split(' ').map((word, index) => (
+                          <motion.span
+                            key={index}
+                            initial={{ opacity: 0, y: 50, rotateX: -90 }}
+                            animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                            transition={{ 
+                              duration: 0.8, 
+                              delay: 1.2 + (index * 0.15),
+                              ease: "backOut"
+                            }}
+                            className="inline-block mr-4 text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-yellow-400 to-orange-500"
+                            whileHover={{ scale: 1.05, y: -5 }}
+                          >
+                            {word}
+                          </motion.span>
+                        ))}
+                      </motion.h1>
+                    </motion.div>
+
+                    {/* Enhanced Description with Typewriter Effect */}
+                    {section.description && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1.2, delay: 1.8 }}
+                        className="relative"
+                      >
+                        <div className="absolute -left-2 top-0 w-1 h-full bg-gradient-to-b from-amber-400 to-orange-500 rounded-full opacity-60"></div>
+                        <motion.p
+                          className="text-xl md:text-2xl text-gray-200/90 font-light leading-relaxed max-w-2xl pl-6"
+                          style={{ fontFamily: 'Cormorant Garamond, serif' }}
+                          whileHover={{ x: 5, color: "#fbbf24" }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          {section.description}
+                        </motion.p>
+                      </motion.div>
                     )}
 
-                    {/* Offer Details */}
+                    {/* Enhanced CTA Section */}
                     <motion.div
-                      initial={{ opacity: 0, y: 20 }}
+                      initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 1, delay: 1.2 }}
-                      className="space-y-4"
+                      transition={{ duration: 1, delay: 2.2 }}
+                      className="space-y-6"
                     >
                       
-                      {/* CTA Button */}
+                      {/* Enhanced CTA Button */}
                       <motion.div
-                        whileHover={{ scale: 1.05, y: -2 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="pt-4"
+                        className="pt-6"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 1, delay: 2.5, ease: "backOut" }}
                       >
-                        <Button
-                          className="group relative overflow-hidden bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold px-8 py-4 text-lg rounded-full shadow-2xl border-0 transition-all duration-300"
-                          onClick={() => window.location.href = '/collections'}
-                          data-testid="button-explore-offers"
+                        <motion.div
+                          whileHover={{ scale: 1.08, y: -5 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="relative group"
                         >
-                          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                          <div className="relative flex items-center gap-3">
-                            <Gem className="h-6 w-6" />
-                            <span>Explore Offers</span>
-                            <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                          </div>
-                        </Button>
+                          {/* Glowing backdrop */}
+                          <div className="absolute -inset-2 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full blur-xl opacity-40 group-hover:opacity-70 transition-opacity duration-300"></div>
+                          
+                          <Button
+                            className="group relative overflow-hidden bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-600 hover:via-orange-600 hover:to-amber-700 text-white font-bold px-12 py-6 text-xl rounded-full shadow-2xl border-2 border-amber-400/50 backdrop-blur-sm transition-all duration-500"
+                            onClick={() => window.location.href = '/collections'}
+                            data-testid="button-explore-offers"
+                          >
+                            {/* Animated shine effect */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                            
+                            {/* Pulsing border */}
+                            <div className="absolute inset-0 rounded-full border-2 border-white/20 animate-pulse"></div>
+                            
+                            <div className="relative flex items-center gap-4">
+                              <motion.div
+                                animate={{ rotate: [0, 360] }}
+                                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                              >
+                                <Gem className="h-7 w-7" />
+                              </motion.div>
+                              <span className="font-extrabold tracking-wide">Explore Offers</span>
+                              <motion.div
+                                animate={{ x: [0, 5, 0] }}
+                                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                              >
+                                <ArrowRight className="h-6 w-6" />
+                              </motion.div>
+                            </div>
+                          </Button>
+                        </motion.div>
                       </motion.div>
                     </motion.div>
                   </div>
 
-                  {/* Right Side - Featured Products */}
+                  {/* Enhanced Product Showcase */}
                   <motion.div
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 1.2, delay: 0.5 }}
-                    className="relative"
+                    initial={{ opacity: 0, x: 100, rotateY: -15 }}
+                    animate={{ opacity: 1, x: 0, rotateY: 0 }}
+                    transition={{ duration: 1.8, delay: 0.6, ease: "backOut" }}
+                    className="relative perspective-1000"
                   >
                     {section.items && section.items.length > 0 && (
                       <div className="relative">
-                        {/* Main Product Showcase */}
-                        <div className="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm border border-white/20 rounded-3xl p-8 shadow-2xl">
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        {/* Floating decorative elements */}
+                        <motion.div
+                          className="absolute -top-8 -right-8 w-16 h-16 bg-gradient-to-br from-amber-400/30 to-orange-500/30 rounded-full blur-2xl"
+                          animate={{ 
+                            scale: [1, 1.3, 1],
+                            opacity: [0.3, 0.7, 0.3] 
+                          }}
+                          transition={{ duration: 4, repeat: Infinity }}
+                        />
+                        <motion.div
+                          className="absolute -bottom-8 -left-8 w-12 h-12 bg-gradient-to-tr from-purple-400/30 to-blue-500/30 rounded-full blur-xl"
+                          animate={{ 
+                            scale: [1.2, 1, 1.2],
+                            opacity: [0.4, 0.8, 0.4] 
+                          }}
+                          transition={{ duration: 3, repeat: Infinity, delay: 1 }}
+                        />
+
+                        {/* Enhanced Product Showcase Container */}
+                        <motion.div 
+                          className="relative bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl border-2 border-white/30 rounded-3xl p-10 shadow-2xl"
+                          whileHover={{ 
+                            scale: 1.02,
+                            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)" 
+                          }}
+                          transition={{ duration: 0.4 }}
+                        >
+                          {/* Premium header */}
+                          <motion.div
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 1.5, duration: 0.8 }}
+                            className="text-center mb-8"
+                          >
+                            <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-orange-400 mb-2">
+                              Featured Collection
+                            </h3>
+                            <div className="w-16 h-0.5 bg-gradient-to-r from-amber-400 to-orange-500 mx-auto"></div>
+                          </motion.div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                             {section.items.slice(0, 4).map((item, index) => (
                               <motion.div
                                 key={item.id}
-                                initial={{ opacity: 0, y: 30 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.6, delay: 1 + (index * 0.15) }}
+                                initial={{ opacity: 0, y: 50, scale: 0.8 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                transition={{ 
+                                  duration: 0.8, 
+                                  delay: 1.8 + (index * 0.2),
+                                  ease: "backOut"
+                                }}
+                                whileHover={{ 
+                                  scale: 1.05, 
+                                  y: -10,
+                                  rotateY: 5,
+                                  rotateX: 5 
+                                }}
                                 className="group cursor-pointer"
                                 onClick={() => handleViewAllClick(item.product.category)}
                                 data-testid={`card-product-${item.product.id}`}
                               >
-                                <div className="bg-white/90 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-                                  <div className="aspect-square relative overflow-hidden">
-                                    <img
-                                      src={item.customImageUrl || item.product.images?.[0] || ringsImage}
-                                      alt={item.product.name}
-                                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                                    />
-                                    <div className="absolute top-3 right-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs px-2 py-1 rounded-full font-bold">
-                                      OFFER
+                                <div className="relative bg-white/95 backdrop-blur-sm rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform-gpu">
+                                  {/* Animated border glow */}
+                                  <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 rounded-3xl opacity-0 group-hover:opacity-70 blur transition-opacity duration-500"></div>
+                                  
+                                  <div className="relative">
+                                    <div className="aspect-square relative overflow-hidden">
+                                      <motion.img
+                                        src={item.customImageUrl || item.product.images?.[0] || ringsImage}
+                                        alt={item.product.name}
+                                        className="w-full h-full object-cover"
+                                        whileHover={{ scale: 1.15, rotate: 2 }}
+                                        transition={{ duration: 0.6, ease: "easeOut" }}
+                                      />
+                                      
+                                      {/* Enhanced offer badge */}
+                                      <motion.div 
+                                        className="absolute top-4 right-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs px-3 py-2 rounded-full font-bold shadow-lg"
+                                        animate={{ 
+                                          scale: [1, 1.1, 1],
+                                          boxShadow: ["0 4px 8px rgba(0,0,0,0.2)", "0 8px 16px rgba(245, 158, 11, 0.4)", "0 4px 8px rgba(0,0,0,0.2)"]
+                                        }}
+                                        transition={{ duration: 2, repeat: Infinity }}
+                                      >
+                                        ✨ OFFER
+                                      </motion.div>
+                                      
+                                      {/* Hover overlay */}
+                                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                     </div>
-                                  </div>
-                                  <div className="p-4">
-                                    <h4 className="font-semibold text-gray-800 text-sm mb-2 line-clamp-1">
-                                      {item.displayName || item.product.name}
+                                    
+                                    <div className="p-6">
+                                      <motion.h4 
+                                        className="font-bold text-gray-800 text-sm mb-3 line-clamp-2"
+                                        whileHover={{ color: "#f59e0b" }}
+                                      >
+                                        {item.displayName || item.product.name}
                                     </h4>
                                     <div className="flex items-center justify-between">
                                       <div className="text-lg font-bold text-amber-600">
