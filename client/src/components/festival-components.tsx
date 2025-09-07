@@ -40,193 +40,273 @@ export function CountdownTimer({ targetDate, title, description }: CountdownTime
 
   return (
     <div className="countdown-timer text-center">
-      {/* Timer Icon and Title */}
-      <motion.div 
-        className="flex items-center justify-center gap-3 mb-4"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-      >
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-        >
-          <Clock className="w-6 h-6 text-amber-400" />
-        </motion.div>
-        <span className="text-amber-300 text-lg font-mono tracking-wide uppercase">
-          {title}
-        </span>
-      </motion.div>
-      
-      {/* Premium Countdown Display - Based on Reference Image */}
+      {/* Ultra Modern Countdown Container - Mobile Optimized */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1, delay: 0.2 }}
-        className="relative max-w-2xl mx-auto"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.2, ease: "easeOut" }}
+        className="relative max-w-4xl mx-auto px-3 sm:px-4 md:px-6"
       >
-        {/* Main timer container with white background like reference */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-amber-200/30">
+        {/* Futuristic Background with Gradient Mesh */}
+        <div className="relative">
+          {/* Dynamic gradient background */}
+          <div 
+            className="absolute inset-0 rounded-2xl md:rounded-3xl"
+            style={{
+              background: `
+                linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%),
+                radial-gradient(ellipse 600px 300px at 30% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 70%),
+                radial-gradient(ellipse 400px 200px at 70% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 60%)
+              `
+            }}
+          />
           
-          {/* Top section with icon and title */}
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full flex items-center justify-center">
-              <Clock className="w-4 h-4 text-white" />
+          {/* Animated grid pattern - smaller on mobile */}
+          <div 
+            className="absolute inset-0 opacity-5 md:opacity-10 rounded-2xl md:rounded-3xl"
+            style={{
+              backgroundImage: `
+                linear-gradient(rgba(139, 92, 246, 0.4) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(139, 92, 246, 0.4) 1px, transparent 1px)
+              `,
+              backgroundSize: '20px 20px'
+            }}
+          />
+          
+          {/* Floating orbs - adjusted for mobile */}
+          <motion.div
+            className="absolute top-4 right-4 md:top-10 md:right-10 w-16 h-16 md:w-32 md:h-32 bg-gradient-to-br from-purple-500/20 to-blue-600/20 rounded-full blur-xl md:blur-2xl"
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.6, 0.3],
+            }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div
+            className="absolute bottom-4 left-4 md:bottom-10 md:left-10 w-12 h-12 md:w-24 md:h-24 bg-gradient-to-tr from-cyan-500/20 to-purple-600/20 rounded-full blur-lg md:blur-xl"
+            animate={{
+              scale: [1.2, 1, 1.2],
+              opacity: [0.4, 0.7, 0.4],
+            }}
+            transition={{
+              duration: 5,
+              repeat: Infinity,
+              delay: 2,
+              ease: "easeInOut"
+            }}
+          />
+
+          {/* Main Content */}
+          <div className="relative z-10 p-4 sm:p-6 md:p-12">
+            
+            {/* Header Section */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+              className="text-center mb-8 md:mb-12"
+            >
+              {/* Modern Badge */}
+              <div className="inline-flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full animate-pulse"></div>
+                <span className="text-gray-300 text-xs md:text-sm font-mono tracking-[0.15em] md:tracking-[0.2em] uppercase">
+                  Limited Time
+                </span>
+                <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse"></div>
+              </div>
+              
+              {/* Title */}
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-light text-white mb-2 tracking-wide">
+                {title}
+              </h3>
+              
+              {/* Decorative line */}
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: '60px' }}
+                transition={{ delay: 0.8, duration: 1 }}
+                className="h-[1px] bg-gradient-to-r from-transparent via-purple-400 to-transparent mx-auto"
+              />
+            </motion.div>
+
+            {/* Ultra Modern Timer Grid - Mobile Optimized */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6 md:mb-8">
+              
+              {/* Days */}
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.8 }}
+                whileHover={{ y: -8, scale: 1.02 }}
+                className="group"
+              >
+                <div className="relative">
+                  {/* Glow effect */}
+                  <div className="absolute -inset-1 md:-inset-2 bg-gradient-to-r from-purple-500/30 to-blue-500/30 rounded-xl md:rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                  
+                  {/* Main container */}
+                  <div className="relative bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl border border-purple-500/20 rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-8">
+                    {/* Corner accents */}
+                    <div className="absolute top-1 left-1 md:top-2 md:left-2 w-2 h-2 md:w-3 md:h-3 border-l-2 border-t-2 border-purple-400/50 rounded-tl-lg"></div>
+                    <div className="absolute bottom-1 right-1 md:bottom-2 md:right-2 w-2 h-2 md:w-3 md:h-3 border-r-2 border-b-2 border-purple-400/50 rounded-br-lg"></div>
+                    
+                    {/* Number */}
+                    <motion.div
+                      className="text-2xl sm:text-3xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-white via-purple-200 to-purple-400 mb-1 sm:mb-2 md:mb-3"
+                      key={timeLeft.days}
+                      initial={{ scale: 1.3, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.4, ease: "backOut" }}
+                    >
+                      {String(timeLeft.days).padStart(2, '0')}
+                    </motion.div>
+                    
+                    {/* Label */}
+                    <div className="text-xs md:text-sm text-gray-400 uppercase tracking-[0.15em] font-medium">
+                      Days
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Hours */}
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7, duration: 0.8 }}
+                whileHover={{ y: -8, scale: 1.02 }}
+                className="group"
+              >
+                <div className="relative">
+                  <div className="absolute -inset-1 md:-inset-2 bg-gradient-to-r from-blue-500/30 to-cyan-500/30 rounded-xl md:rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                  
+                  <div className="relative bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl border border-blue-500/20 rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-8">
+                    <div className="absolute top-1 left-1 md:top-2 md:left-2 w-2 h-2 md:w-3 md:h-3 border-l-2 border-t-2 border-blue-400/50 rounded-tl-lg"></div>
+                    <div className="absolute bottom-1 right-1 md:bottom-2 md:right-2 w-2 h-2 md:w-3 md:h-3 border-r-2 border-b-2 border-blue-400/50 rounded-br-lg"></div>
+                    
+                    <motion.div
+                      className="text-2xl sm:text-3xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-white via-blue-200 to-blue-400 mb-1 sm:mb-2 md:mb-3"
+                      key={timeLeft.hours}
+                      initial={{ scale: 1.3, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.4, ease: "backOut" }}
+                    >
+                      {String(timeLeft.hours).padStart(2, '0')}
+                    </motion.div>
+                    
+                    <div className="text-xs md:text-sm text-gray-400 uppercase tracking-[0.15em] font-medium">
+                      Hours
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Minutes */}
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.9, duration: 0.8 }}
+                whileHover={{ y: -8, scale: 1.02 }}
+                className="group"
+              >
+                <div className="relative">
+                  <div className="absolute -inset-1 md:-inset-2 bg-gradient-to-r from-cyan-500/30 to-emerald-500/30 rounded-xl md:rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                  
+                  <div className="relative bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl border border-cyan-500/20 rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-8">
+                    <div className="absolute top-1 left-1 md:top-2 md:left-2 w-2 h-2 md:w-3 md:h-3 border-l-2 border-t-2 border-cyan-400/50 rounded-tl-lg"></div>
+                    <div className="absolute bottom-1 right-1 md:bottom-2 md:right-2 w-2 h-2 md:w-3 md:h-3 border-r-2 border-b-2 border-cyan-400/50 rounded-br-lg"></div>
+                    
+                    <motion.div
+                      className="text-2xl sm:text-3xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-white via-cyan-200 to-cyan-400 mb-1 sm:mb-2 md:mb-3"
+                      key={timeLeft.minutes}
+                      initial={{ scale: 1.3, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.4, ease: "backOut" }}
+                    >
+                      {String(timeLeft.minutes).padStart(2, '0')}
+                    </motion.div>
+                    
+                    <div className="text-xs md:text-sm text-gray-400 uppercase tracking-[0.15em] font-medium">
+                      Minutes
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Seconds */}
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.1, duration: 0.8 }}
+                whileHover={{ y: -8, scale: 1.02 }}
+                className="group"
+              >
+                <div className="relative">
+                  <div className="absolute -inset-1 md:-inset-2 bg-gradient-to-r from-emerald-500/30 to-purple-500/30 rounded-xl md:rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                  
+                  <div className="relative bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl border border-emerald-500/20 rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-8">
+                    <div className="absolute top-1 left-1 md:top-2 md:left-2 w-2 h-2 md:w-3 md:h-3 border-l-2 border-t-2 border-emerald-400/50 rounded-tl-lg"></div>
+                    <div className="absolute bottom-1 right-1 md:bottom-2 md:right-2 w-2 h-2 md:w-3 md:h-3 border-r-2 border-b-2 border-emerald-400/50 rounded-br-lg"></div>
+                    
+                    <motion.div
+                      className="text-2xl sm:text-3xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-white via-emerald-200 to-emerald-400 mb-1 sm:mb-2 md:mb-3"
+                      key={timeLeft.seconds}
+                      initial={{ scale: 1.3, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.4, ease: "backOut" }}
+                    >
+                      {String(timeLeft.seconds).padStart(2, '0')}
+                    </motion.div>
+                    
+                    <div className="text-xs md:text-sm text-gray-400 uppercase tracking-[0.15em] font-medium">
+                      Seconds
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
             </div>
-            <span className="text-gray-700 font-medium tracking-wide">
-              {title}
-            </span>
-          </div>
-          
-          {/* Timer boxes grid - exactly like reference image */}
-          <div className="grid grid-cols-4 gap-4 mb-4">
-            {/* Days */}
-            <motion.div 
-              className="text-center"
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.2 }}
-            >
-              <motion.div 
-                className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-2xl px-4 py-6 mb-3 shadow-lg"
-                animate={{ 
-                  boxShadow: [
-                    "0 4px 15px rgba(251, 146, 60, 0.3)",
-                    "0 6px 20px rgba(251, 146, 60, 0.4)",
-                    "0 4px 15px rgba(251, 146, 60, 0.3)"
-                  ]
-                }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <motion.div 
-                  className="text-3xl md:text-4xl font-bold"
-                  key={timeLeft.days}
-                  initial={{ scale: 1.2, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {String(timeLeft.days).padStart(2, '0')}
-                </motion.div>
-              </motion.div>
-              <div className="text-sm text-gray-500 uppercase tracking-wider font-medium">
-                DAYS
-              </div>
-            </motion.div>
 
-            {/* Hours */}
-            <motion.div 
+            {/* Footer */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.3, duration: 0.8 }}
               className="text-center"
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.2 }}
             >
-              <motion.div 
-                className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-2xl px-4 py-6 mb-3 shadow-lg"
-                animate={{ 
-                  boxShadow: [
-                    "0 4px 15px rgba(251, 146, 60, 0.3)",
-                    "0 6px 20px rgba(251, 146, 60, 0.4)",
-                    "0 4px 15px rgba(251, 146, 60, 0.3)"
-                  ]
-                }}
-                transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-              >
-                <motion.div 
-                  className="text-3xl md:text-4xl font-bold"
-                  key={timeLeft.hours}
-                  initial={{ scale: 1.2, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {String(timeLeft.hours).padStart(2, '0')}
-                </motion.div>
-              </motion.div>
-              <div className="text-sm text-gray-500 uppercase tracking-wider font-medium">
-                HOURS
+              <div className="inline-flex items-center gap-2 text-gray-400 text-sm">
+                <motion.div
+                  animate={{ 
+                    scale: [1, 1.2, 1],
+                    opacity: [0.5, 1, 0.5] 
+                  }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="w-2 h-2 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full"
+                />
+                <span className="tracking-wide font-mono">Offer expires soon</span>
+                <motion.div
+                  animate={{ 
+                    scale: [1, 1.2, 1],
+                    opacity: [0.5, 1, 0.5] 
+                  }}
+                  transition={{ duration: 2, repeat: Infinity, delay: 1 }}
+                  className="w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full"
+                />
               </div>
             </motion.div>
-
-            {/* Minutes */}
-            <motion.div 
-              className="text-center"
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.2 }}
-            >
-              <motion.div 
-                className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-2xl px-4 py-6 mb-3 shadow-lg"
-                animate={{ 
-                  boxShadow: [
-                    "0 4px 15px rgba(251, 146, 60, 0.3)",
-                    "0 6px 20px rgba(251, 146, 60, 0.4)",
-                    "0 4px 15px rgba(251, 146, 60, 0.3)"
-                  ]
-                }}
-                transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-              >
-                <motion.div 
-                  className="text-3xl md:text-4xl font-bold"
-                  key={timeLeft.minutes}
-                  initial={{ scale: 1.2, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {String(timeLeft.minutes).padStart(2, '0')}
-                </motion.div>
-              </motion.div>
-              <div className="text-sm text-gray-500 uppercase tracking-wider font-medium">
-                MINUTES
-              </div>
-            </motion.div>
-
-            {/* Seconds */}
-            <motion.div 
-              className="text-center"
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.2 }}
-            >
-              <motion.div 
-                className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-2xl px-4 py-6 mb-3 shadow-lg"
-                animate={{ 
-                  boxShadow: [
-                    "0 4px 15px rgba(251, 146, 60, 0.3)",
-                    "0 6px 20px rgba(251, 146, 60, 0.4)",
-                    "0 4px 15px rgba(251, 146, 60, 0.3)"
-                  ]
-                }}
-                transition={{ duration: 2, repeat: Infinity, delay: 1.5 }}
-              >
-                <motion.div 
-                  className="text-3xl md:text-4xl font-bold"
-                  key={timeLeft.seconds}
-                  initial={{ scale: 1.2, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {String(timeLeft.seconds).padStart(2, '0')}
-                </motion.div>
-              </motion.div>
-              <div className="text-sm text-gray-500 uppercase tracking-wider font-medium">
-                SECONDS
-              </div>
-            </motion.div>
-          </div>
-          
-          {/* Bottom subtle text */}
-          <div className="text-center">
-            <span className="text-gray-400 text-sm tracking-wide">
-              Limited Time Offer
-            </span>
           </div>
         </div>
-        
-        {/* Golden border effect */}
-        <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 rounded-3xl opacity-20 blur-sm -z-10"></div>
       </motion.div>
       
       {description && (
         <motion.p 
-          className="text-gray-300 mt-6 text-lg font-light max-w-xl mx-auto"
+          className="text-gray-300 mt-8 text-lg font-light max-w-2xl mx-auto px-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 0.8 }}
+          transition={{ delay: 1.5, duration: 0.8 }}
         >
           {description}
         </motion.p>
