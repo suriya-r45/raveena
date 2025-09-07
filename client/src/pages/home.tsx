@@ -2723,7 +2723,7 @@ export default function Home() {
                           {/* Floating Elements */}
                           <div className="absolute -top-6 -right-6 w-12 h-12 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full blur-lg opacity-60 animate-pulse"></div>
                           <div className="absolute -bottom-4 -left-4 w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full blur-lg opacity-50 animate-pulse" style={{ animationDelay: '1s' }}></div>
-                        </div>
+                        </motion.div>
                       </div>
                     )}
                   </motion.div>
