@@ -25,6 +25,7 @@ import {
   OfferBanner, 
   SeasonalCollection
 } from '@/components/festival-components';
+import FestivalHomePage from '@/components/festival-home';
 
 interface HomeSectionWithItems extends HomeSection {
   items: HomeSectionItemWithProduct[];
@@ -2163,14 +2164,9 @@ export default function Home() {
     }
   };
 
-  // If secondary page is enabled, show royal layout
+  // If secondary page is enabled, show ultra-modern festival layout
   if (isSecondaryPageEnabled) {
-    return (
-      <RoyalSecondaryHomePage 
-        allProducts={allProducts}
-        selectedCurrency={selectedCurrency}
-      />
-    );
+    return <FestivalHomePage />;
   }
 
   // Regular homepage layout
