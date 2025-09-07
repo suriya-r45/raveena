@@ -841,7 +841,7 @@ export default function FestivalHomePage() {
 
 
       {/* Brand Story Section */}
-      <section className="py-32 bg-gradient-to-br from-slate-900 via-gray-900 to-black relative overflow-hidden">
+      <section className="py-16 sm:py-24 lg:py-32 bg-gradient-to-br from-slate-900 via-gray-900 to-black relative overflow-hidden">
         {/* Animated Background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(251,191,36,0.1),transparent)]" />
@@ -881,7 +881,7 @@ export default function FestivalHomePage() {
                 <span className="text-white/80 font-medium tracking-wider text-sm">OUR LEGACY</span>
               </motion.div>
               
-              <h2 className="text-5xl lg:text-6xl font-black text-white mb-8 leading-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-6xl font-black text-white mb-6 sm:mb-8 leading-tight">
                 Crafting Dreams into
                 <span className="block bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">
                   Timeless Beauty
@@ -962,7 +962,7 @@ export default function FestivalHomePage() {
       </section>
 
       {/* Interactive Jewelry Categories */}
-      <section className="py-32 bg-gradient-to-br from-black via-gray-900 to-slate-900 relative overflow-hidden">
+      <section className="py-16 sm:py-24 lg:py-32 bg-gradient-to-br from-black via-gray-900 to-slate-900 relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_40%_at_50%_60%,rgba(139,69,19,0.1),transparent)]" />
         </div>
@@ -985,7 +985,7 @@ export default function FestivalHomePage() {
               <span className="text-white/80 font-medium tracking-wider text-sm">EXPLORE COLLECTIONS</span>
             </motion.div>
             
-            <h2 className="text-5xl lg:text-7xl font-black text-white mb-6 leading-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-7xl font-black text-white mb-6 leading-tight">
               Discover Your
               <span className="block bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
                 Perfect Style
@@ -993,7 +993,7 @@ export default function FestivalHomePage() {
             </h2>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {[
               { name: "Necklaces", icon: Diamond, image: luxuryNecklaceImage, count: "150+ Designs", color: "from-amber-400 to-yellow-500" },
               { name: "Earrings", icon: Sparkles, image: earringsLuxuryImage, count: "200+ Designs", color: "from-purple-400 to-pink-500" },
@@ -1064,7 +1064,7 @@ export default function FestivalHomePage() {
 
 
       {/* Awards and Certifications */}
-      <section className="py-32 bg-gradient-to-br from-black via-slate-900 to-gray-900 relative overflow-hidden">
+      <section className="py-16 sm:py-24 lg:py-32 bg-gradient-to-br from-black via-slate-900 to-gray-900 relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_40%,rgba(34,197,94,0.1),transparent)]" />
         </div>
@@ -1087,7 +1087,7 @@ export default function FestivalHomePage() {
               <span className="text-white/80 font-medium tracking-wider text-sm">TRUSTED EXCELLENCE</span>
             </motion.div>
             
-            <h2 className="text-5xl lg:text-7xl font-black text-white mb-6 leading-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-7xl font-black text-white mb-6 leading-tight">
               Award-Winning
               <span className="block bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
                 Craftsmanship
@@ -1099,7 +1099,7 @@ export default function FestivalHomePage() {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-12 sm:mb-16">
             {[
               {
                 icon: Award,
@@ -1167,7 +1167,7 @@ export default function FestivalHomePage() {
       </section>
 
       {/* Latest News and Updates */}
-      <section className="py-32 bg-gradient-to-br from-gray-900 via-black to-slate-900 relative overflow-hidden">
+      <section className="py-16 sm:py-24 lg:py-32 bg-gradient-to-br from-gray-900 via-black to-slate-900 relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_40%,rgba(59,130,246,0.1),transparent)]" />
         </div>
@@ -1190,7 +1190,7 @@ export default function FestivalHomePage() {
               <span className="text-white/80 font-medium tracking-wider text-sm">LATEST UPDATES</span>
             </motion.div>
             
-            <h2 className="text-5xl lg:text-7xl font-black text-white mb-6 leading-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-7xl font-black text-white mb-6 leading-tight">
               News &
               <span className="block bg-gradient-to-r from-blue-400 to-cyan-500 bg-clip-text text-transparent">
                 Insights
@@ -1198,7 +1198,7 @@ export default function FestivalHomePage() {
             </h2>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {[
               {
                 category: "Collection Launch",
@@ -1289,7 +1289,7 @@ export default function FestivalHomePage() {
       </section>
 
       {/* Virtual Showroom Preview */}
-      <section className="py-32 bg-gradient-to-br from-slate-900 via-gray-900 to-black relative overflow-hidden">
+      <section className="py-16 sm:py-24 lg:py-32 bg-gradient-to-br from-slate-900 via-gray-900 to-black relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_20%,rgba(168,85,247,0.1),transparent)]" />
         </div>
@@ -1313,7 +1313,7 @@ export default function FestivalHomePage() {
                 <span className="text-white/80 font-medium tracking-wider text-sm">VIRTUAL EXPERIENCE</span>
               </motion.div>
               
-              <h2 className="text-5xl lg:text-6xl font-black text-white mb-8 leading-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-6xl font-black text-white mb-6 sm:mb-8 leading-tight">
                 Explore Our
                 <span className="block bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
                   Virtual Showroom
@@ -1329,7 +1329,7 @@ export default function FestivalHomePage() {
                 </p>
               </div>
               
-              <div className="grid grid-cols-2 gap-6 mb-12">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8 sm:mb-12">
                 {[
                   { icon: Eye, label: "360° Product Views", description: "See every detail from all angles" },
                   { icon: Zap, label: "AR Try-On", description: "Virtual try-on experience" },
@@ -1436,7 +1436,7 @@ export default function FestivalHomePage() {
       </section>
 
       {/* Luxury Packaging & Gift Services */}
-      <section className="py-32 bg-gradient-to-br from-black via-gray-900 to-slate-900 relative overflow-hidden">
+      <section className="py-16 sm:py-24 lg:py-32 bg-gradient-to-br from-black via-gray-900 to-slate-900 relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_60%,rgba(251,191,36,0.1),transparent)]" />
         </div>
@@ -1459,7 +1459,7 @@ export default function FestivalHomePage() {
               <span className="text-white/80 font-medium tracking-wider text-sm">PREMIUM GIFTING</span>
             </motion.div>
             
-            <h2 className="text-5xl lg:text-7xl font-black text-white mb-6 leading-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-7xl font-black text-white mb-6 leading-tight">
               Luxury
               <span className="block bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">
                 Gift Experience
@@ -1471,7 +1471,7 @@ export default function FestivalHomePage() {
             </p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-2 gap-16 items-center mb-20">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center mb-12 sm:mb-20">
             {/* Visual Content */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
@@ -1570,7 +1570,7 @@ export default function FestivalHomePage() {
           </div>
 
           {/* Gift Services Grid */}
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {[
               {
                 icon: Clock,
