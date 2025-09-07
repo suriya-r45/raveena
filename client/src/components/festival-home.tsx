@@ -833,6 +833,327 @@ export default function FestivalHomePage() {
       </section>
 
 
+      {/* Brand Story Section */}
+      <section className="py-32 bg-gradient-to-br from-slate-900 via-gray-900 to-black relative overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(251,191,36,0.1),transparent)]" />
+          <motion.div 
+            className="absolute inset-0 opacity-5"
+            animate={{
+              backgroundPosition: ['0% 0%', '100% 100%'],
+            }}
+            transition={{
+              duration: 60,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M60 60l30-30v60l-30-30zM60 60l-30-30v60l30-30z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+              backgroundSize: '120px 120px'
+            }}
+          />
+        </div>
+        
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Text Content */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1 }}
+              viewport={{ once: true }}
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                transition={{ type: "spring", delay: 0.2 }}
+                className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full px-6 py-3 mb-8"
+              >
+                <Crown className="w-5 h-5 text-amber-400" />
+                <span className="text-white/80 font-medium tracking-wider text-sm">OUR LEGACY</span>
+              </motion.div>
+              
+              <h2 className="text-5xl lg:text-6xl font-black text-white mb-8 leading-tight">
+                Crafting Dreams into
+                <span className="block bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">
+                  Timeless Beauty
+                </span>
+              </h2>
+              
+              <div className="space-y-6 text-white/80 text-lg leading-relaxed">
+                <p>
+                  For generations, Palaniappa Jewellers has been synonymous with exceptional craftsmanship and unparalleled beauty. Each piece tells a story of dedication, artistry, and the pursuit of perfection.
+                </p>
+                <p>
+                  Our master artisans blend traditional techniques with contemporary design, creating jewelry that transcends time and celebrates life's most precious moments.
+                </p>
+              </div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="flex gap-6 mt-12"
+              >
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-amber-400 mb-2">1999</div>
+                  <div className="text-white/60 text-sm">Established</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-amber-400 mb-2">100%</div>
+                  <div className="text-white/60 text-sm">Certified Gold</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-amber-400 mb-2">25+</div>
+                  <div className="text-white/60 text-sm">Expert Artisans</div>
+                </div>
+              </motion.div>
+            </motion.div>
+            
+            {/* Visual Content */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1, delay: 0.3 }}
+              viewport={{ once: true }}
+              className="relative"
+            >
+              <div className="relative aspect-square max-w-lg mx-auto">
+                {/* Main Image */}
+                <div className="relative z-10 aspect-square rounded-3xl overflow-hidden border border-amber-400/20 backdrop-blur-xl">
+                  <img
+                    src={goldCollectionImage}
+                    alt="Luxury Gold Collection"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-transparent to-yellow-500/10" />
+                </div>
+                
+                {/* Floating Elements */}
+                <motion.div
+                  className="absolute -top-6 -right-6 w-32 h-32 bg-gradient-to-br from-amber-400/20 to-yellow-500/20 rounded-full blur-2xl"
+                  animate={{
+                    scale: [1, 1.3, 1],
+                    opacity: [0.3, 0.6, 0.3],
+                  }}
+                  transition={{ duration: 8, repeat: Infinity }}
+                />
+                <motion.div
+                  className="absolute -bottom-8 -left-8 w-40 h-40 bg-gradient-to-tr from-purple-400/15 to-pink-500/15 rounded-full blur-3xl"
+                  animate={{
+                    scale: [1.2, 1, 1.2],
+                    opacity: [0.2, 0.5, 0.2],
+                  }}
+                  transition={{ duration: 10, repeat: Infinity, delay: 3 }}
+                />
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Interactive Jewelry Categories */}
+      <section className="py-32 bg-gradient-to-br from-black via-gray-900 to-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_40%_at_50%_60%,rgba(139,69,19,0.1),transparent)]" />
+        </div>
+        
+        <div className="container mx-auto px-6 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-20"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              whileInView={{ scale: 1 }}
+              transition={{ type: "spring", delay: 0.2 }}
+              className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full px-6 py-3 mb-8"
+            >
+              <Gem className="w-5 h-5 text-blue-400" />
+              <span className="text-white/80 font-medium tracking-wider text-sm">EXPLORE COLLECTIONS</span>
+            </motion.div>
+            
+            <h2 className="text-5xl lg:text-7xl font-black text-white mb-6 leading-tight">
+              Discover Your
+              <span className="block bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                Perfect Style
+              </span>
+            </h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { name: "Necklaces", icon: Diamond, image: luxuryNecklaceImage, count: "150+ Designs", color: "from-amber-400 to-yellow-500" },
+              { name: "Earrings", icon: Sparkles, image: earringsLuxuryImage, count: "200+ Designs", color: "from-purple-400 to-pink-500" },
+              { name: "Rings", icon: Crown, image: ringsLuxuryImage, count: "300+ Designs", color: "from-blue-400 to-cyan-500" },
+              { name: "Bracelets", icon: Heart, image: braceletsHeroImage, count: "80+ Designs", color: "from-green-400 to-emerald-500" }
+            ].map((category, index) => (
+              <motion.div
+                key={category.name}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                whileHover={{ 
+                  scale: 1.05, 
+                  rotateY: 5,
+                  transition: { duration: 0.3 }
+                }}
+                viewport={{ once: true }}
+                className="group relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 hover:border-white/20 transition-all duration-500 cursor-pointer"
+                style={{ transformStyle: 'preserve-3d' }}
+              >
+                {/* Background Image */}
+                <div className="absolute inset-0 rounded-3xl overflow-hidden">
+                  <img 
+                    src={category.image} 
+                    alt={category.name}
+                    className="w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                </div>
+                
+                {/* Content */}
+                <div className="relative z-10">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    whileInView={{ scale: 1 }}
+                    transition={{ type: "spring", delay: 0.3 + index * 0.1 }}
+                    className={`w-16 h-16 bg-gradient-to-r ${category.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}
+                  >
+                    <category.icon className="w-8 h-8 text-white" />
+                  </motion.div>
+                  
+                  <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-300 transition-all duration-300">
+                    {category.name}
+                  </h3>
+                  
+                  <p className="text-white/60 text-lg mb-6">
+                    {category.count}
+                  </p>
+                  
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ delay: 0.5 + index * 0.1 }}
+                    className="flex items-center text-white/80 group-hover:text-white transition-colors duration-300"
+                  >
+                    <span className="text-sm font-medium mr-2">Explore Collection</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                  </motion.div>
+                </div>
+                
+                {/* Hover Glow Effect */}
+                <div className={`absolute inset-0 bg-gradient-to-r ${category.color} opacity-0 group-hover:opacity-10 rounded-3xl transition-opacity duration-500 blur-xl`} />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Premium Services Section */}
+      <section className="py-32 bg-gradient-to-br from-slate-900 via-black to-gray-900 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_50%_20%,rgba(168,85,247,0.1),transparent)]" />
+        </div>
+        
+        <div className="container mx-auto px-6 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-20"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              whileInView={{ scale: 1 }}
+              transition={{ type: "spring", delay: 0.2 }}
+              className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full px-6 py-3 mb-8"
+            >
+              <Award className="w-5 h-5 text-purple-400" />
+              <span className="text-white/80 font-medium tracking-wider text-sm">PREMIUM SERVICES</span>
+            </motion.div>
+            
+            <h2 className="text-5xl lg:text-7xl font-black text-white mb-6 leading-tight">
+              Beyond Jewelry
+              <span className="block bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+                Exceptional Service
+              </span>
+            </h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                icon: Gem,
+                title: "Custom Design",
+                description: "Bring your vision to life with our expert designers and craftsmen",
+                features: ["Personal consultation", "3D design preview", "Handcrafted execution"]
+              },
+              {
+                icon: Shield,
+                title: "Lifetime Warranty",
+                description: "Complete protection and maintenance for your precious investments",
+                features: ["Free cleaning service", "Repair guarantee", "Authenticity certificate"]
+              },
+              {
+                icon: Crown,
+                title: "VIP Experience",
+                description: "Exclusive access to limited collections and personalized service",
+                features: ["Private showroom", "First access to collections", "Personal jewelry consultant"]
+              }
+            ].map((service, index) => (
+              <motion.div
+                key={service.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+                whileHover={{ y: -10 }}
+                viewport={{ once: true }}
+                className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 hover:border-purple-400/30 hover:bg-white/10 transition-all duration-500 group"
+              >
+                <motion.div
+                  initial={{ scale: 0, rotate: -180 }}
+                  whileInView={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", delay: 0.3 + index * 0.1 }}
+                  className="w-16 h-16 bg-gradient-to-r from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300"
+                >
+                  <service.icon className="w-8 h-8 text-white" />
+                </motion.div>
+                
+                <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-purple-300 transition-colors duration-300">
+                  {service.title}
+                </h3>
+                
+                <p className="text-white/70 text-lg mb-6 leading-relaxed">
+                  {service.description}
+                </p>
+                
+                <ul className="space-y-3">
+                  {service.features.map((feature, featureIndex) => (
+                    <motion.li
+                      key={featureIndex}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.5 + index * 0.1 + featureIndex * 0.1 }}
+                      className="flex items-center text-white/80 group-hover:text-white transition-colors duration-300"
+                    >
+                      <Check className="w-5 h-5 text-purple-400 mr-3 flex-shrink-0" />
+                      <span className="text-sm">{feature}</span>
+                    </motion.li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Featured Products Showcase */}
       {featuredProducts.length > 0 && (
         <section className="py-24 bg-black relative overflow-hidden">
