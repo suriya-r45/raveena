@@ -401,7 +401,7 @@ function UltraModernHero() {
 }
 
 export default function FestivalHomePage() {
-  const [selectedCurrency, setSelectedCurrency] = useState<Currency>(Currency.INR);
+  const [selectedCurrency, setSelectedCurrency] = useState<Currency>('INR');
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const { scrollY } = useScroll();
   const opacity = useTransform(scrollY, [0, 300], [1, 0]);
@@ -409,7 +409,8 @@ export default function FestivalHomePage() {
   // Fetch products for featured sections
   const { data: allProducts = [] } = useQuery({
     queryKey: ['/api/products'],
-    queryFn: () => apiRequest('/api/products')
+    queryFn: () => apiRequest('/api/products'),
+    staleTime: 1000 * 60 * 5 // 5 minutes
   });
 
   // Ensure products is an array and filter for sections
