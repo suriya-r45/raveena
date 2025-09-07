@@ -133,8 +133,8 @@ export function CountdownTimer({ targetDate, title, description }: CountdownTime
               />
             </motion.div>
 
-            {/* Ultra Modern Timer Grid - Mobile Optimized 2x2 */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6 md:mb-8">
+            {/* Ultra Modern Timer Grid - Landscape Mobile Layout */}
+            <div className="grid grid-cols-4 gap-2 sm:gap-4 md:gap-6 mb-6 md:mb-8">
               
               {/* Days */}
               <motion.div
