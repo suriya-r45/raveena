@@ -77,6 +77,15 @@ export default {
           800: "hsl(35, 50%, 15%)",
           900: "hsl(35, 45%, 8%)",
         },
+        // Premium Golden Palette for Header
+        golden: {
+          200: "var(--golden-200)",
+          300: "var(--golden-300)",
+          400: "var(--golden-400)",
+          500: "var(--golden-500)",
+          600: "var(--golden-600)",
+          700: "var(--golden-700)",
+        },
         "rose-gold": {
           50: "hsl(15, 60%, 92%)",
           100: "hsl(15, 60%, 85%)",

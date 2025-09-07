@@ -45,18 +45,50 @@ export default function Header({ selectedCurrency, onCurrencyChange }: HeaderPro
                 <Menu className="h-4 w-4" />
               </Button>
 
-              {/* Brand with Logo */}
-              <Link href="/" className="flex items-center space-x-1 md:space-x-3 min-w-0 flex-1" data-testid="link-home">
-                <div className="w-8 h-8 md:w-12 md:h-12 rounded-full overflow-hidden border border-gray-300 flex-shrink-0">
+              {/* Brand with Logo - Ultra Premium Design */}
+              <Link href="/" className="flex items-center space-x-2 md:space-x-4 min-w-0 flex-1 group" data-testid="link-home">
+                <div className="w-10 h-10 md:w-14 md:h-14 rounded-full overflow-hidden border-2 border-golden-300 shadow-lg ring-2 ring-golden-200/30 flex-shrink-0 group-hover:shadow-xl group-hover:ring-golden-300/50 transition-all duration-300">
                   <img 
                     src={logoPath} 
                     alt="Palaniappa Jewellers Logo" 
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
-                <div className="min-w-0 flex-1">
-                  <h1 className="text-xs md:text-2xl font-light text-gray-800 tracking-wide" style={{ fontFamily: 'Inter, system-ui, sans-serif', whiteSpace: 'nowrap', overflow: 'visible' }}>PALANIAPPA JEWELLERS</h1>
-                  <p className="text-[9px] md:text-xs text-gray-600 font-light hidden md:block">ESTD 2025</p>
+                <div className="min-w-0 flex-1 py-1">
+                  <h1 
+                    className="text-sm md:text-3xl font-bold bg-gradient-to-r from-golden-600 via-golden-500 to-golden-700 bg-clip-text text-transparent tracking-wider leading-tight drop-shadow-sm group-hover:from-golden-500 group-hover:to-golden-600 transition-all duration-300" 
+                    style={{ 
+                      fontFamily: 'Playfair Display, Georgia, serif', 
+                      whiteSpace: 'nowrap', 
+                      overflow: 'visible',
+                      textShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                    }}
+                  >
+                    PALANIAPPA JEWELLERS
+                  </h1>
+                  <div className="flex items-center space-x-2 mt-0.5 md:mt-1">
+                    <div className="hidden md:block w-8 h-px bg-gradient-to-r from-transparent via-golden-400 to-transparent"></div>
+                    <p 
+                      className="text-[10px] md:text-sm font-medium bg-gradient-to-r from-golden-600 to-golden-700 bg-clip-text text-transparent tracking-[0.2em] hidden md:block uppercase"
+                      style={{ 
+                        fontFamily: 'Montserrat, sans-serif',
+                        letterSpacing: '0.25em'
+                      }}
+                    >
+                      ESTD 2025
+                    </p>
+                    <div className="hidden md:block w-8 h-px bg-gradient-to-r from-transparent via-golden-400 to-transparent"></div>
+                  </div>
+                  {/* Mobile ESTD */}
+                  <p 
+                    className="text-[9px] font-medium bg-gradient-to-r from-golden-600 to-golden-700 bg-clip-text text-transparent tracking-wider md:hidden uppercase"
+                    style={{ 
+                      fontFamily: 'Montserrat, sans-serif',
+                      letterSpacing: '0.15em'
+                    }}
+                  >
+                    ESTD 2025
+                  </p>
                 </div>
               </Link>
             </div>
