@@ -329,6 +329,7 @@ function CreateSectionDialog({
         displayOrder: 0,
         backgroundColor: "#fff8e1",
         textColor: "#8b4513",
+        showCountdown: false,
         countdownStartDate: "",
         countdownEndDate: "",
         countdownTitle: "",
@@ -357,6 +358,7 @@ function CreateSectionDialog({
       displayOrder: parseInt(formData.get('displayOrder') as string),
       backgroundColor: formData.get('backgroundColor') as string,
       textColor: formData.get('textColor') as string,
+      showCountdown: formData.get('showCountdown') === 'true',
       countdownStartDate: formData.get('countdownStartDate') as string || undefined,
       countdownEndDate: formData.get('countdownEndDate') as string || undefined,
       countdownTitle: formData.get('countdownTitle') as string || undefined,
@@ -469,7 +471,7 @@ function CreateSectionDialog({
             <Label htmlFor="layoutType" className="font-medium text-gray-700" style={{ fontFamily: 'Cormorant Garamond, serif' }}>Layout Type *</Label>
             <Select
               value={formData.layoutType}
-              onValueChange={(value: 'grid' | 'featured' | 'mixed' | 'split' | 'festival' | 'festival-specials' | 'carousel' | 'mosaic' | 'luxury' | 'magazine' | 'diamond' | 'floating' | 'radial' | 'artistic' | 'royal' | 'new-arrivals' | 'premium' | 'curved-grid' | 'tilted-grid') => 
+              onValueChange={(value: 'grid' | 'featured' | 'mixed' | 'festival' | 'festival-specials' | 'carousel' | 'mosaic' | 'magazine' | 'new-arrivals' | 'premium' | 'zen' | 'royal' | 'curved-grid' | 'tilted-grid' | 'countdown-offers') => 
                 setFormData(prev => ({ ...prev, layoutType: value }))
               }
             >
