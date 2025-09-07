@@ -575,7 +575,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       console.error("Error creating test showcase:", error);
-      res.status(500).json({ message: "Failed to create test showcase", error: error.message });
+      res.status(500).json({ message: "Failed to create test showcase", error: error instanceof Error ? error.message : String(error) });
     }
   });
 
@@ -591,18 +591,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Create barcode data from product
       const barcodeData: ProductBarcodeData = {
-        productCode: product.productCode,
+        productCode: product.productCode || '',
         productName: product.name,
         purity: product.purity || '22K',
         grossWeight: `${product.grossWeight} g`,
         netWeight: `${product.netWeight} g`,
         stones: product.stones || 'None',
         goldRate: product.goldRateAtCreation ? `₹${product.goldRateAtCreation} / g` : 'N/A',
-        approxPrice: `₹${product.priceInr.toLocaleString('en-IN')} (excluding charges)`
+        approxPrice: `₹${Number(product.priceInr).toLocaleString('en-IN')} (excluding charges)`
       };
 
       // Generate new QR code with beautiful product showcase
-      const qrCodePath = await generateQRCode(barcodeData, product.productCode, product.images[0]);
+      const qrCodePath = await generateQRCode(barcodeData, product.productCode || '', product.images[0] || '');
       
       res.json({ 
         message: "QR code regenerated with beautiful product showcase!",
@@ -612,7 +612,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       console.error("Error regenerating QR code:", error);
-      res.status(500).json({ message: "Failed to regenerate QR code", error: error.message });
+      res.status(500).json({ message: "Failed to regenerate QR code", error: error instanceof Error ? error.message : String(error) });
     }
   });
 
