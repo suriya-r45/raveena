@@ -19,11 +19,12 @@ import { MetalRatesAdmin } from '@/components/admin/metal-rates-admin';
 import OrderTracking from '@/components/admin/order-tracking';
 import VideoManagement from '@/components/admin/video-management';
 import UserManagement from '@/components/admin/user-management';
+import AdminNotifications from './admin-notifications';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { Product, Bill } from '@shared/schema';
 import { Currency } from '@/lib/currency';
-import { Package, FileText, TrendingUp, Users, Calculator, DollarSign, Edit, QrCode, Printer, Search, CheckSquare, Square, Plus, Receipt, History, ClipboardList, Tag, BarChart3, Grid3X3, Film, Settings, Crown, Eye, EyeOff, Star, StarOff, X } from 'lucide-react';
+import { Package, FileText, TrendingUp, Users, Calculator, DollarSign, Edit, QrCode, Printer, Search, CheckSquare, Square, Plus, Receipt, History, ClipboardList, Tag, BarChart3, Grid3X3, Film, Settings, Crown, Eye, EyeOff, Star, StarOff, X, Bell } from 'lucide-react';
 import BarcodeDisplay from '@/components/barcode-display';
 import { useToast } from '@/hooks/use-toast';
 import QRCode from 'qrcode';
@@ -714,7 +715,7 @@ export default function AdminDashboard() {
             {/* Mobile: Vertical scrollable tabs */}
             <div className="md:hidden">
               <div className="overflow-x-auto">
-                <TabsList className="grid w-full grid-cols-12 bg-white border border-gray-200 shadow-md h-auto p-2 rounded-xl min-w-max">
+                <TabsList className="grid w-full grid-cols-13 bg-white border border-gray-200 shadow-md h-auto p-2 rounded-xl min-w-max">
                   <TabsTrigger value="products" data-testid="tab-products" className="text-xs font-light text-gray-700 hover:text-gray-500 hover:bg-gray-50 data-[state=active]:bg-white data-[state=active]:text-gray-700 data-[state=active]:shadow-md transition-all duration-300 px-3 py-3 mx-1 rounded-lg min-h-[44px] flex items-center justify-center whitespace-nowrap border border-gray-200">
                     <Plus className="h-4 w-4 mr-1" />
                     Products
@@ -763,12 +764,16 @@ export default function AdminDashboard() {
                     <Users className="h-4 w-4 mr-1" />
                     Users
                   </TabsTrigger>
+                  <TabsTrigger value="notifications" data-testid="tab-notifications" className="text-xs font-light text-gray-700 hover:text-gray-500 hover:bg-gray-50 data-[state=active]:bg-white data-[state=active]:text-gray-700 data-[state=active]:shadow-md transition-all duration-300 px-3 py-3 mx-1 rounded-lg min-h-[44px] flex items-center justify-center whitespace-nowrap border border-gray-200">
+                    <Bell className="h-4 w-4 mr-1" />
+                    Notifications
+                  </TabsTrigger>
                 </TabsList>
               </div>
             </div>
             
             {/* Desktop: Original horizontal layout */}
-            <TabsList className="hidden md:grid w-full grid-cols-12 bg-white border border-gray-200 shadow-sm h-auto p-1">
+            <TabsList className="hidden md:grid w-full grid-cols-13 bg-white border border-gray-200 shadow-sm h-auto p-1">
               <TabsTrigger value="products" data-testid="tab-products" className="text-xs md:text-sm font-light text-gray-700 hover:text-gray-500 hover:bg-gray-50 data-[state=active]:bg-white data-[state=active]:text-gray-700 data-[state=active]:shadow-md transition-all duration-200 px-1 py-2 mx-0.5 rounded-md min-h-[40px] flex items-center justify-center border border-gray-200">
                 <Plus className="h-4 w-4 mr-1" />
                 Products
@@ -816,6 +821,10 @@ export default function AdminDashboard() {
               <TabsTrigger value="users" data-testid="tab-users" className="text-xs md:text-sm font-light text-gray-700 hover:text-gray-500 hover:bg-gray-50 data-[state=active]:bg-white data-[state=active]:text-gray-700 data-[state=active]:shadow-md transition-all duration-200 px-1 py-2 mx-0.5 rounded-md min-h-[40px] flex items-center justify-center border border-gray-200">
                 <Users className="h-4 w-4 mr-1" />
                 Users
+              </TabsTrigger>
+              <TabsTrigger value="notifications" data-testid="tab-notifications" className="text-xs md:text-sm font-light text-gray-700 hover:text-gray-500 hover:bg-gray-50 data-[state=active]:bg-white data-[state=active]:text-gray-700 data-[state=active]:shadow-md transition-all duration-200 px-1 py-2 mx-0.5 rounded-md min-h-[40px] flex items-center justify-center border border-gray-200">
+                <Bell className="h-4 w-4 mr-1" />
+                Notifications
               </TabsTrigger>
             </TabsList>
           </div>
@@ -1127,6 +1136,10 @@ export default function AdminDashboard() {
 
           <TabsContent value="users" className="space-y-6">
             <UserManagement />
+          </TabsContent>
+
+          <TabsContent value="notifications" className="space-y-6">
+            <AdminNotifications />
           </TabsContent>
         </Tabs>
       </div>

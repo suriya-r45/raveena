@@ -3263,6 +3263,18 @@ For any queries, please contact us.`;
     }
   });
 
+  // Initialize sample notification templates (Admin only - one-time setup)
+  app.post("/api/notifications/init-templates", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const { createSampleTemplates } = await import('./scripts/create-sample-templates.js');
+      await createSampleTemplates();
+      res.json({ success: true, message: 'Sample notification templates created successfully' });
+    } catch (error) {
+      console.error('Error creating sample templates:', error);
+      res.status(500).json({ error: 'Failed to create sample templates' });
+    }
+  });
+
   // === END NOTIFICATION API ROUTES ===
 
   // QR codes now contain text-only data, no URL redirects needed
