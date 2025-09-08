@@ -1,4 +1,4 @@
-import { users, products, bills, cartItems, orders, estimates, categories, homeSections, homeSectionItems, shippingZones, shippingMethods, shipments, deliveryAttempts, videos, appSettings, type User, type InsertUser, type Product, type InsertProduct, type Bill, type InsertBill, type CartItemRow, type InsertCartItem, type Order, type InsertOrder, type CartItem, type Estimate, type InsertEstimate, type Category, type InsertCategory, type HomeSection, type InsertHomeSection, type HomeSectionItem, type InsertHomeSectionItem, type ShippingZone, type ShippingMethod, type Shipment, type DeliveryAttempt, type Video, type AppSetting, type InsertAppSetting } from "@shared/schema";
+import { users, products, bills, cartItems, orders, estimates, categories, homeSections, homeSectionItems, shippingZones, shippingMethods, shipments, deliveryAttempts, videos, appSettings, notificationTemplates, notificationPreferences, notifications, notificationCampaigns, userActivity, type User, type InsertUser, type Product, type InsertProduct, type Bill, type InsertBill, type CartItemRow, type InsertCartItem, type Order, type InsertOrder, type CartItem, type Estimate, type InsertEstimate, type Category, type InsertCategory, type HomeSection, type InsertHomeSection, type HomeSectionItem, type InsertHomeSectionItem, type ShippingZone, type ShippingMethod, type Shipment, type DeliveryAttempt, type Video, type AppSetting, type InsertAppSetting, type NotificationTemplate, type InsertNotificationTemplate, type NotificationPreferences, type InsertNotificationPreferences, type Notification, type InsertNotification, type NotificationCampaign, type InsertNotificationCampaign, type UserActivity, type InsertUserActivity } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, like, and, gte, lte, isNull, or } from "drizzle-orm";
 import bcrypt from "bcryptjs";
@@ -137,6 +137,40 @@ export interface IStorage {
   setAppSetting(key: string, value: string, description?: string): Promise<AppSetting>;
   updateAppSetting(key: string, value: string, description?: string): Promise<AppSetting | undefined>;
   deleteAppSetting(key: string): Promise<boolean>;
+
+  // Notification Template operations
+  getAllNotificationTemplates(): Promise<NotificationTemplate[]>;
+  getNotificationTemplate(name: string): Promise<NotificationTemplate | null>;
+  getNotificationTemplateById(id: string): Promise<NotificationTemplate | null>;
+  createNotificationTemplate(template: InsertNotificationTemplate): Promise<NotificationTemplate>;
+  updateNotificationTemplate(id: string, template: Partial<InsertNotificationTemplate>): Promise<NotificationTemplate | undefined>;
+  deleteNotificationTemplate(id: string): Promise<boolean>;
+
+  // Notification Preferences operations
+  getNotificationPreferences(userId: string): Promise<NotificationPreferences | null>;
+  createNotificationPreferences(preferences: InsertNotificationPreferences): Promise<NotificationPreferences>;
+  updateNotificationPreferences(userId: string, preferences: Partial<InsertNotificationPreferences>): Promise<NotificationPreferences | undefined>;
+
+  // Notification operations
+  getAllNotifications(): Promise<Notification[]>;
+  getNotification(id: string): Promise<Notification | undefined>;
+  getUserNotifications(userId: string): Promise<Notification[]>;
+  createNotification(notification: InsertNotification): Promise<Notification>;
+  updateNotification(id: string, notification: Partial<InsertNotification>): Promise<Notification | undefined>;
+  markNotificationAsDelivered(id: string): Promise<Notification | undefined>;
+  markNotificationAsFailed(id: string, errorMessage: string): Promise<Notification | undefined>;
+
+  // Notification Campaign operations
+  getAllNotificationCampaigns(): Promise<NotificationCampaign[]>;
+  getNotificationCampaign(id: string): Promise<NotificationCampaign | undefined>;
+  createNotificationCampaign(campaign: InsertNotificationCampaign): Promise<NotificationCampaign>;
+  updateNotificationCampaign(id: string, campaign: Partial<InsertNotificationCampaign>): Promise<NotificationCampaign | undefined>;
+  deleteNotificationCampaign(id: string): Promise<boolean>;
+
+  // User Activity operations
+  createUserActivity(activity: InsertUserActivity): Promise<UserActivity>;
+  getUserActivity(userId: string, limit?: number): Promise<UserActivity[]>;
+  getActivityByType(activityType: string, limit?: number): Promise<UserActivity[]>;
 }
 
 export interface CategoryWithChildren extends Category {
@@ -1092,6 +1126,163 @@ export class DatabaseStorage implements IStorage {
   async deleteAppSetting(key: string): Promise<boolean> {
     const result = await db.delete(appSettings).where(eq(appSettings.key, key));
     return (result.rowCount || 0) > 0;
+  }
+
+  // Notification Template operations
+  async getAllNotificationTemplates(): Promise<NotificationTemplate[]> {
+    return await db.select().from(notificationTemplates).orderBy(notificationTemplates.name);
+  }
+
+  async getNotificationTemplate(name: string): Promise<NotificationTemplate | null> {
+    const [template] = await db.select().from(notificationTemplates).where(eq(notificationTemplates.name, name));
+    return template || null;
+  }
+
+  async getNotificationTemplateById(id: string): Promise<NotificationTemplate | null> {
+    const [template] = await db.select().from(notificationTemplates).where(eq(notificationTemplates.id, id));
+    return template || null;
+  }
+
+  async createNotificationTemplate(template: InsertNotificationTemplate): Promise<NotificationTemplate> {
+    const [newTemplate] = await db.insert(notificationTemplates).values(template).returning();
+    return newTemplate;
+  }
+
+  async updateNotificationTemplate(id: string, template: Partial<InsertNotificationTemplate>): Promise<NotificationTemplate | undefined> {
+    const [updatedTemplate] = await db.update(notificationTemplates)
+      .set({ ...template, updatedAt: new Date() })
+      .where(eq(notificationTemplates.id, id))
+      .returning();
+    return updatedTemplate || undefined;
+  }
+
+  async deleteNotificationTemplate(id: string): Promise<boolean> {
+    const result = await db.delete(notificationTemplates).where(eq(notificationTemplates.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  // Notification Preferences operations
+  async getNotificationPreferences(userId: string): Promise<NotificationPreferences | null> {
+    const [preferences] = await db.select().from(notificationPreferences).where(eq(notificationPreferences.userId, userId));
+    return preferences || null;
+  }
+
+  async createNotificationPreferences(preferences: InsertNotificationPreferences): Promise<NotificationPreferences> {
+    const [newPreferences] = await db.insert(notificationPreferences).values(preferences).returning();
+    return newPreferences;
+  }
+
+  async updateNotificationPreferences(userId: string, preferences: Partial<InsertNotificationPreferences>): Promise<NotificationPreferences | undefined> {
+    const [updatedPreferences] = await db.update(notificationPreferences)
+      .set({ ...preferences, updatedAt: new Date() })
+      .where(eq(notificationPreferences.userId, userId))
+      .returning();
+    return updatedPreferences || undefined;
+  }
+
+  // Notification operations
+  async getAllNotifications(): Promise<Notification[]> {
+    return await db.select().from(notifications).orderBy(desc(notifications.createdAt));
+  }
+
+  async getNotification(id: string): Promise<Notification | undefined> {
+    const [notification] = await db.select().from(notifications).where(eq(notifications.id, id));
+    return notification || undefined;
+  }
+
+  async getUserNotifications(userId: string): Promise<Notification[]> {
+    return await db.select()
+      .from(notifications)
+      .where(eq(notifications.userId, userId))
+      .orderBy(desc(notifications.createdAt));
+  }
+
+  async createNotification(notification: InsertNotification): Promise<Notification> {
+    const [newNotification] = await db.insert(notifications).values(notification).returning();
+    return newNotification;
+  }
+
+  async updateNotification(id: string, notification: Partial<InsertNotification>): Promise<Notification | undefined> {
+    const [updatedNotification] = await db.update(notifications)
+      .set({ ...notification, updatedAt: new Date() })
+      .where(eq(notifications.id, id))
+      .returning();
+    return updatedNotification || undefined;
+  }
+
+  async markNotificationAsDelivered(id: string): Promise<Notification | undefined> {
+    const [updatedNotification] = await db.update(notifications)
+      .set({ 
+        status: 'delivered', 
+        deliveredAt: new Date(),
+        updatedAt: new Date()
+      })
+      .where(eq(notifications.id, id))
+      .returning();
+    return updatedNotification || undefined;
+  }
+
+  async markNotificationAsFailed(id: string, errorMessage: string): Promise<Notification | undefined> {
+    const [updatedNotification] = await db.update(notifications)
+      .set({ 
+        status: 'failed',
+        errorMessage,
+        failedAt: new Date(),
+        updatedAt: new Date()
+      })
+      .where(eq(notifications.id, id))
+      .returning();
+    return updatedNotification || undefined;
+  }
+
+  // Notification Campaign operations
+  async getAllNotificationCampaigns(): Promise<NotificationCampaign[]> {
+    return await db.select().from(notificationCampaigns).orderBy(desc(notificationCampaigns.createdAt));
+  }
+
+  async getNotificationCampaign(id: string): Promise<NotificationCampaign | undefined> {
+    const [campaign] = await db.select().from(notificationCampaigns).where(eq(notificationCampaigns.id, id));
+    return campaign || undefined;
+  }
+
+  async createNotificationCampaign(campaign: InsertNotificationCampaign): Promise<NotificationCampaign> {
+    const [newCampaign] = await db.insert(notificationCampaigns).values(campaign).returning();
+    return newCampaign;
+  }
+
+  async updateNotificationCampaign(id: string, campaign: Partial<InsertNotificationCampaign>): Promise<NotificationCampaign | undefined> {
+    const [updatedCampaign] = await db.update(notificationCampaigns)
+      .set({ ...campaign, updatedAt: new Date() })
+      .where(eq(notificationCampaigns.id, id))
+      .returning();
+    return updatedCampaign || undefined;
+  }
+
+  async deleteNotificationCampaign(id: string): Promise<boolean> {
+    const result = await db.delete(notificationCampaigns).where(eq(notificationCampaigns.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  // User Activity operations
+  async createUserActivity(activity: InsertUserActivity): Promise<UserActivity> {
+    const [newActivity] = await db.insert(userActivity).values(activity).returning();
+    return newActivity;
+  }
+
+  async getUserActivity(userId: string, limit: number = 50): Promise<UserActivity[]> {
+    return await db.select()
+      .from(userActivity)
+      .where(eq(userActivity.userId, userId))
+      .orderBy(desc(userActivity.createdAt))
+      .limit(limit);
+  }
+
+  async getActivityByType(activityType: string, limit: number = 100): Promise<UserActivity[]> {
+    return await db.select()
+      .from(userActivity)
+      .where(eq(userActivity.activityType, activityType))
+      .orderBy(desc(userActivity.createdAt))
+      .limit(limit);
   }
 }
 
