@@ -83,6 +83,17 @@ export default function AdminNotifications() {
   const [selectedTemplate, setSelectedTemplate] = useState<NotificationTemplate | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  
+  // Send notification form state
+  const [sendForm, setSendForm] = useState({
+    type: '',
+    channels: [] as string[],
+    recipientName: '',
+    recipientEmail: '',
+    recipientPhone: '',
+    subject: '',
+    message: ''
+  });
 
   // Fetch notification service status
   const { data: serviceStatus, isLoading: statusLoading } = useQuery<NotificationService>({
@@ -129,6 +140,78 @@ export default function AdminNotifications() {
       });
     }
   });
+
+  // Send notification mutation
+  const sendNotificationMutation = useMutation({
+    mutationFn: async (data: SendNotificationRequest) => {
+      const response = await fetch('/api/notifications/send', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error('Failed to send notification');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Notification Sent",
+        description: "Your notification has been sent successfully."
+      });
+      // Reset form
+      setSendForm({
+        type: '',
+        channels: [],
+        recipientName: '',
+        recipientEmail: '',
+        recipientPhone: '',
+        subject: '',
+        message: ''
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to send notification",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const handleSendNotification = () => {
+    if (!sendForm.message.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a message",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (sendForm.channels.length === 0) {
+      toast({
+        title: "Error",
+        description: "Please select at least one channel",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const data: SendNotificationRequest = {
+      type: sendForm.type || 'custom',
+      channels: sendForm.channels as ('email' | 'sms' | 'whatsapp')[],
+      recipientName: sendForm.recipientName,
+      recipientEmail: sendForm.recipientEmail,
+      recipientPhone: sendForm.recipientPhone,
+      subject: sendForm.subject,
+      message: sendForm.message
+    };
+
+    sendNotificationMutation.mutate(data);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -572,7 +655,7 @@ export default function AdminNotifications() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="send-type">Notification Type</Label>
-                      <Select>
+                      <Select value={sendForm.type} onValueChange={(value) => setSendForm(prev => ({ ...prev, type: value }))}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select type" />
                         </SelectTrigger>
@@ -589,15 +672,48 @@ export default function AdminNotifications() {
                       <Label>Channels</Label>
                       <div className="flex items-center space-x-4">
                         <div className="flex items-center space-x-2">
-                          <Switch id="channel-email" />
+                          <Switch 
+                            id="channel-email" 
+                            checked={sendForm.channels.includes('email')}
+                            onCheckedChange={(checked) => {
+                              setSendForm(prev => ({
+                                ...prev,
+                                channels: checked 
+                                  ? [...prev.channels, 'email']
+                                  : prev.channels.filter(c => c !== 'email')
+                              }));
+                            }}
+                          />
                           <Label htmlFor="channel-email">📧 Email</Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Switch id="channel-sms" />
+                          <Switch 
+                            id="channel-sms" 
+                            checked={sendForm.channels.includes('sms')}
+                            onCheckedChange={(checked) => {
+                              setSendForm(prev => ({
+                                ...prev,
+                                channels: checked 
+                                  ? [...prev.channels, 'sms']
+                                  : prev.channels.filter(c => c !== 'sms')
+                              }));
+                            }}
+                          />
                           <Label htmlFor="channel-sms">📱 SMS</Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Switch id="channel-whatsapp" />
+                          <Switch 
+                            id="channel-whatsapp" 
+                            checked={sendForm.channels.includes('whatsapp')}
+                            onCheckedChange={(checked) => {
+                              setSendForm(prev => ({
+                                ...prev,
+                                channels: checked 
+                                  ? [...prev.channels, 'whatsapp']
+                                  : prev.channels.filter(c => c !== 'whatsapp')
+                              }));
+                            }}
+                          />
                           <Label htmlFor="channel-whatsapp">💬 WhatsApp</Label>
                         </div>
                       </div>
@@ -607,22 +723,43 @@ export default function AdminNotifications() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="recipient-name">Recipient Name</Label>
-                      <Input id="recipient-name" placeholder="Customer name" />
+                      <Input 
+                        id="recipient-name" 
+                        placeholder="Customer name" 
+                        value={sendForm.recipientName}
+                        onChange={(e) => setSendForm(prev => ({ ...prev, recipientName: e.target.value }))}
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="recipient-email">Email</Label>
-                      <Input id="recipient-email" type="email" placeholder="customer@example.com" />
+                      <Input 
+                        id="recipient-email" 
+                        type="email" 
+                        placeholder="customer@example.com" 
+                        value={sendForm.recipientEmail}
+                        onChange={(e) => setSendForm(prev => ({ ...prev, recipientEmail: e.target.value }))}
+                      />
                     </div>
                   </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="recipient-phone">Phone Number</Label>
-                    <Input id="recipient-phone" placeholder="+91XXXXXXXXXX" />
+                    <Input 
+                      id="recipient-phone" 
+                      placeholder="+91XXXXXXXXXX" 
+                      value={sendForm.recipientPhone}
+                      onChange={(e) => setSendForm(prev => ({ ...prev, recipientPhone: e.target.value }))}
+                    />
                   </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="message-subject">Subject</Label>
-                    <Input id="message-subject" placeholder="Message subject" />
+                    <Input 
+                      id="message-subject" 
+                      placeholder="Message subject" 
+                      value={sendForm.subject}
+                      onChange={(e) => setSendForm(prev => ({ ...prev, subject: e.target.value }))}
+                    />
                   </div>
                   
                   <div className="space-y-2">
@@ -631,18 +768,161 @@ export default function AdminNotifications() {
                       id="message-content" 
                       placeholder="Your message content..."
                       className="min-h-[150px]"
+                      value={sendForm.message}
+                      onChange={(e) => setSendForm(prev => ({ ...prev, message: e.target.value }))}
                     />
                   </div>
                   
-                  <Button className="bg-amber-600 hover:bg-amber-700" data-testid="button-send-notification">
-                    <Send className="w-4 h-4 mr-2" />
-                    Send Notification
+                  <Button 
+                    className="bg-amber-600 hover:bg-amber-700" 
+                    data-testid="button-send-notification"
+                    onClick={handleSendNotification}
+                    disabled={sendNotificationMutation.isPending}
+                  >
+                    {sendNotificationMutation.isPending ? (
+                      <>
+                        <Loader className="w-4 h-4 mr-2 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4 mr-2" />
+                        Send Notification
+                      </>
+                    )}
                   </Button>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
+        
+        {/* Edit Template Dialog */}
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Edit Notification Template</DialogTitle>
+              <DialogDescription>
+                View notification template details and settings.
+              </DialogDescription>
+            </DialogHeader>
+            {selectedTemplate && (
+              <div className="space-y-6">
+                <div className="grid gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-name">Template Name</Label>
+                    <Input 
+                      id="edit-name" 
+                      value={selectedTemplate.name}
+                      placeholder="Template name"
+                      readOnly
+                      className="bg-gray-50"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-description">Description</Label>
+                    <Input 
+                      id="edit-description" 
+                      value={selectedTemplate.description}
+                      placeholder="Template description"
+                      readOnly
+                      className="bg-gray-50"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-type">Type</Label>
+                    <Badge variant="secondary" className="w-fit">
+                      {selectedTemplate.type}
+                    </Badge>
+                  </div>
+                  
+                  {selectedTemplate.emailSubject && (
+                    <div className="space-y-2">
+                      <Label htmlFor="edit-email-subject">Email Subject</Label>
+                      <Input 
+                        id="edit-email-subject" 
+                        value={selectedTemplate.emailSubject}
+                        readOnly
+                        className="bg-gray-50"
+                      />
+                    </div>
+                  )}
+                  
+                  {selectedTemplate.emailHtmlTemplate && (
+                    <div className="space-y-2">
+                      <Label htmlFor="edit-email-template">Email Template</Label>
+                      <Textarea 
+                        id="edit-email-template" 
+                        value={selectedTemplate.emailHtmlTemplate}
+                        className="min-h-[100px] bg-gray-50"
+                        readOnly
+                      />
+                    </div>
+                  )}
+                  
+                  {selectedTemplate.smsTemplate && (
+                    <div className="space-y-2">
+                      <Label htmlFor="edit-sms-template">SMS Template</Label>
+                      <Textarea 
+                        id="edit-sms-template" 
+                        value={selectedTemplate.smsTemplate}
+                        className="min-h-[60px] bg-gray-50"
+                        readOnly
+                      />
+                    </div>
+                  )}
+                  
+                  {selectedTemplate.whatsappTemplate && (
+                    <div className="space-y-2">
+                      <Label htmlFor="edit-whatsapp-template">WhatsApp Template</Label>
+                      <Textarea 
+                        id="edit-whatsapp-template" 
+                        value={selectedTemplate.whatsappTemplate}
+                        className="min-h-[60px] bg-gray-50"
+                        readOnly
+                      />
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center space-x-2">
+                    <Switch 
+                      id="edit-active" 
+                      checked={selectedTemplate.isActive}
+                      disabled
+                    />
+                    <Label htmlFor="edit-active">Template is active</Label>
+                  </div>
+                </div>
+                
+                <div className="flex justify-between">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsEditDialogOpen(false)}
+                  >
+                    Close
+                  </Button>
+                  <div className="space-x-2">
+                    <Button 
+                      className="bg-amber-600 hover:bg-amber-700"
+                      onClick={() => {
+                        // For now, just show a toast that editing will be available soon
+                        toast({
+                          title: "Template Details",
+                          description: "This template is configured and active. Full editing capabilities will be available in a future update."
+                        });
+                      }}
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      View Details
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
