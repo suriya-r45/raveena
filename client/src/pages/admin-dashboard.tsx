@@ -18,6 +18,7 @@ import { HomeSectionsManagement } from '@/components/admin/home-sections-managem
 import { MetalRatesAdmin } from '@/components/admin/metal-rates-admin';
 import OrderTracking from '@/components/admin/order-tracking';
 import VideoManagement from '@/components/admin/video-management';
+import UserManagement from '@/components/admin/user-management';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { Product, Bill } from '@shared/schema';
@@ -362,7 +363,7 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const tabParam = urlParams.get('tab');
-    if (tabParam === 'products' || tabParam === 'billing' || tabParam === 'bills' || tabParam === 'estimates' || tabParam === 'categories' || tabParam === 'pricing' || tabParam === 'barcodes' || tabParam === 'home-sections' || tabParam === 'orders' || tabParam === 'metal-rates' || tabParam === 'videos') {
+    if (tabParam === 'products' || tabParam === 'billing' || tabParam === 'bills' || tabParam === 'estimates' || tabParam === 'categories' || tabParam === 'pricing' || tabParam === 'barcodes' || tabParam === 'home-sections' || tabParam === 'orders' || tabParam === 'metal-rates' || tabParam === 'videos' || tabParam === 'users') {
       return tabParam;
     }
     return 'products';
@@ -510,7 +511,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const tabParam = urlParams.get('tab');
-    if (tabParam === 'products' || tabParam === 'billing' || tabParam === 'bills' || tabParam === 'estimates' || tabParam === 'categories' || tabParam === 'pricing' || tabParam === 'barcodes' || tabParam === 'home-sections' || tabParam === 'orders' || tabParam === 'metal-rates' || tabParam === 'videos') {
+    if (tabParam === 'products' || tabParam === 'billing' || tabParam === 'bills' || tabParam === 'estimates' || tabParam === 'categories' || tabParam === 'pricing' || tabParam === 'barcodes' || tabParam === 'home-sections' || tabParam === 'orders' || tabParam === 'metal-rates' || tabParam === 'videos' || tabParam === 'users') {
       setActiveTab(tabParam);
     }
   }, []);
@@ -520,7 +521,7 @@ export default function AdminDashboard() {
     const handlePopState = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const tabParam = urlParams.get('tab');
-      if (tabParam === 'products' || tabParam === 'billing' || tabParam === 'bills' || tabParam === 'estimates' || tabParam === 'categories' || tabParam === 'pricing' || tabParam === 'barcodes' || tabParam === 'home-sections' || tabParam === 'orders' || tabParam === 'metal-rates' || tabParam === 'videos') {
+      if (tabParam === 'products' || tabParam === 'billing' || tabParam === 'bills' || tabParam === 'estimates' || tabParam === 'categories' || tabParam === 'pricing' || tabParam === 'barcodes' || tabParam === 'home-sections' || tabParam === 'orders' || tabParam === 'metal-rates' || tabParam === 'videos' || tabParam === 'users') {
         setActiveTab(tabParam);
       }
     };
@@ -533,7 +534,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const tabParam = urlParams.get('tab');
-    if (tabParam === 'products' || tabParam === 'billing' || tabParam === 'bills' || tabParam === 'estimates' || tabParam === 'categories' || tabParam === 'pricing' || tabParam === 'barcodes' || tabParam === 'home-sections' || tabParam === 'orders' || tabParam === 'metal-rates' || tabParam === 'videos') {
+    if (tabParam === 'products' || tabParam === 'billing' || tabParam === 'bills' || tabParam === 'estimates' || tabParam === 'categories' || tabParam === 'pricing' || tabParam === 'barcodes' || tabParam === 'home-sections' || tabParam === 'orders' || tabParam === 'metal-rates' || tabParam === 'videos' || tabParam === 'users') {
       setActiveTab(tabParam);
     }
   }, [location]);
@@ -713,7 +714,7 @@ export default function AdminDashboard() {
             {/* Mobile: Vertical scrollable tabs */}
             <div className="md:hidden">
               <div className="overflow-x-auto">
-                <TabsList className="grid w-full grid-cols-11 bg-white border border-gray-200 shadow-md h-auto p-2 rounded-xl min-w-max">
+                <TabsList className="grid w-full grid-cols-12 bg-white border border-gray-200 shadow-md h-auto p-2 rounded-xl min-w-max">
                   <TabsTrigger value="products" data-testid="tab-products" className="text-xs font-light text-gray-700 hover:text-gray-500 hover:bg-gray-50 data-[state=active]:bg-white data-[state=active]:text-gray-700 data-[state=active]:shadow-md transition-all duration-300 px-3 py-3 mx-1 rounded-lg min-h-[44px] flex items-center justify-center whitespace-nowrap border border-gray-200">
                     <Plus className="h-4 w-4 mr-1" />
                     Products
@@ -758,12 +759,16 @@ export default function AdminDashboard() {
                     <Film className="h-4 w-4 mr-1" />
                     Videos
                   </TabsTrigger>
+                  <TabsTrigger value="users" data-testid="tab-users" className="text-xs font-light text-gray-700 hover:text-gray-500 hover:bg-gray-50 data-[state=active]:bg-white data-[state=active]:text-gray-700 data-[state=active]:shadow-md transition-all duration-300 px-3 py-3 mx-1 rounded-lg min-h-[44px] flex items-center justify-center whitespace-nowrap border border-gray-200">
+                    <Users className="h-4 w-4 mr-1" />
+                    Users
+                  </TabsTrigger>
                 </TabsList>
               </div>
             </div>
             
             {/* Desktop: Original horizontal layout */}
-            <TabsList className="hidden md:grid w-full grid-cols-11 bg-white border border-gray-200 shadow-sm h-auto p-1">
+            <TabsList className="hidden md:grid w-full grid-cols-12 bg-white border border-gray-200 shadow-sm h-auto p-1">
               <TabsTrigger value="products" data-testid="tab-products" className="text-xs md:text-sm font-light text-gray-700 hover:text-gray-500 hover:bg-gray-50 data-[state=active]:bg-white data-[state=active]:text-gray-700 data-[state=active]:shadow-md transition-all duration-200 px-1 py-2 mx-0.5 rounded-md min-h-[40px] flex items-center justify-center border border-gray-200">
                 <Plus className="h-4 w-4 mr-1" />
                 Products
@@ -807,6 +812,10 @@ export default function AdminDashboard() {
               <TabsTrigger value="videos" data-testid="tab-videos" className="text-xs md:text-sm font-light text-gray-700 hover:text-gray-500 hover:bg-gray-50 data-[state=active]:bg-white data-[state=active]:text-gray-700 data-[state=active]:shadow-md transition-all duration-200 px-1 py-2 mx-0.5 rounded-md min-h-[40px] flex items-center justify-center border border-gray-200">
                 <Film className="h-4 w-4 mr-1" />
                 Videos
+              </TabsTrigger>
+              <TabsTrigger value="users" data-testid="tab-users" className="text-xs md:text-sm font-light text-gray-700 hover:text-gray-500 hover:bg-gray-50 data-[state=active]:bg-white data-[state=active]:text-gray-700 data-[state=active]:shadow-md transition-all duration-200 px-1 py-2 mx-0.5 rounded-md min-h-[40px] flex items-center justify-center border border-gray-200">
+                <Users className="h-4 w-4 mr-1" />
+                Users
               </TabsTrigger>
             </TabsList>
           </div>
@@ -1114,6 +1123,10 @@ export default function AdminDashboard() {
 
           <TabsContent value="videos" className="space-y-6">
             <VideoManagement />
+          </TabsContent>
+
+          <TabsContent value="users" className="space-y-6">
+            <UserManagement />
           </TabsContent>
         </Tabs>
       </div>
