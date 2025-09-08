@@ -1108,6 +1108,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Don't fail the order creation if notification fails
       }
 
+      // Send order confirmation notification to customer using new notification system
+      try {
+        await NotificationService.sendOrderUpdate(
+          bill.id,
+          'Order Confirmed',
+          billData.customerEmail,
+          billData.customerPhone,
+          billData.customerName
+        );
+        console.log(`[Customer Notification] Order confirmation sent for Bill ${billNumber}`);
+      } catch (error) {
+        console.error(`[Customer Notification] Failed to send order confirmation for Bill ${billNumber}:`, error);
+        // Don't fail the order creation if notification fails
+      }
+
       res.status(201).json(bill);
     } catch (error: any) {
       console.error("Zod validation error:", error.errors || error);
@@ -1679,6 +1694,21 @@ Premium quality, timeless beauty.`;
         console.log(`[New Order] Admin notification sent for Order ${orderNumber}`);
       } catch (error) {
         console.error(`[New Order] Failed to send admin notification for Order ${orderNumber}:`, error);
+        // Don't fail the order creation if notification fails
+      }
+
+      // Send order confirmation notification to customer using new notification system
+      try {
+        await NotificationService.sendOrderUpdate(
+          bill.id,
+          'Order Confirmed',
+          orderData.customerEmail,
+          orderData.customerPhone,
+          orderData.customerName
+        );
+        console.log(`[Customer Notification] Order confirmation sent for Order ${orderNumber}`);
+      } catch (error) {
+        console.error(`[Customer Notification] Failed to send order confirmation for Order ${orderNumber}:`, error);
         // Don't fail the order creation if notification fails
       }
 
@@ -3176,7 +3206,7 @@ For any queries, please contact us.`;
   app.post("/api/notifications/track-activity", authenticateToken, async (req, res) => {
     try {
       const currentUser = (req as any).user;
-      const { activityType, details, productId, orderId } = req.body;
+      const { activityType, page, productId, categoryId, searchQuery, videoId, metadata, duration } = req.body;
       
       if (!activityType) {
         return res.status(400).json({ error: 'Activity type is required' });
@@ -3185,12 +3215,17 @@ For any queries, please contact us.`;
       await NotificationService.trackActivity({
         userId: currentUser.id,
         activityType,
-        details: details || '',
+        page,
         productId,
-        orderId,
-        sessionId: req.sessionID || 'unknown',
+        categoryId,
+        searchQuery,
+        videoId,
+        metadata: metadata || {},
+        duration,
+        sessionId: (req as any).sessionID || 'unknown',
         ipAddress: req.ip || '',
-        userAgent: req.get('User-Agent') || ''
+        userAgent: req.get('User-Agent') || '',
+        referrer: req.get('Referer') || ''
       });
 
       res.json({ success: true, message: 'Activity tracked' });
