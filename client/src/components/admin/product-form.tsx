@@ -419,19 +419,9 @@ function ProductForm({ currency }: ProductFormProps) {
   const addProductMutation = useMutation({
     mutationFn: async (data: FormData) => {
       if (!token) {
-        throw new Error('Authentication required');
+        throw new Error('Authentication required. Please log in as admin.');
       }
-      const response = await fetch('/api/products', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        body: data,
-      });
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error || 'Failed to create product');
-      }
+      const response = await apiRequest('POST', '/api/products', data);
       return response.json();
     },
     onSuccess: (newProduct) => {
@@ -459,10 +449,23 @@ function ProductForm({ currency }: ProductFormProps) {
         }, 500);
       }
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error('Product creation error:', error);
+      let errorMessage = "Failed to add product.";
+      
+      if (error.message.includes('401')) {
+        errorMessage = "Authentication failed. Please log in as admin and try again.";
+      } else if (error.message.includes('403')) {
+        errorMessage = "Admin access required. Please contact administrator.";
+      } else if (error.message.includes('Authentication required')) {
+        errorMessage = "Please log in as admin to add products.";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       toast({
         title: "Error",
-        description: "Failed to add product.",
+        description: errorMessage,
         variant: "destructive",
       });
     },

@@ -15,6 +15,7 @@ import OrderSuccess from "@/pages/order-success";
 import { EstimatesPage } from "@/pages/estimates";
 import CollectionsPage from "@/pages/collections";
 import QRScanResult from "@/pages/qr-scan-result";
+import AddProduct from "@/pages/AddProduct";
 import { AuthProvider } from "./lib/auth";
 import { CartProvider } from "./lib/cart";
 
@@ -36,6 +37,7 @@ function Router() {
         <Route path="/" component={Home} />
       <Route path="/login" component={Login} />
       <Route path="/admin" component={AdminDashboard} />
+      <Route path="/add-product" component={AddProduct} />
       <Route path="/estimates" component={EstimatesPage} />
       {/* Material-based routes */}
       <Route path="/collections/gold" component={() => <CollectionsPage material="GOLD" />} />
