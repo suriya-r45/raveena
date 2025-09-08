@@ -431,6 +431,136 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User Management Routes (Admin only)
+  // Get all users
+  app.get("/api/users", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const users = await storage.getAllUsers();
+      // Remove password from response for security
+      const safeUsers = users.map(user => {
+        const { password, ...safeUser } = user;
+        return safeUser;
+      });
+      res.json(safeUsers);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  // Get single user by ID
+  app.get("/api/users/:id", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const user = await storage.getUser(req.params.id);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      // Remove password from response for security
+      const { password, ...safeUser } = user;
+      res.json(safeUser);
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
+  // Create new user (Admin only)
+  app.post("/api/users", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const userData = insertUserSchema.parse(req.body);
+      
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(userData.email);
+      if (existingUser) {
+        return res.status(400).json({ message: "User with this email already exists" });
+      }
+
+      // Check if phone number is already in use
+      if (userData.phone) {
+        const existingPhoneUser = await storage.getUserByPhone(userData.phone);
+        if (existingPhoneUser) {
+          return res.status(400).json({ message: "User with this phone number already exists" });
+        }
+      }
+
+      const user = await storage.createUser(userData);
+      
+      // Remove password from response for security
+      const { password, ...safeUser } = user;
+      res.status(201).json(safeUser);
+    } catch (error) {
+      console.error('Error creating user:', error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid user data", details: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create user" });
+    }
+  });
+
+  // Update user (Admin only)
+  app.patch("/api/users/:id", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const updates = req.body;
+
+      // Validate that user exists
+      const existingUser = await storage.getUser(userId);
+      if (!existingUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Check if email is being updated and if it conflicts with another user
+      if (updates.email && updates.email !== existingUser.email) {
+        const emailConflict = await storage.getUserByEmail(updates.email);
+        if (emailConflict && emailConflict.id !== userId) {
+          return res.status(400).json({ message: "Email already in use by another user" });
+        }
+      }
+
+      // Check if phone is being updated and if it conflicts with another user
+      if (updates.phone && updates.phone !== existingUser.phone) {
+        const phoneConflict = await storage.getUserByPhone(updates.phone);
+        if (phoneConflict && phoneConflict.id !== userId) {
+          return res.status(400).json({ message: "Phone number already in use by another user" });
+        }
+      }
+
+      const updatedUser = await storage.updateUser(userId, updates);
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Remove password from response for security
+      const { password, ...safeUser } = updatedUser;
+      res.json(safeUser);
+    } catch (error) {
+      console.error('Error updating user:', error);
+      res.status(500).json({ message: "Failed to update user" });
+    }
+  });
+
+  // Delete user (Admin only)
+  app.delete("/api/users/:id", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const userId = req.params.id;
+      
+      // Prevent deletion of admin user (hardcoded admin has id "admin")
+      if (userId === "admin") {
+        return res.status(403).json({ message: "Cannot delete admin user" });
+      }
+
+      const deleted = await storage.deleteUser(userId);
+      if (!deleted) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.json({ message: "User deleted successfully" });
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      res.status(500).json({ message: "Failed to delete user" });
+    }
+  });
+
   // Product routes
   app.get("/api/products", async (req, res) => {
     try {
