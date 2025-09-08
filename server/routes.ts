@@ -545,10 +545,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Test endpoint to show beautiful product showcase page
+  // Test endpoint to show beautiful product card image
   app.get("/api/products/test/showcase", async (req, res) => {
     try {
-      const { generateStandaloneProductPage } = await import("./utils/product-card-generator.js");
+      const { generateStunningProductCard } = await import("./utils/product-card-generator.js");
       
       // Create test product data
       const testProductData: ProductBarcodeData = {
@@ -562,22 +562,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         approxPrice: "₹570"
       };
 
-      // Generate the beautiful standalone page
-      const pagePath = await generateStandaloneProductPage(testProductData);
+      // Generate the beautiful product card image
+      const imagePath = await generateStunningProductCard({
+        productData: testProductData,
+        backgroundStyle: 'luxury-gold'
+      });
       
       // Get the base URL for the current environment
       const baseUrl = process.env.REPL_URL || process.env.BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
-      const fullUrl = `${baseUrl}${pagePath}`;
+      const fullUrl = `${baseUrl}${imagePath}`;
       
       res.json({ 
-        message: "Beautiful product showcase created!",
-        url: fullUrl,
-        path: pagePath,
+        message: "Beautiful product card image created!",
+        imageUrl: fullUrl,
+        imagePath: imagePath,
         testData: testProductData
       });
     } catch (error) {
-      console.error("Error creating test showcase:", error);
-      res.status(500).json({ message: "Failed to create test showcase", error: error instanceof Error ? error.message : String(error) });
+      console.error("Error creating test product card:", error);
+      res.status(500).json({ message: "Failed to create test product card", error: error instanceof Error ? error.message : String(error) });
     }
   });
 
