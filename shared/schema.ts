@@ -455,6 +455,177 @@ export const appSettings = pgTable("app_settings", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// NOTIFICATION SYSTEM TABLES
+
+// Notification Templates for reusable message formats
+export const notificationTemplates = pgTable("notification_templates", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull().unique(), // 'order_confirmed', 'order_shipped', 'product_launch', etc.
+  description: text("description"), // Description of template purpose
+  type: text("type").notNull(), // 'order_update', 'promotion', 'product_launch', 'personalized'
+  channels: jsonb("channels").$type<string[]>().notNull().default(sql`'["email"]'::jsonb`), // ['email', 'sms', 'whatsapp']
+  
+  // Email template fields
+  emailSubject: text("email_subject"),
+  emailHtmlTemplate: text("email_html_template"), // HTML template with variables like {{customerName}}
+  emailTextTemplate: text("email_text_template"), // Plain text version
+  
+  // SMS template fields
+  smsTemplate: text("sms_template"), // SMS message template
+  
+  // WhatsApp template fields
+  whatsappTemplate: text("whatsapp_template"), // WhatsApp message template
+  whatsappMediaUrl: text("whatsapp_media_url"), // Optional media attachment
+  
+  // Template variables that can be replaced
+  variables: jsonb("variables").$type<string[]>().default(sql`'[]'::jsonb`), // ['customerName', 'orderNumber', 'productName']
+  
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// User notification preferences
+export const notificationPreferences = pgTable("notification_preferences", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  
+  // Order notification preferences
+  orderUpdatesEmail: boolean("order_updates_email").default(true),
+  orderUpdatesSms: boolean("order_updates_sms").default(true),
+  orderUpdatesWhatsapp: boolean("order_updates_whatsapp").default(false),
+  
+  // Promotional notification preferences
+  promotionalEmail: boolean("promotional_email").default(true),
+  promotionalSms: boolean("promotional_sms").default(false),
+  promotionalWhatsapp: boolean("promotional_whatsapp").default(false),
+  
+  // Product launch notification preferences
+  productLaunchEmail: boolean("product_launch_email").default(true),
+  productLaunchSms: boolean("product_launch_sms").default(false),
+  productLaunchWhatsapp: boolean("product_launch_whatsapp").default(false),
+  
+  // Personalized recommendation preferences
+  personalizedEmail: boolean("personalized_email").default(true),
+  personalizedSms: boolean("personalized_sms").default(false),
+  personalizedWhatsapp: boolean("personalized_whatsapp").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Individual notifications sent to users
+export const notifications = pgTable("notifications", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id"), // Can be null for guest notifications
+  sessionId: text("session_id"), // For guest users
+  templateId: varchar("template_id"), // Reference to notification template
+  
+  type: text("type").notNull(), // 'order_update', 'promotion', 'product_launch', 'personalized'
+  channel: text("channel").notNull(), // 'email', 'sms', 'whatsapp'
+  
+  // Recipient details
+  recipientEmail: text("recipient_email"),
+  recipientPhone: text("recipient_phone"),
+  recipientName: text("recipient_name"),
+  
+  // Message content
+  subject: text("subject"), // Email subject or SMS/WhatsApp preview
+  htmlContent: text("html_content"), // HTML content for email
+  textContent: text("text_content"), // Text content for SMS/WhatsApp
+  mediaUrl: text("media_url"), // Optional media attachment
+  
+  // Status and tracking
+  status: text("status").notNull().default("pending"), // 'pending', 'sent', 'delivered', 'failed', 'bounced'
+  sentAt: timestamp("sent_at"),
+  deliveredAt: timestamp("delivered_at"),
+  failedAt: timestamp("failed_at"),
+  errorMessage: text("error_message"),
+  
+  // External service tracking
+  externalId: text("external_id"), // ID from email/SMS service provider
+  externalStatus: text("external_status"),
+  
+  // Related entities
+  orderId: uuid("order_id"), // If notification is order-related
+  productId: varchar("product_id"), // If notification is product-related
+  campaignId: varchar("campaign_id"), // If part of a campaign
+  
+  // Template variables used for this notification
+  templateVariables: jsonb("template_variables").$type<Record<string, any>>().default(sql`'{}'::jsonb`),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Notification campaigns for bulk messaging (product launches, festivals)
+export const notificationCampaigns = pgTable("notification_campaigns", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  description: text("description"),
+  type: text("type").notNull(), // 'product_launch', 'festival', 'promotion', 'seasonal'
+  
+  // Campaign targeting
+  targetAudience: text("target_audience").notNull().default("all"), // 'all', 'customers', 'frequent_buyers', 'inactive_users'
+  targetSegment: jsonb("target_segment").$type<Record<string, any>>(), // Advanced targeting criteria
+  
+  // Campaign content
+  templateId: varchar("template_id").notNull(),
+  channels: jsonb("channels").$type<string[]>().notNull(), // ['email', 'sms', 'whatsapp']
+  
+  // Scheduling
+  scheduledAt: timestamp("scheduled_at"),
+  launchedAt: timestamp("launched_at"),
+  completedAt: timestamp("completed_at"),
+  
+  // Campaign status
+  status: text("status").notNull().default("draft"), // 'draft', 'scheduled', 'running', 'paused', 'completed', 'cancelled'
+  
+  // Campaign metrics
+  totalRecipients: integer("total_recipients").default(0),
+  emailsSent: integer("emails_sent").default(0),
+  smsSent: integer("sms_sent").default(0),
+  whatsappSent: integer("whatsapp_sent").default(0),
+  totalDelivered: integer("total_delivered").default(0),
+  totalFailed: integer("total_failed").default(0),
+  
+  // Budget and limits
+  budgetLimit: decimal("budget_limit", { precision: 10, scale: 2 }),
+  currentSpend: decimal("current_spend", { precision: 10, scale: 2 }).default("0"),
+  
+  createdBy: varchar("created_by").notNull(), // Admin user ID
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// User activity tracking for personalized notifications
+export const userActivity = pgTable("user_activity", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id"),
+  sessionId: text("session_id"), // For guest users
+  
+  // Activity details
+  activityType: text("activity_type").notNull(), // 'page_view', 'product_view', 'add_to_cart', 'purchase', 'search', 'video_view'
+  page: text("page"), // Page visited
+  
+  // Related entities
+  productId: varchar("product_id"), // Product viewed/added/purchased
+  categoryId: varchar("category_id"), // Category browsed
+  searchQuery: text("search_query"), // Search terms used
+  videoId: varchar("video_id"), // Video watched
+  
+  // Activity metadata
+  metadata: jsonb("metadata").$type<Record<string, any>>().default(sql`'{}'::jsonb`), // Additional activity data
+  duration: integer("duration"), // Time spent (for video views, page views)
+  
+  // User context
+  userAgent: text("user_agent"),
+  ipAddress: text("ip_address"),
+  referrer: text("referrer"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Shipping Relations
 export const shippingZonesRelations = relations(shippingZones, ({ many }) => ({
   methods: many(shippingMethods),
@@ -494,6 +665,74 @@ export const ordersRelationsUpdated = relations(orders, ({ one, many }) => ({
     references: [users.email],
   }),
   shipments: many(shipments),
+}));
+
+// NOTIFICATION SYSTEM RELATIONS
+
+export const notificationTemplatesRelations = relations(notificationTemplates, ({ many }) => ({
+  notifications: many(notifications),
+  campaigns: many(notificationCampaigns),
+}));
+
+export const notificationPreferencesRelations = relations(notificationPreferences, ({ one }) => ({
+  user: one(users, {
+    fields: [notificationPreferences.userId],
+    references: [users.id],
+  }),
+}));
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  user: one(users, {
+    fields: [notifications.userId],
+    references: [users.id],
+  }),
+  template: one(notificationTemplates, {
+    fields: [notifications.templateId],
+    references: [notificationTemplates.id],
+  }),
+  order: one(orders, {
+    fields: [notifications.orderId],
+    references: [orders.id],
+  }),
+  product: one(products, {
+    fields: [notifications.productId],
+    references: [products.id],
+  }),
+  campaign: one(notificationCampaigns, {
+    fields: [notifications.campaignId],
+    references: [notificationCampaigns.id],
+  }),
+}));
+
+export const notificationCampaignsRelations = relations(notificationCampaigns, ({ one, many }) => ({
+  template: one(notificationTemplates, {
+    fields: [notificationCampaigns.templateId],
+    references: [notificationTemplates.id],
+  }),
+  createdByUser: one(users, {
+    fields: [notificationCampaigns.createdBy],
+    references: [users.id],
+  }),
+  notifications: many(notifications),
+}));
+
+export const userActivityRelations = relations(userActivity, ({ one }) => ({
+  user: one(users, {
+    fields: [userActivity.userId],
+    references: [users.id],
+  }),
+  product: one(products, {
+    fields: [userActivity.productId],
+    references: [products.id],
+  }),
+  category: one(categories, {
+    fields: [userActivity.categoryId],
+    references: [categories.id],
+  }),
+  video: one(videos, {
+    fields: [userActivity.videoId],
+    references: [videos.id],
+  }),
 }));
 
 // Categories Management Table
@@ -1058,6 +1297,13 @@ export type HomeSectionItem = typeof homeSectionItems.$inferSelect;
 export type AppSetting = typeof appSettings.$inferSelect;
 export type CartItemRow = typeof cartItems.$inferSelect;
 
+// NOTIFICATION SYSTEM TYPES
+export type NotificationTemplate = typeof notificationTemplates.$inferSelect;
+export type NotificationPreferences = typeof notificationPreferences.$inferSelect;
+export type Notification = typeof notifications.$inferSelect;
+export type NotificationCampaign = typeof notificationCampaigns.$inferSelect;
+export type UserActivity = typeof userActivity.$inferSelect;
+
 // Shipping Zod Schemas
 export const insertShippingZoneSchema = createInsertSchema(shippingZones).omit({
   id: true,
@@ -1102,3 +1348,104 @@ export const calculateShippingSchema = z.object({
   currency: z.enum(["INR", "BHD"]),
   isExpress: z.boolean().default(false),
 });
+
+// NOTIFICATION SYSTEM ZOD SCHEMAS
+
+export const insertNotificationTemplateSchema = createInsertSchema(notificationTemplates).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertNotificationPreferencesSchema = createInsertSchema(notificationPreferences).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertNotificationSchema = createInsertSchema(notifications).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertNotificationCampaignSchema = createInsertSchema(notificationCampaigns).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertUserActivitySchema = createInsertSchema(userActivity).omit({
+  id: true,
+  createdAt: true,
+});
+
+// Additional notification schemas for API endpoints
+export const sendNotificationSchema = z.object({
+  userId: z.string().optional(),
+  sessionId: z.string().optional(),
+  type: z.enum(['order_update', 'promotion', 'product_launch', 'personalized']),
+  channels: z.array(z.enum(['email', 'sms', 'whatsapp'])),
+  recipientEmail: z.string().email().optional(),
+  recipientPhone: z.string().optional(),
+  recipientName: z.string().optional(),
+  subject: z.string(),
+  message: z.string(),
+  templateId: z.string().optional(),
+  orderId: z.string().optional(),
+  productId: z.string().optional(),
+  campaignId: z.string().optional(),
+  templateVariables: z.record(z.any()).optional(),
+});
+
+export const createCampaignSchema = z.object({
+  name: z.string().min(1, "Campaign name is required"),
+  description: z.string().optional(),
+  type: z.enum(['product_launch', 'festival', 'promotion', 'seasonal']),
+  targetAudience: z.enum(['all', 'customers', 'frequent_buyers', 'inactive_users']).default('all'),
+  templateId: z.string().min(1, "Template is required"),
+  channels: z.array(z.enum(['email', 'sms', 'whatsapp'])).min(1, "At least one channel is required"),
+  scheduledAt: z.coerce.date().optional(),
+  budgetLimit: z.coerce.number().positive().optional(),
+});
+
+export const updateNotificationPreferencesSchema = z.object({
+  userId: z.string(),
+  orderUpdatesEmail: z.boolean().optional(),
+  orderUpdatesSms: z.boolean().optional(),
+  orderUpdatesWhatsapp: z.boolean().optional(),
+  promotionalEmail: z.boolean().optional(),
+  promotionalSms: z.boolean().optional(),
+  promotionalWhatsapp: z.boolean().optional(),
+  productLaunchEmail: z.boolean().optional(),
+  productLaunchSms: z.boolean().optional(),
+  productLaunchWhatsapp: z.boolean().optional(),
+  personalizedEmail: z.boolean().optional(),
+  personalizedSms: z.boolean().optional(),
+  personalizedWhatsapp: z.boolean().optional(),
+});
+
+// Activity tracking schema
+export const trackUserActivitySchema = z.object({
+  userId: z.string().optional(),
+  sessionId: z.string().optional(),
+  activityType: z.enum(['page_view', 'product_view', 'add_to_cart', 'purchase', 'search', 'video_view']),
+  page: z.string().optional(),
+  productId: z.string().optional(),
+  categoryId: z.string().optional(),
+  searchQuery: z.string().optional(),
+  videoId: z.string().optional(),
+  duration: z.number().optional(),
+  metadata: z.record(z.any()).optional(),
+});
+
+// Inferred types from schemas
+export type InsertNotificationTemplate = z.infer<typeof insertNotificationTemplateSchema>;
+export type InsertNotificationPreferences = z.infer<typeof insertNotificationPreferencesSchema>;
+export type InsertNotification = z.infer<typeof insertNotificationSchema>;
+export type InsertNotificationCampaign = z.infer<typeof insertNotificationCampaignSchema>;
+export type InsertUserActivity = z.infer<typeof insertUserActivitySchema>;
+export type SendNotificationRequest = z.infer<typeof sendNotificationSchema>;
+export type CreateCampaignRequest = z.infer<typeof createCampaignSchema>;
+export type UpdateNotificationPreferencesRequest = z.infer<typeof updateNotificationPreferencesSchema>;
+export type TrackUserActivityRequest = z.infer<typeof trackUserActivitySchema>;
