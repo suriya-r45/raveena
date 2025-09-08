@@ -322,22 +322,26 @@ export async function generateQRCode(data: ProductBarcodeData, productCode: stri
       fs.mkdirSync(uploadsDir, { recursive: true });
     }
 
-    // Generate a beautiful standalone product page instead of plain text
-    console.log('🎨 Creating stunning product showcase...');
-    const productPagePath = await generateStandaloneProductPage(data, productImagePath);
+    // Generate a beautiful product card image with stunning background
+    console.log('🎨 Creating stunning product card image...');
+    const productCardImagePath = await generateStunningProductCard({
+      productData: data,
+      productImagePath,
+      backgroundStyle: 'luxury-gold' // Gorgeous gold luxury theme
+    });
     
     // Create the full URL that works independently of Replit
     // Get the current domain from environment or use localhost for development
     const baseUrl = process.env.REPL_URL || process.env.BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
-    const fullProductUrl = `${baseUrl}${productPagePath}`;
+    const fullProductImageUrl = `${baseUrl}${productCardImagePath}`;
     
-    console.log(`✨ Product showcase created: ${fullProductUrl}`);
+    console.log(`✨ Beautiful product card created: ${fullProductImageUrl}`);
 
-    // Generate QR code that links to the beautiful product page
+    // Generate QR code that links directly to the stunning product card image
     const filename = `qr-${productCode.replace(/[^a-zA-Z0-9]/g, '_')}-${Date.now()}.png`;
     const imagePath = path.join(uploadsDir, filename);
     
-    await QRCode.toFile(imagePath, fullProductUrl, {
+    await QRCode.toFile(imagePath, fullProductImageUrl, {
       width: 300,
       margin: 4,
       color: {
@@ -349,7 +353,7 @@ export async function generateQRCode(data: ProductBarcodeData, productCode: stri
       scale: 10  // Higher scale for crisp printing
     });
 
-    console.log('🔗 QR Code generated successfully! Scanning will show beautiful product showcase');
+    console.log('🔗 QR Code generated successfully! Scanning will now show stunning product card image');
     return `/uploads/qrcodes/${filename}`;
   } catch (error) {
     console.error('Error generating stunning QR code:', error);
