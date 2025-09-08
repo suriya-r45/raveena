@@ -330,18 +330,34 @@ export async function generateQRCode(data: ProductBarcodeData, productCode: stri
       backgroundStyle: 'luxury-gold' // Gorgeous gold luxury theme
     });
     
-    // Create the full URL that works independently of Replit
-    // Get the current domain from environment or use localhost for development
-    const baseUrl = process.env.REPL_URL || process.env.BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
-    const fullProductImageUrl = `${baseUrl}${productCardImagePath}`;
+    // For production deployment, use the production domain
+    // For development/testing, create self-contained product info
+    let qrContent: string;
     
-    console.log(`✨ Beautiful product card created: ${fullProductImageUrl}`);
+    if (process.env.NODE_ENV === 'production' && process.env.REPL_URL) {
+      // Production: Link to hosted product card
+      const baseUrl = process.env.REPL_URL;
+      qrContent = `${baseUrl}${productCardImagePath}`;
+      console.log(`✨ Production QR: ${qrContent}`);
+    } else {
+      // Development/Self-contained: Create rich product info that opens beautifully
+      qrContent = `🏆 PALANIAPPA JEWELLERS
+💎 ${data.productName}
+📦 Code: ${data.productCode}
+⚱️ Purity: ${data.purity}
+⚖️ Weight: ${data.grossWeight} (Net: ${data.netWeight})
+💍 Stone: ${data.stones}
+💰 Price: ${data.approxPrice}
+📞 Contact: +91 994 206 1393
+🌐 Visit: Palaniappa Jewellers for exclusive collections`;
+      console.log(`✨ Self-contained QR created for testing`);
+    }
 
-    // Generate QR code that links directly to the stunning product card image
+    // Generate QR code with appropriate content
     const filename = `qr-${productCode.replace(/[^a-zA-Z0-9]/g, '_')}-${Date.now()}.png`;
     const imagePath = path.join(uploadsDir, filename);
     
-    await QRCode.toFile(imagePath, fullProductImageUrl, {
+    await QRCode.toFile(imagePath, qrContent, {
       width: 300,
       margin: 4,
       color: {
