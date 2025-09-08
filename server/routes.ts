@@ -12,6 +12,7 @@ import jwt from "jsonwebtoken";
 import PDFDocument from "pdfkit";
 import Stripe from "stripe";
 import { MetalRatesService } from "./services/testmetalRatesService.js";
+import NotificationService from "./services/notification-service.js";
 import twilio from "twilio";
 import { generateProductCode, generateBarcode, generateQRCode, ProductBarcodeData } from "./utils/barcode.js";
 import { recalculateAllMetalBasedProducts } from "./utils/pricing.js";
@@ -2921,6 +2922,313 @@ For any queries, please contact us.`;
   });
 
   // === END APP SETTINGS API ROUTES ===
+
+  // === NOTIFICATION API ROUTES ===
+  
+  // Send notification (Admin only)
+  app.post("/api/notifications/send", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const requestData = req.body;
+      
+      // Validate required fields
+      if (!requestData.type || !requestData.channels || !requestData.message) {
+        return res.status(400).json({ error: 'Missing required fields: type, channels, message' });
+      }
+
+      const results = await NotificationService.sendNotification(requestData);
+      
+      res.json({ 
+        success: true, 
+        results,
+        summary: {
+          total: results.length,
+          successful: results.filter(r => r.success).length,
+          failed: results.filter(r => !r.success).length
+        }
+      });
+    } catch (error) {
+      console.error('Error sending notification:', error);
+      res.status(500).json({ error: 'Failed to send notification' });
+    }
+  });
+
+  // Get notification service status
+  app.get("/api/notifications/status", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const status = NotificationService.getServiceStatus();
+      res.json(status);
+    } catch (error) {
+      console.error('Error getting notification status:', error);
+      res.status(500).json({ error: 'Failed to get notification status' });
+    }
+  });
+
+  // Get all notifications (Admin only)
+  app.get("/api/notifications", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const notifications = await storage.getAllNotifications();
+      res.json(notifications);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+      res.status(500).json({ error: 'Failed to fetch notifications' });
+    }
+  });
+
+  // Get user notifications (User can get their own, Admin can get any)
+  app.get("/api/notifications/user/:userId", authenticateToken, async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const currentUser = (req as any).user;
+
+      // Users can only access their own notifications unless they're admin
+      if (currentUser.role !== 'admin' && currentUser.id !== userId) {
+        return res.status(403).json({ error: 'Access denied' });
+      }
+
+      const notifications = await storage.getUserNotifications(userId);
+      res.json(notifications);
+    } catch (error) {
+      console.error('Error fetching user notifications:', error);
+      res.status(500).json({ error: 'Failed to fetch user notifications' });
+    }
+  });
+
+  // Get notification preferences (User can get their own, Admin can get any)
+  app.get("/api/notification-preferences/:userId", authenticateToken, async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const currentUser = (req as any).user;
+
+      // Users can only access their own preferences unless they're admin
+      if (currentUser.role !== 'admin' && currentUser.id !== userId) {
+        return res.status(403).json({ error: 'Access denied' });
+      }
+
+      const preferences = await storage.getNotificationPreferences(userId);
+      
+      // Return default preferences if none exist
+      if (!preferences) {
+        return res.json({
+          userId,
+          orderUpdatesEmail: true,
+          orderUpdatesSms: false,
+          orderUpdatesWhatsapp: false,
+          marketingEmail: true,
+          marketingSms: false,
+          marketingWhatsapp: false,
+          productLaunchEmail: true,
+          productLaunchSms: false,
+          productLaunchWhatsapp: false,
+          festivalOffersEmail: true,
+          festivalOffersSms: false,
+          festivalOffersWhatsapp: false,
+          personalizedEmail: true,
+          personalizedSms: false,
+          personalizedWhatsapp: false
+        });
+      }
+
+      res.json(preferences);
+    } catch (error) {
+      console.error('Error fetching notification preferences:', error);
+      res.status(500).json({ error: 'Failed to fetch notification preferences' });
+    }
+  });
+
+  // Update notification preferences (User can update their own, Admin can update any)
+  app.put("/api/notification-preferences/:userId", authenticateToken, async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const currentUser = (req as any).user;
+
+      // Users can only update their own preferences unless they're admin
+      if (currentUser.role !== 'admin' && currentUser.id !== userId) {
+        return res.status(403).json({ error: 'Access denied' });
+      }
+
+      const preferences = req.body;
+
+      // Check if preferences exist
+      const existingPreferences = await storage.getNotificationPreferences(userId);
+
+      let result;
+      if (existingPreferences) {
+        result = await storage.updateNotificationPreferences(userId, preferences);
+      } else {
+        result = await storage.createNotificationPreferences({ userId, ...preferences });
+      }
+
+      if (!result) {
+        return res.status(404).json({ error: 'Failed to update preferences' });
+      }
+
+      res.json(result);
+    } catch (error) {
+      console.error('Error updating notification preferences:', error);
+      res.status(500).json({ error: 'Failed to update notification preferences' });
+    }
+  });
+
+  // Get all notification templates (Admin only)
+  app.get("/api/notification-templates", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const templates = await storage.getAllNotificationTemplates();
+      res.json(templates);
+    } catch (error) {
+      console.error('Error fetching notification templates:', error);
+      res.status(500).json({ error: 'Failed to fetch notification templates' });
+    }
+  });
+
+  // Get single notification template (Admin only)
+  app.get("/api/notification-templates/:id", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const template = await storage.getNotificationTemplateById(req.params.id);
+      if (!template) {
+        return res.status(404).json({ error: 'Template not found' });
+      }
+      res.json(template);
+    } catch (error) {
+      console.error('Error fetching notification template:', error);
+      res.status(500).json({ error: 'Failed to fetch notification template' });
+    }
+  });
+
+  // Create notification template (Admin only)
+  app.post("/api/notification-templates", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const templateData = req.body;
+      
+      // Basic validation
+      if (!templateData.name || !templateData.type) {
+        return res.status(400).json({ error: 'Template name and type are required' });
+      }
+
+      const template = await storage.createNotificationTemplate(templateData);
+      res.status(201).json(template);
+    } catch (error) {
+      console.error('Error creating notification template:', error);
+      res.status(500).json({ error: 'Failed to create notification template' });
+    }
+  });
+
+  // Update notification template (Admin only)
+  app.put("/api/notification-templates/:id", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+
+      const template = await storage.updateNotificationTemplate(id, updates);
+
+      if (!template) {
+        return res.status(404).json({ error: 'Template not found' });
+      }
+
+      res.json(template);
+    } catch (error) {
+      console.error('Error updating notification template:', error);
+      res.status(500).json({ error: 'Failed to update notification template' });
+    }
+  });
+
+  // Delete notification template (Admin only)
+  app.delete("/api/notification-templates/:id", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const deleted = await storage.deleteNotificationTemplate(id);
+
+      if (!deleted) {
+        return res.status(404).json({ error: 'Template not found' });
+      }
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error deleting notification template:', error);
+      res.status(500).json({ error: 'Failed to delete notification template' });
+    }
+  });
+
+  // Send order update notification (Internal use, can be called from order status changes)
+  app.post("/api/notifications/order-update", async (req, res) => {
+    try {
+      const { orderId, status, customerEmail, customerPhone, customerName } = req.body;
+      
+      if (!orderId || !status || !customerEmail) {
+        return res.status(400).json({ error: 'Missing required fields' });
+      }
+
+      await NotificationService.sendOrderUpdate(
+        orderId,
+        status,
+        customerEmail,
+        customerPhone || '',
+        customerName || 'Valued Customer'
+      );
+
+      res.json({ success: true, message: 'Order update notification sent' });
+    } catch (error) {
+      console.error('Error sending order update notification:', error);
+      res.status(500).json({ error: 'Failed to send order update notification' });
+    }
+  });
+
+  // Track user activity (Can be called from frontend to track engagement)
+  app.post("/api/notifications/track-activity", authenticateToken, async (req, res) => {
+    try {
+      const currentUser = (req as any).user;
+      const { activityType, details, productId, orderId } = req.body;
+      
+      if (!activityType) {
+        return res.status(400).json({ error: 'Activity type is required' });
+      }
+
+      await NotificationService.trackActivity({
+        userId: currentUser.id,
+        activityType,
+        details: details || '',
+        productId,
+        orderId,
+        sessionId: req.sessionID || 'unknown',
+        ipAddress: req.ip || '',
+        userAgent: req.get('User-Agent') || ''
+      });
+
+      res.json({ success: true, message: 'Activity tracked' });
+    } catch (error) {
+      console.error('Error tracking user activity:', error);
+      res.status(500).json({ error: 'Failed to track activity' });
+    }
+  });
+
+  // Get notification campaigns (Admin only)
+  app.get("/api/notification-campaigns", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const campaigns = await storage.getAllNotificationCampaigns();
+      res.json(campaigns);
+    } catch (error) {
+      console.error('Error fetching notification campaigns:', error);
+      res.status(500).json({ error: 'Failed to fetch notification campaigns' });
+    }
+  });
+
+  // Create notification campaign (Admin only)
+  app.post("/api/notification-campaigns", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const campaignData = req.body;
+      
+      if (!campaignData.name || !campaignData.type) {
+        return res.status(400).json({ error: 'Campaign name and type are required' });
+      }
+
+      const campaign = await storage.createNotificationCampaign(campaignData);
+      res.status(201).json(campaign);
+    } catch (error) {
+      console.error('Error creating notification campaign:', error);
+      res.status(500).json({ error: 'Failed to create notification campaign' });
+    }
+  });
+
+  // === END NOTIFICATION API ROUTES ===
 
   // QR codes now contain text-only data, no URL redirects needed
   // Customers can scan QR codes directly to see product information
