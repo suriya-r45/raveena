@@ -5,10 +5,13 @@ import bcrypt from "bcryptjs";
 
 export interface IStorage {
   // User operations
+  getAllUsers(): Promise<User[]>;
   getUser(id: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByPhone(phone: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: string, user: Partial<Omit<InsertUser, 'password'>> & { password?: string }): Promise<User | undefined>;
+  deleteUser(id: string): Promise<boolean>;
   authenticateUser(email: string, password: string): Promise<User | null>;
   updateStripeCustomerId(userId: string, customerId: string): Promise<User | undefined>;
   updateUserStripeInfo(userId: string, stripeInfo: { customerId: string; subscriptionId: string }): Promise<User | undefined>;
@@ -161,6 +164,11 @@ export interface ProductFilters {
 
 export class DatabaseStorage implements IStorage {
   // User operations
+  async getAllUsers(): Promise<User[]> {
+    const allUsers = await db.select().from(users).orderBy(desc(users.createdAt));
+    return allUsers;
+  }
+
   async getUser(id: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user || undefined;
@@ -186,6 +194,27 @@ export class DatabaseStorage implements IStorage {
       })
       .returning();
     return user;
+  }
+
+  async updateUser(id: string, userData: Partial<Omit<InsertUser, 'password'>> & { password?: string }): Promise<User | undefined> {
+    const updateData: any = { ...userData };
+    
+    // Hash password if it's being updated
+    if (userData.password) {
+      updateData.password = await bcrypt.hash(userData.password, 10);
+    }
+
+    const [updatedUser] = await db
+      .update(users)
+      .set(updateData)
+      .where(eq(users.id, id))
+      .returning();
+    return updatedUser || undefined;
+  }
+
+  async deleteUser(id: string): Promise<boolean> {
+    const result = await db.delete(users).where(eq(users.id, id));
+    return result.rowCount !== null && result.rowCount > 0;
   }
 
   async authenticateUser(email: string, password: string): Promise<User | null> {
