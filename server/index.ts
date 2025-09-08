@@ -7,9 +7,13 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
+export const jwtSecret = process.env.JWT_SECRET;
+
 // Recreate __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+dotenv.config({ path: path.join(__dirname, "../.env") });
 
 const app = express();
 app.use(express.json());
@@ -80,11 +84,11 @@ app.use("/attached_assets", express.static(path.join(__dirname, "../attached_ass
   await initializeShippingData();
 
   // Start server
+  // Remove `server` and just use `app.listen`
   const port = parseInt(process.env.PORT || '5000', 10);
-  server.listen(
-    { port, host: "0.0.0.0", reusePort: true },
-    () => {
-      log(`serving on port ${port}`);
-    }
-  );
+
+  app.listen(port, "0.0.0.0", () => {
+    log(`Server is running on port ${port}`);
+  });
+
 })();

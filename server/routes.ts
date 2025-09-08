@@ -55,17 +55,17 @@ const ADMIN_CREDENTIALS = {
 // WhatsApp messaging function
 async function sendWelcomeWhatsAppMessage(name: string, phone: string) {
   const message = `✨ Welcome, ${name}! You are now part of the Palaniappa Jewellers legacy, where every jewel is crafted for elegance that lasts generations.`;
-  
+
   // Format phone number for WhatsApp (remove any non-numeric characters except +)
   const formattedPhone = phone.replace(/[^\d+]/g, '');
-  
+
   // Create WhatsApp URL
   const whatsappUrl = `https://wa.me/${formattedPhone.replace('+', '')}?text=${encodeURIComponent(message)}`;
-  
+
   // For now, we'll log the message. In production, you would integrate with WhatsApp Business API
   console.log(`WhatsApp welcome message for ${name} (${phone}): ${message}`);
   console.log(`WhatsApp URL: ${whatsappUrl}`);
-  
+
   // Return the URL so it can be used if needed
   return whatsappUrl;
 }
@@ -73,7 +73,7 @@ async function sendWelcomeWhatsAppMessage(name: string, phone: string) {
 // Function to send WhatsApp notification to admin for new orders
 async function sendAdminOrderNotification(billData: any) {
   const adminPhone = "+919597201554"; // Admin WhatsApp number
-  
+
   const message = `🔔 NEW ORDER RECEIVED!
 
 ` +
@@ -96,7 +96,7 @@ async function sendAdminOrderNotification(billData: any) {
 
 ` +
     `Palaniappa Jewellers - Admin Alert`;
-  
+
   try {
     if (!twilioClient) {
       console.log('[WhatsApp Notification] Twilio not configured, logging notification instead');
@@ -143,7 +143,7 @@ Contact: +919597201554`;
       // Add +91 for Indian numbers if no country code
       formattedPhone = '+91' + formattedPhone;
     }
-    
+
     console.log(`[SMS Debug] Original phone: ${phone}, Formatted phone: ${formattedPhone}`);
 
     if (!twilioClient) {
@@ -159,7 +159,7 @@ Contact: +919597201554`;
 
     console.log(`[SMS Sent] OTP ${otp} sent to ${name} (${phone}) - Message SID: ${twilioMessage.sid}`);
     console.log(`[SMS Details] Status: ${twilioMessage.status}, From: ${process.env.TWILIO_PHONE_NUMBER}, To: ${formattedPhone}`);
-    
+
     // Check message status after a brief delay
     setTimeout(async () => {
       try {
@@ -169,7 +169,7 @@ Contact: +919597201554`;
         console.log(`[SMS Status Error] Could not fetch status: ${error}`);
       }
     }, 5000);
-    
+
     return { success: true, messageSid: twilioMessage.sid };
   } catch (error) {
     console.error(`[SMS Error] Failed to send OTP to ${phone}:`, error);
@@ -303,7 +303,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/auth/send-otp", async (req, res) => {
     try {
       const { phone } = req.body;
-      
+
       if (!phone || phone.length < 10) {
         return res.status(400).json({ message: "Valid phone number is required" });
       }
@@ -316,7 +316,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Generate 6-digit OTP
       const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-      
+
       // Set OTP expiry to 10 minutes from now
       const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
 
@@ -326,14 +326,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Send OTP via SMS
       const smsResult = await sendOtpSMS(user.name, phone, otpCode);
       if (!smsResult.success) {
-        return res.status(500).json({ 
-          success: false, 
-          message: "Failed to send OTP. Please try again." 
+        return res.status(500).json({
+          success: false,
+          message: "Failed to send OTP. Please try again."
         });
       }
 
-      res.json({ 
-        success: true, 
+      res.json({
+        success: true,
         message: "OTP sent to your phone number via SMS",
         phone: phone
       });
@@ -346,7 +346,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/auth/verify-otp", async (req, res) => {
     try {
       const { phone, otp } = req.body;
-      
+
       if (!phone || !otp) {
         return res.status(400).json({ message: "Phone number and OTP are required" });
       }
@@ -376,11 +376,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         { expiresIn: '24h' }
       );
 
-      res.json({ 
-        success: true, 
-        user: { id: user.id, email: user.email, role: user.role, name: user.name }, 
+      res.json({
+        success: true,
+        user: { id: user.id, email: user.email, role: user.role, name: user.name },
         token,
-        message: "OTP verified successfully, you are now logged in!" 
+        message: "OTP verified successfully, you are now logged in!"
       });
     } catch (error) {
       console.error("Error verifying OTP:", error);
@@ -391,7 +391,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/auth/reset-password", async (req, res) => {
     try {
       const { phone, otp, newPassword } = req.body;
-      
+
       if (!phone || !otp || !newPassword) {
         return res.status(400).json({ message: "Phone number, OTP, and new password are required" });
       }
@@ -417,13 +417,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Reset password
       await storage.updateUserPassword(user.id, newPassword);
-      
+
       // Clear OTP data
       await storage.clearUserOtp(user.id);
 
-      res.json({ 
-        success: true, 
-        message: "Password reset successfully! You can now login with your new password." 
+      res.json({
+        success: true,
+        message: "Password reset successfully! You can now login with your new password."
       });
     } catch (error) {
       console.error("Error resetting password:", error);
@@ -490,7 +490,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Wait for all essential operations
       const [productCode, imageUrls, goldRateAtCreation] = await Promise.all([
         productCodePromise,
-        imageUrlsPromise, 
+        imageUrlsPromise,
         goldRatePromise
       ]);
 
@@ -524,9 +524,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             generateBarcode(JSON.stringify(barcodeData), productCode),
             generateQRCode(barcodeData, productCode, imageUrls[0]) // Pass first product image for showcase
           ]);
-          
+
           // Update product with both barcode and QR code paths
-          await storage.updateProduct(product.id, { 
+          await storage.updateProduct(product.id, {
             barcodeImageUrl: barcodeResult.imagePath,
             // You may want to add a qrCodeImageUrl field to the schema
             // qrCodeImageUrl: qrCodePath
@@ -549,14 +549,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/products/test/showcase", async (req, res) => {
     try {
       const { generateStunningProductCard } = await import("./utils/product-card-generator.js");
-      
+
       // Create test product data
       const testProductData: ProductBarcodeData = {
         productCode: "PJ-RN-BIRR-2025-002",
         productName: "Silver 925 Birthstone Rings",
         purity: "925",
         grossWeight: "6.00 g",
-        netWeight: "6.00 g", 
+        netWeight: "6.00 g",
         stones: "None",
         goldRate: "N/A",
         approxPrice: "₹570"
@@ -567,12 +567,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         productData: testProductData,
         backgroundStyle: 'luxury-gold'
       });
-      
+
       // Get the base URL for the current environment
       const baseUrl = process.env.REPL_URL || process.env.BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
       const fullUrl = `${baseUrl}${imagePath}`;
-      
-      res.json({ 
+
+      res.json({
         message: "Beautiful product card image created!",
         imageUrl: fullUrl,
         imagePath: imagePath,
@@ -589,7 +589,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const productId = req.params.id;
       const product = await storage.getProduct(productId);
-      
+
       if (!product) {
         return res.status(404).json({ message: "Product not found" });
       }
@@ -608,8 +608,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Generate new QR code with beautiful product showcase
       const qrCodePath = await generateQRCode(barcodeData, product.productCode || '', product.images[0] || '');
-      
-      res.json({ 
+
+      res.json({
         message: "QR code regenerated with beautiful product showcase!",
         productCode: product.productCode,
         productName: product.name,
@@ -743,13 +743,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { featured } = req.query;
       let videos;
-      
+
       if (featured === 'true') {
         videos = await storage.getFeaturedVideos();
       } else {
         videos = await storage.getAllVideos();
       }
-      
+
       res.json(videos);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch videos" });
@@ -775,10 +775,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const videoData = req.body;
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
-      
+
       let videoUrl = '';
       let thumbnailUrl = '';
-      
+
       // Handle video file upload
       if (files.video && files.video[0]) {
         const videoFile = files.video[0];
@@ -787,7 +787,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await fs.promises.rename(videoFile.path, videoFilepath);
         videoUrl = `/uploads/${videoFilename}`;
       }
-      
+
       // Handle thumbnail upload or auto-generate from product image
       if (files.thumbnail && files.thumbnail[0]) {
         const thumbnailFile = files.thumbnail[0];
@@ -808,7 +808,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.error('Failed to get product for thumbnail generation:', error);
         }
       }
-      
+
       const video = await storage.createVideo({
         title: videoData.title,
         description: videoData.description || '',
@@ -820,7 +820,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         isFeatured: videoData.isFeatured === 'true',
         displayOrder: videoData.displayOrder ? parseInt(videoData.displayOrder) : 0
       });
-      
+
       res.status(201).json(video);
     } catch (error) {
       console.error('Video creation error:', error);
@@ -835,7 +835,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const videoData = req.body;
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
-      
+
       let updateData: any = {
         title: videoData.title,
         description: videoData.description || '',
@@ -845,7 +845,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         isFeatured: videoData.isFeatured === 'true',
         displayOrder: videoData.displayOrder ? parseInt(videoData.displayOrder) : 0
       };
-      
+
       // Handle video file upload
       if (files.video && files.video[0]) {
         const videoFile = files.video[0];
@@ -854,7 +854,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await fs.promises.rename(videoFile.path, videoFilepath);
         updateData.videoUrl = `/uploads/${videoFilename}`;
       }
-      
+
       // Handle thumbnail upload
       if (files.thumbnail && files.thumbnail[0]) {
         const thumbnailFile = files.thumbnail[0];
@@ -863,12 +863,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await fs.promises.rename(thumbnailFile.path, thumbnailFilepath);
         updateData.thumbnailUrl = `/uploads/${thumbnailFilename}`;
       }
-      
+
       const video = await storage.updateVideo(req.params.id, updateData);
       if (!video) {
         return res.status(404).json({ message: "Video not found" });
       }
-      
+
       res.json(video);
     } catch (error) {
       res.status(400).json({ message: "Invalid video data" });
@@ -1025,7 +1025,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Format the bill for WhatsApp message with PDF link
       const currencySymbol = bill.currency === 'INR' ? '₹' : 'BD';
       const pdfUrl = `${req.protocol}://${req.get('host')}/api/bills/${bill.id}/pdf`;
-      
+
       const message = `*BILL GENERATED*
 
 *Palaniappa Jewellers Since 2025*
@@ -1043,9 +1043,9 @@ Address: ${bill.customerAddress}
 *Total Amount: ${currencySymbol} ${parseFloat(bill.total).toLocaleString()}*
 
 *Items:*
-${(typeof bill.items === 'string' ? JSON.parse(bill.items) : bill.items).map((item: any, index: number) => 
-  `${index + 1}. ${item.productName} - ${currencySymbol}${parseFloat(item.price).toLocaleString()} × ${item.quantity}`
-).join('\n')}
+${(typeof bill.items === 'string' ? JSON.parse(bill.items) : bill.items).map((item: any, index: number) =>
+        `${index + 1}. ${item.productName} - ${currencySymbol}${parseFloat(item.price).toLocaleString()} × ${item.quantity}`
+      ).join('\n')}
 
 ━━━━━━━━━━━━━━━━━━━━━
 *Payment Summary*
@@ -1095,8 +1095,8 @@ Premium quality, timeless beauty.`;
       }
 
       // Create PDF matching the sample bill format exactly
-      const doc = new PDFDocument({ 
-        size: 'A4', 
+      const doc = new PDFDocument({
+        size: 'A4',
         margin: 30,
         bufferPages: true,
         font: 'Helvetica',
@@ -1106,7 +1106,7 @@ Premium quality, timeless beauty.`;
           Subject: 'Tax Invoice',
         }
       });
-      
+
       const filename = `${bill.customerName.replace(/\s+/g, '_')}_${bill.billNumber.replace(/[\/\\]/g, '')}.pdf`;
 
       // Set headers for PDF download with better compatibility for WhatsApp
@@ -1128,39 +1128,39 @@ Premium quality, timeless beauty.`;
       // Add company logo (centered at top)
       try {
         const logoSize = 80;
-        doc.image('./client/public/company-logo.jpg', 
-                 (pageWidth - logoSize) / 2, currentY, { width: logoSize, height: logoSize });
+        doc.image('./client/public/company-logo.jpg',
+          (pageWidth - logoSize) / 2, currentY, { width: logoSize, height: logoSize });
         currentY += logoSize + 20;
       } catch (error) {
         // If no logo, add company name
         doc.fontSize(16)
-           .font('Helvetica-Bold')
-           .text('PALANIAPPA JEWELLERS', 0, currentY, { align: 'center', width: pageWidth });
+          .font('Helvetica-Bold')
+          .text('PALANIAPPA JEWELLERS', 0, currentY, { align: 'center', width: pageWidth });
         doc.fontSize(12)
-           .font('Helvetica')
-           .text('Since 2025', 0, currentY + 20, { align: 'center', width: pageWidth });
+          .font('Helvetica')
+          .text('Since 2025', 0, currentY + 20, { align: 'center', width: pageWidth });
         currentY += 45;
       }
 
       // Customer copy header (top right)
       doc.fontSize(10)
-         .font('Helvetica')
-         .text('CUSTOMER COPY', pageWidth - 120, 50)
-         .text(`Date: ${new Date(bill.createdAt!).toLocaleDateString('en-IN')} ${new Date(bill.createdAt!).toLocaleTimeString('en-IN')}`, pageWidth - 140, 65);
+        .font('Helvetica')
+        .text('CUSTOMER COPY', pageWidth - 120, 50)
+        .text(`Date: ${new Date(bill.createdAt!).toLocaleDateString('en-IN')} ${new Date(bill.createdAt!).toLocaleTimeString('en-IN')}`, pageWidth - 140, 65);
 
       currentY += 20;
 
       // TAX INVOICE header with border - matching preview style
       const headerY = currentY;
       doc.rect(margin, headerY, pageWidth - (margin * 2), 30)
-         .fill('#F5F5F5')
-         .stroke('#000000')
-         .lineWidth(1);
+        .fill('#F5F5F5')
+        .stroke('#000000')
+        .lineWidth(1);
 
       doc.fontSize(16)
-         .font('Helvetica-Bold')
-         .fillColor('#000000')
-         .text('TAX INVOICE', margin + 8, headerY + 8);
+        .font('Helvetica-Bold')
+        .fillColor('#000000')
+        .text('TAX INVOICE', margin + 8, headerY + 8);
 
       currentY += 40;
 
@@ -1168,43 +1168,43 @@ Premium quality, timeless beauty.`;
       const detailsY = currentY;
       const detailsHeight = 140;
       const leftColumnWidth = (pageWidth - margin * 2) / 2 - 10;
-      
+
       // Draw border around details section
       doc.rect(margin, detailsY, pageWidth - (margin * 2), detailsHeight)
-         .stroke('#000000')
-         .lineWidth(1);
-      
+        .stroke('#000000')
+        .lineWidth(1);
+
       // Left side - Company details
       doc.fontSize(11)
-         .font('Helvetica-Bold')
-         .fillColor('#000000')
-         .text('PALANIAPPA JEWELLERS', margin + 8, detailsY + 10);
-      
+        .font('Helvetica-Bold')
+        .fillColor('#000000')
+        .text('PALANIAPPA JEWELLERS', margin + 8, detailsY + 10);
+
       doc.fontSize(9)
-         .font('Helvetica')
-         .fillColor('#000000')
-         .text('Premium Jewelry Store', margin + 8, detailsY + 25)
-         .text('123 Jewelry Street', margin + 8, detailsY + 38)
-         .text('Chennai, Tamil Nadu', margin + 8, detailsY + 51)
-         .text('PINCODE: 600001', margin + 8, detailsY + 64)
-         .text('Phone Number: +919597201554', margin + 8, detailsY + 77)
-         .text('GSTIN: 33AAACT5712A124', margin + 8, detailsY + 90)
-         .text('Email: jewelerypalaniappa@gmail.com', margin + 8, detailsY + 103);
+        .font('Helvetica')
+        .fillColor('#000000')
+        .text('Premium Jewelry Store', margin + 8, detailsY + 25)
+        .text('123 Jewelry Street', margin + 8, detailsY + 38)
+        .text('Chennai, Tamil Nadu', margin + 8, detailsY + 51)
+        .text('PINCODE: 600001', margin + 8, detailsY + 64)
+        .text('Phone Number: +919597201554', margin + 8, detailsY + 77)
+        .text('GSTIN: 33AAACT5712A124', margin + 8, detailsY + 90)
+        .text('Email: jewelerypalaniappa@gmail.com', margin + 8, detailsY + 103);
 
       // Right side - Customer details
       const rightX = margin + leftColumnWidth + 20;
       doc.fontSize(11)
-         .font('Helvetica-Bold')
-         .fillColor('#000000')
-         .text('CUSTOMER DETAILS:', rightX, detailsY + 10);
-      
+        .font('Helvetica-Bold')
+        .fillColor('#000000')
+        .text('CUSTOMER DETAILS:', rightX, detailsY + 10);
+
       doc.fontSize(9)
-         .font('Helvetica')
-         .fillColor('#000000')
-         .text(`${bill.customerName || 'N/A'}`, rightX, detailsY + 25)
-         .text(`${bill.customerPhone || 'N/A'}`, rightX, detailsY + 38)
-         .text(`${bill.customerEmail || 'N/A'}`, rightX, detailsY + 51)
-         .text(`${bill.customerAddress || 'N/A'}`, rightX, detailsY + 64, { width: leftColumnWidth - 10 });
+        .font('Helvetica')
+        .fillColor('#000000')
+        .text(`${bill.customerName || 'N/A'}`, rightX, detailsY + 25)
+        .text(`${bill.customerPhone || 'N/A'}`, rightX, detailsY + 38)
+        .text(`${bill.customerEmail || 'N/A'}`, rightX, detailsY + 51)
+        .text(`${bill.customerAddress || 'N/A'}`, rightX, detailsY + 64, { width: leftColumnWidth - 10 });
 
       currentY = detailsY + detailsHeight + 20;
 
@@ -1215,17 +1215,17 @@ Premium quality, timeless beauty.`;
       const vatHeader = bill.currency === 'INR' ? 'GST (3%)' : 'VAT\n(5%)';
       const tableHeaders = ['Product\nDescription', 'Qty', 'Gross\nWeight(gms)', 'Net\nWeight(gms)', 'Product\nPrice', 'Making\nCharges', 'Discount', vatHeader, 'Value'];
       const colWidths = [80, 30, 60, 60, 60, 60, 60, 50, 60];
-      
+
       // Table header with gray background like preview
       doc.rect(margin, tableY, pageWidth - (margin * 2), 35)
-         .fill('#E5E5E5')
-         .stroke('#000000');
+        .fill('#E5E5E5')
+        .stroke('#000000');
 
       let headerX = margin + 2;
       doc.fontSize(8)
-         .font('Helvetica-Bold')
-         .fillColor('#000000');
-      
+        .font('Helvetica-Bold')
+        .fillColor('#000000');
+
       tableHeaders.forEach((header, i) => {
         doc.text(header, headerX, tableY + 8, { width: colWidths[i] - 2, align: 'center' });
         headerX += colWidths[i];
@@ -1235,67 +1235,67 @@ Premium quality, timeless beauty.`;
 
       // Table rows
       doc.fontSize(7)
-         .font('Helvetica');
+        .font('Helvetica');
 
       const currency = bill.currency === 'INR' ? 'Rs.' : 'BD';
-      
+
       bill.items.forEach((item, index) => {
         const rowY = currentY;
         const rowHeight = 25;
-        
+
         // Row background
         if (index % 2 === 1) {
           doc.rect(margin, rowY, pageWidth - (margin * 2), rowHeight)
-             .fill('#F8F8F8');
+            .fill('#F8F8F8');
         }
-        
+
         // Row border
         doc.rect(margin, rowY, pageWidth - (margin * 2), rowHeight)
-           .stroke('#000000');
+          .stroke('#000000');
 
         let cellX = margin + 3;
         doc.fillColor('#000000');
-        
+
         // Product Description
         doc.text(item.productName, cellX, rowY + 8, { width: colWidths[0] - 2 });
         cellX += colWidths[0];
-        
+
         // Purity
         doc.text('22K', cellX, rowY + 8, { width: colWidths[1] - 2, align: 'center' });
         cellX += colWidths[1];
-        
+
         // Net Weight
         const netWeight = parseFloat(item.netWeight) || 5.0;
         doc.text(netWeight.toFixed(3), cellX, rowY + 8, { width: colWidths[2] - 2, align: 'center' });
         cellX += colWidths[2];
-        
+
         // Gross Weight
         const grossWeight = parseFloat(item.grossWeight) || netWeight + 0.5;
         doc.text(grossWeight.toFixed(3), cellX, rowY + 8, { width: colWidths[3] - 2, align: 'center' });
         cellX += colWidths[3];
-        
+
         // Product Price
         const rate = bill.currency === 'INR' ? parseFloat(item.priceInr) : parseFloat(item.priceBhd);
         doc.text(`${currency} ${rate.toFixed(2)}`, cellX, rowY + 8, { width: colWidths[4] - 2, align: 'right' });
         cellX += colWidths[4];
-        
+
         // Making Charges
         const makingCharges = parseFloat(item.makingCharges) || 0;
         doc.text(`${currency} ${makingCharges.toFixed(2)}`, cellX, rowY + 8, { width: colWidths[5] - 2, align: 'right' });
         cellX += colWidths[5];
-        
+
         // Discount
         const discount = parseFloat(item.discount) || 0;
         doc.text(`${currency} ${discount.toFixed(2)}`, cellX, rowY + 8, { width: colWidths[6] - 2, align: 'right' });
         cellX += colWidths[6];
-        
+
         // Tax (GST for India, VAT for Bahrain)
         const tax = bill.currency === 'INR' ? parseFloat(item.sgst) + parseFloat(item.cgst) : parseFloat(item.vat);
         const taxLabel = bill.currency === 'INR' ? 'GST' : 'VAT';
         const taxPercentage = bill.currency === 'INR' ? '3' : '10';
         doc.text(`${taxLabel} (${taxPercentage}%)`, cellX, rowY + 8, { width: colWidths[7] - 2, align: 'center' });
         cellX += colWidths[7];
-        
+
         // Total Amount
         doc.text(`${currency} ${parseFloat(item.total).toFixed(2)}`, cellX, rowY + 8, { width: colWidths[8] - 2, align: 'right' });
 
@@ -1305,14 +1305,14 @@ Premium quality, timeless beauty.`;
       // Total row
       const totalRowY = currentY;
       doc.rect(margin, totalRowY, pageWidth - (margin * 2), 20)
-         .fill('#E5E5E5')
-         .stroke('#000000');
+        .fill('#E5E5E5')
+        .stroke('#000000');
 
       doc.fontSize(8)
-         .font('Helvetica-Bold')
-         .text('Total', margin + 5, totalRowY + 8)
-         .text(bill.items.length.toString(), margin + 120, totalRowY + 8, { align: 'center' })
-         .text(parseFloat(bill.total).toFixed(2), pageWidth - 80, totalRowY + 8, { align: 'right' });
+        .font('Helvetica-Bold')
+        .text('Total', margin + 5, totalRowY + 8)
+        .text(bill.items.length.toString(), margin + 120, totalRowY + 8, { align: 'center' })
+        .text(parseFloat(bill.total).toFixed(2), pageWidth - 80, totalRowY + 8, { align: 'right' });
 
       currentY = totalRowY + 30;
 
@@ -1321,39 +1321,39 @@ Premium quality, timeless beauty.`;
       const leftBoxWidth = (pageWidth - (margin * 2)) / 2 - 10;
       const rightBoxWidth = leftBoxWidth;
       const boxHeight = 100;
-      
+
       // Left box - Payment Details
       doc.rect(margin, summaryY, leftBoxWidth, boxHeight)
-         .stroke('#000000');
-      
+        .stroke('#000000');
+
       doc.fontSize(10)
-         .font('Helvetica-Bold')
-         .fillColor('#000000')
-         .text('Payment Details', margin + 5, summaryY + 5);
-      
+        .font('Helvetica-Bold')
+        .fillColor('#000000')
+        .text('Payment Details', margin + 5, summaryY + 5);
+
       // Payment details table
       doc.fontSize(8)
-         .font('Helvetica-Bold')
-         .text('Payment Mode', margin + 5, summaryY + 25)
-         .text('Amount (BHD)', margin + 120, summaryY + 25);
-      
+        .font('Helvetica-Bold')
+        .text('Payment Mode', margin + 5, summaryY + 25)
+        .text('Amount (BHD)', margin + 120, summaryY + 25);
+
       doc.font('Helvetica')
-         .text(bill.paymentMethod || 'CASH', margin + 5, summaryY + 40)
-         .text(`${currency}${parseFloat(bill.paidAmount).toFixed(2)}`, margin + 120, summaryY + 40);
-      
+        .text(bill.paymentMethod || 'CASH', margin + 5, summaryY + 40)
+        .text(`${currency}${parseFloat(bill.paidAmount).toFixed(2)}`, margin + 120, summaryY + 40);
+
       doc.font('Helvetica-Bold')
-         .text('Total Amount Paid', margin + 5, summaryY + 60)
-         .text(`${currency}${parseFloat(bill.paidAmount).toFixed(2)}`, margin + 120, summaryY + 60);
-      
+        .text('Total Amount Paid', margin + 5, summaryY + 60)
+        .text(`${currency}${parseFloat(bill.paidAmount).toFixed(2)}`, margin + 120, summaryY + 60);
+
       // Right box - Bill Summary
       const rightBoxX = margin + leftBoxWidth + 20;
       doc.rect(rightBoxX, summaryY, rightBoxWidth, boxHeight)
-         .stroke('#000000');
-      
+        .stroke('#000000');
+
       doc.fontSize(10)
-         .font('Helvetica-Bold')
-         .text('Bill Summary', rightBoxX + 5, summaryY + 5);
-      
+        .font('Helvetica-Bold')
+        .text('Bill Summary', rightBoxX + 5, summaryY + 5);
+
       // Bill summary details
       const subtotal = parseFloat(bill.subtotal);
       const makingCharges = parseFloat(bill.makingCharges);
@@ -1361,37 +1361,37 @@ Premium quality, timeless beauty.`;
       const gst = parseFloat(bill.gst) || 0;
       const vat = parseFloat(bill.vat) || 0;
       const taxAmount = bill.currency === 'INR' ? gst : vat;
-      
+
       doc.fontSize(8)
-         .font('Helvetica')
-         .text('Subtotal:', rightBoxX + 5, summaryY + 25)
-         .text(`${currency}${subtotal.toFixed(2)}`, rightBoxX + rightBoxWidth - 60, summaryY + 25, { align: 'right' })
-         .text('Making Charges:', rightBoxX + 5, summaryY + 38)
-         .text(`${currency}${makingCharges.toFixed(2)}`, rightBoxX + rightBoxWidth - 60, summaryY + 38, { align: 'right' })
-         .text(bill.currency === 'BHD' ? 'VAT:' : 'GST:', rightBoxX + 5, summaryY + 51)
-         .text(`${currency}${taxAmount.toFixed(2)}`, rightBoxX + rightBoxWidth - 60, summaryY + 51, { align: 'right' })
-         .text('Discount:', rightBoxX + 5, summaryY + 64)
-         .text(`${currency}${discount.toFixed(2)}`, rightBoxX + rightBoxWidth - 60, summaryY + 64, { align: 'right' });
-      
+        .font('Helvetica')
+        .text('Subtotal:', rightBoxX + 5, summaryY + 25)
+        .text(`${currency}${subtotal.toFixed(2)}`, rightBoxX + rightBoxWidth - 60, summaryY + 25, { align: 'right' })
+        .text('Making Charges:', rightBoxX + 5, summaryY + 38)
+        .text(`${currency}${makingCharges.toFixed(2)}`, rightBoxX + rightBoxWidth - 60, summaryY + 38, { align: 'right' })
+        .text(bill.currency === 'BHD' ? 'VAT:' : 'GST:', rightBoxX + 5, summaryY + 51)
+        .text(`${currency}${taxAmount.toFixed(2)}`, rightBoxX + rightBoxWidth - 60, summaryY + 51, { align: 'right' })
+        .text('Discount:', rightBoxX + 5, summaryY + 64)
+        .text(`${currency}${discount.toFixed(2)}`, rightBoxX + rightBoxWidth - 60, summaryY + 64, { align: 'right' });
+
       doc.font('Helvetica-Bold')
-         .text('Total Amount:', rightBoxX + 5, summaryY + 77)
-         .text(`${currency}${parseFloat(bill.total).toFixed(2)}`, rightBoxX + rightBoxWidth - 60, summaryY + 77, { align: 'right' });
+        .text('Total Amount:', rightBoxX + 5, summaryY + 77)
+        .text(`${currency}${parseFloat(bill.total).toFixed(2)}`, rightBoxX + rightBoxWidth - 60, summaryY + 77, { align: 'right' });
 
       currentY = summaryY + boxHeight + 10;
 
       // Amount in words section - matching preview
       doc.fontSize(8)
-         .font('Helvetica-Bold')
-         .fillColor('#000000')
-         .text('Amount in Words:', margin + 5, currentY + 10);
-      
+        .font('Helvetica-Bold')
+        .fillColor('#000000')
+        .text('Amount in Words:', margin + 5, currentY + 10);
+
       const total = parseFloat(bill.total);
-      const amountInWords = bill.currency === 'INR' 
+      const amountInWords = bill.currency === 'INR'
         ? `Rupees ${Math.floor(total)} and ${Math.round((total - Math.floor(total)) * 100)} Paise Only`
         : `Bahrain Dinars ${Math.floor(total)} and ${Math.round((total - Math.floor(total)) * 1000)} Fils Only`;
-      
+
       doc.font('Helvetica')
-         .text(amountInWords, margin + 90, currentY + 10);
+        .text(amountInWords, margin + 90, currentY + 10);
 
       currentY += 40;
 
@@ -1399,27 +1399,27 @@ Premium quality, timeless beauty.`;
       const totalSectionY = currentY;
       const totalBoxWidth = pageWidth - (margin * 2);
       const totalBoxHeight = 30;
-      
+
       // Black background box with yellow text - matching preview
       doc.rect(margin, totalSectionY, totalBoxWidth, totalBoxHeight)
-         .fill('#000000')
-         .stroke('#000000');
+        .fill('#000000')
+        .stroke('#000000');
 
       // Left side - "TOTAL AMOUNT TO BE PAID:"
       doc.fontSize(11)
-         .font('Helvetica-Bold')
-         .fillColor('#FFD700')
-         .text('TOTAL AMOUNT TO BE PAID:', margin + 10, totalSectionY + 8);
-      
+        .font('Helvetica-Bold')
+        .fillColor('#FFD700')
+        .text('TOTAL AMOUNT TO BE PAID:', margin + 10, totalSectionY + 8);
+
       // Right side - Amount with proper alignment
       const amountText = `${currency} ${parseFloat(bill.total).toFixed(2)}`;
       doc.fontSize(11)
-         .font('Helvetica-Bold')
-         .fillColor('#FFD700')
-         .text(amountText, margin + totalBoxWidth - 150, totalSectionY + 8, { 
-           align: 'right',
-           width: 140
-         });
+        .font('Helvetica-Bold')
+        .fillColor('#FFD700')
+        .text(amountText, margin + totalBoxWidth - 150, totalSectionY + 8, {
+          align: 'right',
+          width: 140
+        });
 
       currentY = totalSectionY + totalBoxHeight + 20;
 
@@ -1427,16 +1427,16 @@ Premium quality, timeless beauty.`;
 
       // Footer text - matching preview exactly
       doc.fontSize(8)
-         .font('Helvetica')
-         .fillColor('#666666')
-         .text('This is a computer-generated bill.No signature required', 0, currentY, { 
-           align: 'center', 
-           width: pageWidth 
-         })
-         .text('Thank you for shopping with Palaniappa Jewellery!', 0, currentY + 15, { 
-           align: 'center', 
-           width: pageWidth 
-         });
+        .font('Helvetica')
+        .fillColor('#666666')
+        .text('This is a computer-generated bill.No signature required', 0, currentY, {
+          align: 'center',
+          width: pageWidth
+        })
+        .text('Thank you for shopping with Palaniappa Jewellery!', 0, currentY + 15, {
+          align: 'center',
+          width: pageWidth
+        });
 
       doc.end();
     } catch (error) {
@@ -1449,7 +1449,7 @@ Premium quality, timeless beauty.`;
   app.post("/api/create-payment-intent", async (req, res) => {
     try {
       const { amount, currency = 'inr', items } = req.body;
-      
+
       if (!amount || amount <= 0) {
         return res.status(400).json({ message: "Invalid amount" });
       }
@@ -1477,7 +1477,7 @@ Premium quality, timeless beauty.`;
   app.post("/api/orders", authenticateToken, async (req, res) => {
     try {
       const orderData = req.body;
-      
+
       // Generate order number
       const orderCount = (await storage.getAllBills()).length; // Reuse bill count for now
       const date = new Date();
@@ -1569,7 +1569,7 @@ Premium quality, timeless beauty.`;
     try {
       // For now, get bills as orders since they're being used for order storage
       const bills = await storage.getAllBills();
-      
+
       // Transform bills to order format for frontend
       const orders = bills.map(bill => ({
         id: bill.id,
@@ -1608,13 +1608,13 @@ Premium quality, timeless beauty.`;
       const rates = await MetalRatesService.getLatestRates(
         market as "INDIA" | "BAHRAIN" | undefined
       );
-      
+
       res.json(rates);
     } catch (error: any) {
       console.error("Error fetching metal rates:", error);
-      res.status(500).json({ 
+      res.status(500).json({
         message: "Failed to fetch metal rates",
-        error: error.message 
+        error: error.message
       });
     }
   });
@@ -1625,16 +1625,16 @@ Premium quality, timeless beauty.`;
       // Metal rates are now static - remove this call
       // await MetalRatesService.fetchLiveRates();
       const rates = await MetalRatesService.getLatestRates();
-      
-      res.json({ 
-        message: "Metal rates updated successfully", 
-        rates 
+
+      res.json({
+        message: "Metal rates updated successfully",
+        rates
       });
     } catch (error: any) {
       console.error("Error updating metal rates:", error);
-      res.status(500).json({ 
+      res.status(500).json({
         message: "Failed to update metal rates",
-        error: error.message 
+        error: error.message
       });
     }
   });
@@ -1642,13 +1642,13 @@ Premium quality, timeless beauty.`;
   // Manual update metal rates (admin only)
   app.post("/api/metal-rates/manual-update", authenticateToken, requireAdmin, async (req, res) => {
     try {
-      const { 
-        indiaGold22k, 
-        indiaGold18k, 
-        indiaSilver, 
-        bahrainGold22k, 
-        bahrainGold18k, 
-        bahrainSilver 
+      const {
+        indiaGold22k,
+        indiaGold18k,
+        indiaSilver,
+        bahrainGold22k,
+        bahrainGold18k,
+        bahrainSilver
       } = req.body;
 
       const updatePromises = [];
@@ -1747,17 +1747,17 @@ Premium quality, timeless beauty.`;
 
       // Get updated rates to return
       const updatedRates = await MetalRatesService.getLatestRates();
-      
-      res.json({ 
-        message: "Metal rates updated manually and product prices recalculated", 
+
+      res.json({
+        message: "Metal rates updated manually and product prices recalculated",
         updatesCount: updatePromises.length,
         rates: updatedRates
       });
     } catch (error: any) {
       console.error("Error updating metal rates manually:", error);
-      res.status(500).json({ 
+      res.status(500).json({
         message: "Failed to update metal rates manually",
-        error: error.message 
+        error: error.message
       });
     }
   });
@@ -1787,7 +1787,7 @@ Premium quality, timeless beauty.`;
     try {
       const estimateId = req.params.id;
       const estimate = await storage.getEstimate(estimateId);
-      
+
       if (!estimate) {
         return res.status(404).json({ error: 'Estimate not found' });
       }
@@ -1815,11 +1815,11 @@ Premium quality, timeless beauty.`;
     try {
       const estimateId = req.params.id;
       const estimate = await storage.getEstimate(estimateId);
-      
+
       if (!estimate) {
         return res.status(404).json({ error: 'Estimate not found' });
       }
-      
+
       // Create detailed WhatsApp message (fallback approach)
       const formatCurrency = (value: string | number): string => {
         const num = typeof value === 'string' ? parseFloat(value) : value;
@@ -1872,7 +1872,7 @@ Thank you for choosing Palaniappa Jewellers! 🙏
 For any queries, please contact us.`;
 
       const whatsappUrl = `https://wa.me/${estimate.customerPhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
-      
+
       // Mark as sent to WhatsApp
       await storage.updateEstimate(estimateId, { sentToWhatsApp: true });
 
@@ -1955,11 +1955,11 @@ For any queries, please contact us.`;
       const { id } = req.params;
       const updateData = updateCategorySchema.parse({ ...req.body, id });
       const category = await storage.updateCategory(id, updateData);
-      
+
       if (!category) {
         return res.status(404).json({ error: 'Category not found' });
       }
-      
+
       res.json(category);
     } catch (error) {
       console.error('Error updating category:', error);
@@ -1975,13 +1975,13 @@ For any queries, please contact us.`;
     try {
       const { id } = req.params;
       const success = await storage.deleteCategory(id);
-      
+
       if (!success) {
-        return res.status(400).json({ 
-          error: 'Cannot delete category. It may have subcategories or be used by products.' 
+        return res.status(400).json({
+          error: 'Cannot delete category. It may have subcategories or be used by products.'
         });
       }
-      
+
       res.json({ message: 'Category deleted successfully' });
     } catch (error) {
       console.error('Error deleting category:', error);
@@ -1993,17 +1993,17 @@ For any queries, please contact us.`;
   app.post("/api/categories/reorder", authenticateToken, requireAdmin, async (req, res) => {
     try {
       const { categoryIds } = req.body;
-      
+
       if (!Array.isArray(categoryIds)) {
         return res.status(400).json({ error: 'categoryIds must be an array' });
       }
-      
+
       const success = await storage.reorderCategories(categoryIds);
-      
+
       if (!success) {
         return res.status(400).json({ error: 'Failed to reorder categories' });
       }
-      
+
       res.json({ message: 'Categories reordered successfully' });
     } catch (error) {
       console.error('Error reordering categories:', error);
@@ -2091,7 +2091,7 @@ For any queries, please contact us.`;
         }
       }
 
-      res.json({ 
+      res.json({
         message: 'Initial categories created successfully',
         mainCategories: initialCategories.length,
         subcategories: createdSubcategories
@@ -2114,7 +2114,7 @@ For any queries, please contact us.`;
       // Check if user is admin - if so, show all sections (active and inactive)
       // If not admin or not authenticated, show only active sections
       const isAdmin = (req as any).user?.role === 'admin';
-      const sections = isAdmin 
+      const sections = isAdmin
         ? await storage.getAllHomeSectionsForAdmin()
         : await storage.getAllHomeSections();
       res.json(sections);
@@ -2231,7 +2231,7 @@ For any queries, please contact us.`;
               product.id
             );
             console.log(`✨ Vintage image created: ${vintageImagePath}`);
-            
+
             // Store the vintage image path in a custom field or override the display
             // We'll add this as custom data for festival sections
             itemData.customImageUrl = vintageImagePath;
@@ -2288,7 +2288,7 @@ For any queries, please contact us.`;
   app.post("/api/home-sections/reorder", authenticateToken, requireAdmin, async (req, res) => {
     try {
       const { sectionOrders } = req.body; // Array of { id, displayOrder }
-      
+
       if (!Array.isArray(sectionOrders)) {
         return res.status(400).json({ error: 'sectionOrders must be an array' });
       }
@@ -2296,7 +2296,7 @@ For any queries, please contact us.`;
       for (const { id, displayOrder } of sectionOrders) {
         await storage.updateHomeSection(id, { displayOrder });
       }
-      
+
       res.json({ message: 'Home sections reordered successfully' });
     } catch (error) {
       console.error('Error reordering home sections:', error);
@@ -2315,28 +2315,28 @@ For any queries, please contact us.`;
       const originalExt = path.extname(req.file.originalname).toLowerCase();
       const useWebp = ['.jpg', '.jpeg', '.png'].includes(originalExt);
       const outputExt = useWebp ? '.webp' : originalExt;
-      
+
       const filename = `festival-${Date.now()}-${req.file.originalname.split('.')[0]}${outputExt}`;
       const filepath = path.join(uploadsDir, filename);
-      
+
       try {
         // Check if Sharp can handle this file format first
         const metadata = await sharp(req.file.path).metadata();
-        
+
         // If we got metadata, proceed with Sharp processing
         let sharpInstance = sharp(req.file.path)
-          .resize(1920, 1080, { 
-            fit: 'inside', 
-            withoutEnlargement: true 
+          .resize(1920, 1080, {
+            fit: 'inside',
+            withoutEnlargement: true
           });
-        
+
         if (useWebp && metadata.format && ['jpeg', 'jpg', 'png'].includes(metadata.format)) {
-          sharpInstance = sharpInstance.webp({ 
-            quality: 90, 
-            effort: 4 
+          sharpInstance = sharpInstance.webp({
+            quality: 90,
+            effort: 4
           });
         }
-        
+
         await sharpInstance.toFile(filepath);
       } catch (sharpError) {
         console.warn('Sharp processing failed, using direct file copy:', sharpError);
@@ -2346,16 +2346,16 @@ For any queries, please contact us.`;
         await fs.promises.copyFile(req.file.path, fallbackFilepath);
         // Update the response path
         const imagePath = `/uploads/${fallbackFilename}`;
-        
+
         // Clean up temp file
         await fs.promises.unlink(req.file.path);
-        
+
         return res.json({ imagePath });
       }
-      
+
       // Clean up temp file
       await fs.promises.unlink(req.file.path);
-      
+
       const imagePath = `/uploads/${filename}`;
       res.json({ imagePath });
     } catch (error) {
@@ -2435,7 +2435,7 @@ For any queries, please contact us.`;
   app.get("/api/shipping/methods", async (req, res) => {
     try {
       const { zoneId, country } = req.query;
-      
+
       let methods;
       if (zoneId) {
         methods = await storage.getShippingMethodsByZone(zoneId as string);
@@ -2444,7 +2444,7 @@ For any queries, please contact us.`;
       } else {
         methods = await storage.getAllShippingMethods();
       }
-      
+
       res.json(methods);
     } catch (error) {
       console.error('Error fetching shipping methods:', error);
@@ -2527,7 +2527,7 @@ For any queries, please contact us.`;
     try {
       const validatedData = calculateShippingSchema.parse(req.body);
       const { recipientCountry, packageWeight, packageValue, currency } = validatedData;
-      
+
       const result = await storage.calculateShippingCost(recipientCountry, packageWeight, packageValue, currency);
       res.json(result);
     } catch (error) {
@@ -2543,7 +2543,7 @@ For any queries, please contact us.`;
   app.get("/api/shipments", authenticateToken, async (req, res) => {
     try {
       const { orderId, trackingNumber } = req.query;
-      
+
       let shipments;
       if (orderId) {
         shipments = await storage.getShipmentsByOrder(orderId as string);
@@ -2553,7 +2553,7 @@ For any queries, please contact us.`;
       } else {
         shipments = await storage.getAllShipments();
       }
-      
+
       res.json(shipments);
     } catch (error) {
       console.error('Error fetching shipments:', error);
@@ -2609,18 +2609,18 @@ For any queries, please contact us.`;
       const { id } = req.params;
       const validatedData = updateShipmentStatusSchema.parse(req.body);
       const { status, trackingEvents, estimatedDeliveryDate, actualDeliveryDate, notes } = validatedData;
-      
+
       let shipment = await storage.updateShipmentStatus(id, status, trackingEvents);
-      
+
       if (estimatedDeliveryDate || actualDeliveryDate || notes) {
         const updateData: any = {};
         if (estimatedDeliveryDate) updateData.estimatedDeliveryDate = estimatedDeliveryDate;
         if (actualDeliveryDate) updateData.actualDeliveryDate = actualDeliveryDate;
         if (notes) updateData.notes = notes;
-        
+
         shipment = await storage.updateShipment(id, updateData);
       }
-      
+
       if (!shipment) {
         return res.status(404).json({ error: 'Shipment not found' });
       }
@@ -2639,11 +2639,11 @@ For any queries, please contact us.`;
     try {
       const { trackingNumber } = req.params;
       const shipment = await storage.getShipmentByTrackingNumber(trackingNumber);
-      
+
       if (!shipment) {
         return res.status(404).json({ error: 'Tracking number not found' });
       }
-      
+
       // Return limited tracking information for public access
       const publicTrackingInfo = {
         trackingNumber: shipment.trackingNumber,
@@ -2657,7 +2657,7 @@ For any queries, please contact us.`;
         recipientState: shipment.recipientState,
         recipientCountry: shipment.recipientCountry,
       };
-      
+
       res.json(publicTrackingInfo);
     } catch (error) {
       console.error('Error tracking shipment:', error);
@@ -2723,11 +2723,11 @@ For any queries, please contact us.`;
     try {
       const { key } = req.params;
       const setting = await storage.getAppSetting(key);
-      
+
       if (!setting) {
         return res.status(404).json({ error: 'Setting not found' });
       }
-      
+
       res.json(setting);
     } catch (error) {
       console.error('Error fetching app setting:', error);
@@ -2740,8 +2740,8 @@ For any queries, please contact us.`;
     try {
       const validatedData = updateAppSettingSchema.parse(req.body);
       const setting = await storage.setAppSetting(
-        validatedData.key, 
-        validatedData.value, 
+        validatedData.key,
+        validatedData.value,
         validatedData.description
       );
       res.json(setting);
@@ -2759,13 +2759,13 @@ For any queries, please contact us.`;
     try {
       const { key } = req.params;
       const { value, description } = req.body;
-      
+
       const setting = await storage.updateAppSetting(key, value, description);
-      
+
       if (!setting) {
         return res.status(404).json({ error: 'Setting not found' });
       }
-      
+
       res.json(setting);
     } catch (error) {
       console.error('Error updating app setting:', error);
@@ -2778,11 +2778,11 @@ For any queries, please contact us.`;
     try {
       const { key } = req.params;
       const deleted = await storage.deleteAppSetting(key);
-      
+
       if (!deleted) {
         return res.status(404).json({ error: 'Setting not found' });
       }
-      
+
       res.json({ success: true });
     } catch (error) {
       console.error('Error deleting app setting:', error);
