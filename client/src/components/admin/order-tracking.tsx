@@ -198,7 +198,7 @@ export default function OrderTracking() {
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-48" data-testid="select-status-filter">
+              <SelectTrigger className="w-full sm:w-48" data-testid="select-status-filter">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
@@ -226,7 +226,7 @@ export default function OrderTracking() {
                 return (
                   <Card key={order.id} className="border-l-4 border-l-rose-500" data-testid={`order-card-${order.id}`}>
                     <CardContent className="p-6">
-                      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
                         {/* Order Information */}
                         <div className="lg:col-span-2">
                           <div className="flex items-center justify-between mb-4">
@@ -242,7 +242,7 @@ export default function OrderTracking() {
                             </div>
                           </div>
                           
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
                             <div>
                               <p><strong>Customer:</strong> {order.customerName}</p>
                               <p><strong>Email:</strong> {order.customerEmail}</p>
@@ -261,7 +261,7 @@ export default function OrderTracking() {
                         </div>
 
                         {/* Shipments */}
-                        <div className="border-l border-gray-200 pl-6">
+                        <div className="border-t lg:border-t-0 lg:border-l border-gray-200 pt-4 lg:pt-0 lg:pl-6">
                           <h4 className="font-medium mb-3 flex items-center gap-2">
                             <Truck className="h-4 w-4" />
                             Shipments ({orderShipments.length})
@@ -288,7 +288,7 @@ export default function OrderTracking() {
                                     )}
                                   </div>
                                   
-                                  <div className="flex gap-2 mt-3">
+                                  <div className="flex flex-col sm:flex-row gap-2 mt-3">
                                     <Button
                                       size="sm"
                                       variant="outline"
@@ -335,7 +335,7 @@ export default function OrderTracking() {
       {/* Shipment Details Dialog */}
       {selectedShipment && (
         <Dialog open={!!selectedShipment} onOpenChange={() => setSelectedShipment(null)}>
-          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Truck className="h-5 w-5" />
@@ -344,7 +344,7 @@ export default function OrderTracking() {
             </DialogHeader>
             
             <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
                 <div>
                   <p><strong>Status:</strong> 
                     <Badge className={`ml-2 ${SHIPMENT_STATUS_COLORS[selectedShipment.status as keyof typeof SHIPMENT_STATUS_COLORS] || 'bg-gray-100 text-gray-800'}`}>
