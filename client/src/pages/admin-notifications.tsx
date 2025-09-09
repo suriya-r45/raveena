@@ -268,7 +268,7 @@ export default function AdminNotifications() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 bg-white shadow-sm">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 bg-white shadow-sm">
             <TabsTrigger value="overview" data-testid="tab-overview">Overview</TabsTrigger>
             <TabsTrigger value="notifications" data-testid="tab-notifications">Notifications</TabsTrigger>
             <TabsTrigger value="templates" data-testid="tab-templates">Templates</TabsTrigger>
@@ -292,7 +292,7 @@ export default function AdminNotifications() {
                     <Loader className="w-8 h-8 animate-spin text-amber-600" />
                   </div>
                 ) : serviceStatus ? (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                       <div className="flex items-center">
                         <span className="text-2xl mr-3">📧</span>
