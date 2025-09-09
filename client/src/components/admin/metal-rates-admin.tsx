@@ -194,12 +194,12 @@ export function MetalRatesAdmin() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <CardTitle className="text-gradient flex items-center gap-2">
             <TrendingUp className="h-5 w-5" />
             Metal Rates Management
           </CardTitle>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
             {isStale && (
               <Badge variant="destructive" className="animate-pulse">
                 Rates Need Update
@@ -209,7 +209,7 @@ export function MetalRatesAdmin() {
               onClick={() => updateRatesMutation.mutate()}
               disabled={updateRatesMutation.isPending}
               size="sm"
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 w-full sm:w-auto"
             >
               {updateRatesMutation.isPending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -255,7 +255,7 @@ export function MetalRatesAdmin() {
                       </Badge>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="indiaGold22k">Gold 22K (₹/gram)</Label>
                         <Input
@@ -305,7 +305,7 @@ export function MetalRatesAdmin() {
                       </Badge>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="bahrainGold22k">Gold 22K (BHD/gram)</Label>
                         <Input
