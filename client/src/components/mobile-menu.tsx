@@ -239,14 +239,6 @@ export default function MobileMenu({ isOpen, onToggle, selectedCurrency }: Mobil
             </div>
           </div>
           
-          {/* Gold Rate Section - Mobile Only */}
-          {currentView === 'main' && (
-            <div className="px-6 py-3 border-b border-gray-300 bg-white/20">
-              <div className="w-full">
-                <MetalRatesDropdown selectedCurrency={selectedCurrency} />
-              </div>
-            </div>
-          )}
           
           {/* Categories List */}
           <div className="flex-1 overflow-y-auto max-h-[calc(100vh-200px)]">
@@ -264,7 +256,7 @@ export default function MobileMenu({ isOpen, onToggle, selectedCurrency }: Mobil
                         <div className="w-10 h-10 bg-white/50 rounded-lg flex items-center justify-center mr-4">
                           <IconComponent className="h-5 w-5 text-gray-700" />
                         </div>
-                        <span className="text-base font-light text-gray-800" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                        <span className="text-sm font-light text-gray-800" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                           {category.name}
                         </span>
                       </div>
@@ -281,7 +273,7 @@ export default function MobileMenu({ isOpen, onToggle, selectedCurrency }: Mobil
                   >
                     <div className="flex items-center">
                       <div className="w-2 h-2 bg-gray-500 rounded-full mr-4"></div>
-                      <span className="text-base font-light text-gray-700" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                      <span className="text-sm font-light text-gray-700" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                         {subcategory}
                       </span>
                     </div>
