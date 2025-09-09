@@ -236,7 +236,7 @@ export default function UserManagement() {
                   Create User
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-md" data-testid="dialog-create-user">
+              <DialogContent className="w-[95vw] max-w-md" data-testid="dialog-create-user">
                 <DialogHeader>
                   <DialogTitle>Create New User</DialogTitle>
                   <DialogDescription>
@@ -472,7 +472,7 @@ export default function UserManagement() {
 
       {/* Edit User Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-md" data-testid="dialog-edit-user">
+        <DialogContent className="w-[95vw] max-w-md" data-testid="dialog-edit-user">
           <DialogHeader>
             <DialogTitle>Edit User</DialogTitle>
             <DialogDescription>
@@ -554,7 +554,7 @@ export default function UserManagement() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="max-w-md" data-testid="dialog-delete-user">
+        <DialogContent className="w-[95vw] max-w-md" data-testid="dialog-delete-user">
           <DialogHeader>
             <DialogTitle>Delete User</DialogTitle>
             <DialogDescription>

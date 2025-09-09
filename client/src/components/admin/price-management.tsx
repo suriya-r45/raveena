@@ -278,7 +278,7 @@ export default function PriceManagement() {
 
       {/* Price Update Dialog */}
       <Dialog open={isUpdateDialogOpen} onOpenChange={setIsUpdateDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="w-[95vw] max-w-md">
           <DialogHeader>
             <DialogTitle>
               Update Price & Stock - {selectedProduct?.name}

@@ -612,7 +612,7 @@ export default function CategoryManagement() {
             </Button>
           </div>
           
-          <DialogContent className="max-w-md">
+          <DialogContent className="w-[95vw] max-w-md">
             <DialogHeader>
               <DialogTitle>
                 {editingCategory ? 'Edit Category' : 'Add New Category'}
