@@ -153,7 +153,7 @@ export default function PriceManagement() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-light text-gray-700 flex items-center gap-2" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
             <DollarSign className="h-6 w-6 text-amber-700" />
