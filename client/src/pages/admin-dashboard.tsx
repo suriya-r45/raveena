@@ -1175,9 +1175,12 @@ export default function AdminDashboard() {
                     </div>
                   ) : (
                     <div className="space-y-6">
-                      <div className="text-sm text-gray-600 mb-4">
-                        Total Products: <span className="font-semibold">{products.length}</span> | 
-                        Products with QR Codes: <span className="font-semibold">{products.filter(p => p.productCode).length}</span>
+                      <div className="text-sm text-gray-600 mb-4 text-center sm:text-left">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                          <span>Total Products: <span className="font-semibold">{products.length}</span></span>
+                          <span className="hidden sm:inline">|</span>
+                          <span>Products with QR Codes: <span className="font-semibold">{products.filter(p => p.productCode).length}</span></span>
+                        </div>
                       </div>
                       
                       {/* Search Products by Name */}
