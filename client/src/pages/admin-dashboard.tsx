@@ -939,19 +939,21 @@ export default function AdminDashboard() {
                       No bills generated yet.
                     </p>
                   ) : (
-                    <div className="overflow-x-auto">
-                      <table className="w-full bg-white rounded-lg border border-gray-200">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th className="px-4 py-3 text-left text-sm font-light text-gray-700">Bill No.</th>
-                            <th className="px-4 py-3 text-left text-sm font-light text-gray-700">Customer</th>
-                            <th className="px-4 py-3 text-left text-sm font-light text-gray-700">Date</th>
-                            <th className="px-4 py-3 text-left text-sm font-light text-gray-700">Amount</th>
-                            <th className="px-4 py-3 text-left text-sm font-light text-gray-700">Currency</th>
-                            <th className="px-4 py-3 text-left text-sm font-light text-gray-700">Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200">
+                    <>
+                      {/* Desktop Table View */}
+                      <div className="hidden md:block overflow-x-auto">
+                        <table className="w-full bg-white rounded-lg border border-gray-200">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-4 py-3 text-left text-sm font-light text-gray-700">Bill No.</th>
+                              <th className="px-4 py-3 text-left text-sm font-light text-gray-700">Customer</th>
+                              <th className="px-4 py-3 text-left text-sm font-light text-gray-700">Date</th>
+                              <th className="px-4 py-3 text-left text-sm font-light text-gray-700">Amount</th>
+                              <th className="px-4 py-3 text-left text-sm font-light text-gray-700">Currency</th>
+                              <th className="px-4 py-3 text-left text-sm font-light text-gray-700">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-200">
                           {bills
                             .filter(bill => {
                               if (!billSearchTerm) return true;
@@ -974,7 +976,7 @@ export default function AdminDashboard() {
                               </td>
                               <td className="px-4 py-3 text-sm font-light text-gray-700">{bill.currency}</td>
                               <td className="px-4 py-3 text-sm">
-                                <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-1 xl:space-x-2">
                                   <Button
                                     size="sm"
                                     variant="outline"
@@ -1037,6 +1039,102 @@ export default function AdminDashboard() {
                         </tbody>
                       </table>
                     </div>
+
+                    {/* Mobile Card View */}
+                    <div className="md:hidden space-y-4">
+                      {bills
+                        .filter(bill => {
+                          if (!billSearchTerm) return true;
+                          const searchLower = billSearchTerm.toLowerCase();
+                          return (
+                            bill.customerName.toLowerCase().includes(searchLower) ||
+                            bill.customerPhone.toLowerCase().includes(searchLower) ||
+                            bill.billNumber.toLowerCase().includes(searchLower)
+                          );
+                        })
+                        .map((bill) => (
+                        <div key={bill.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm" data-testid={`card-bill-${bill.id}`}>
+                          <div className="flex items-center justify-between mb-3">
+                            <div>
+                              <h3 className="font-medium text-gray-900 text-sm">{bill.billNumber}</h3>
+                              <p className="text-sm text-gray-600">{bill.customerName}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-medium text-gray-900 text-sm">
+                                {bill.currency === 'INR' ? '₹' : 'BD'} {parseFloat(bill.total).toLocaleString()}
+                              </p>
+                              <p className="text-xs text-gray-500">{bill.currency}</p>
+                            </div>
+                          </div>
+                          
+                          <div className="mb-3">
+                            <p className="text-xs text-gray-500">
+                              Date: {new Date(bill.createdAt!).toLocaleDateString()}
+                            </p>
+                          </div>
+                          
+                          <div className="flex flex-wrap gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setSelectedBill(bill)}
+                              className="flex-1 text-xs"
+                              data-testid={`button-preview-mobile-${bill.id}`}
+                            >
+                              Preview
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                localStorage.setItem('editBill', JSON.stringify(bill));
+                                setActiveTab('billing');
+                                setLocation('/admin?tab=billing');
+                                toast({
+                                  title: "Bill Loaded",
+                                  description: `Bill ${bill.billNumber} loaded for editing.`,
+                                });
+                              }}
+                              className="flex-1 border-blue-600 text-blue-600 hover:bg-blue-50 text-xs"
+                              data-testid={`button-edit-mobile-${bill.id}`}
+                            >
+                              <Edit className="h-3 w-3 mr-1" />
+                              Edit
+                            </Button>
+                          </div>
+                          
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                const link = document.createElement('a');
+                                link.href = `/api/bills/${bill.id}/pdf`;
+                                link.download = `${bill.customerName.replace(/\s+/g, '_')}_${bill.billNumber}.pdf`;
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                              }}
+                              className="flex-1 text-xs"
+                              data-testid={`button-download-mobile-${bill.id}`}
+                            >
+                              Download
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => sendBillToWhatsAppMutation.mutate(bill.id)}
+                              disabled={sendBillToWhatsAppMutation.isPending}
+                              className="flex-1 bg-green-50 hover:bg-green-100 text-green-700 border-green-200 text-xs"
+                              data-testid={`button-whatsapp-mobile-${bill.id}`}
+                            >
+                              {sendBillToWhatsAppMutation.isPending ? "Sending..." : "WhatsApp"}
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    </>
                   )}
                 </div>
               </CardContent>
