@@ -194,11 +194,11 @@ export default function VideoManagement() {
 
   return (
     <div className="space-y-6" data-testid="video-management">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <h2 className="text-2xl font-semibold">Video Management</h2>
         <Button 
           onClick={() => setIsFormOpen(true)}
-          className="bg-amber-600 hover:bg-amber-700"
+          className="bg-amber-600 hover:bg-amber-700 w-full sm:w-auto"
           data-testid="button-add-video"
         >
           <Plus className="w-4 h-4 mr-2" />
@@ -216,7 +216,7 @@ export default function VideoManagement() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="title">Title *</Label>
                   <Input
@@ -261,7 +261,7 @@ export default function VideoManagement() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="videoFile">Video File {!editingVideo && '*'}</Label>
                   <Input
