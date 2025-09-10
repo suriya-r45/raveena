@@ -472,11 +472,18 @@ export class DatabaseStorage implements IStorage {
   async createBill(bill: InsertBill): Promise<Bill> {
     const total = Number(bill.subtotal) + Number(bill.makingCharges) + Number(bill.gst) - Number(bill.discount || 0);
 
+    // Generate unique bill number
+    const today = new Date();
+    const dateStr = today.toISOString().slice(0, 10).replace(/-/g, ''); // YYYYMMDD
+    const timeStr = today.getTime().toString().slice(-6); // Last 6 digits of timestamp
+    const billNumber = `PJ-${dateStr}-${timeStr}`;
+
     // Insert bill into database
     const result = await db
       .insert(bills)
       .values({
         ...bill,
+        billNumber: billNumber,
         subtotal: bill.subtotal.toString(),
         makingCharges: bill.makingCharges.toString(), 
         gst: bill.gst.toString(),
