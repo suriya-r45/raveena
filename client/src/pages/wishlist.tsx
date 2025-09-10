@@ -30,12 +30,13 @@ export default function WishlistPage() {
   const { data: wishlistItems = [], isLoading } = useQuery({
     queryKey: ["/api/wishlist"],
     enabled: !!user,
-  });
+  }) as { data: WishlistItem[], isLoading: boolean };
 
   const removeFromWishlistMutation = useMutation({
-    mutationFn: (productId: string) => apiRequest(`/api/wishlist/${productId}`, {
-      method: "DELETE",
-    }),
+    mutationFn: async (productId: string) => {
+      const response = await apiRequest("DELETE", `/api/wishlist/${productId}`);
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/wishlist"] });
       toast({

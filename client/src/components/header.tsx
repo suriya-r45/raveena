@@ -25,7 +25,7 @@ export default function Header({ selectedCurrency, onCurrencyChange }: HeaderPro
   const { data: wishlistItems = [] } = useQuery({
     queryKey: ["/api/wishlist"],
     enabled: !!user,
-  });
+  }) as { data: any[] };
 
   const handleLogout = () => {
     logout();

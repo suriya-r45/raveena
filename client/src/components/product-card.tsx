@@ -32,15 +32,19 @@ export default function ProductCard({ product, currency, showActions = true, cus
   const { data: isInWishlist = false } = useQuery({
     queryKey: ["/api/wishlist/check", product.id],
     queryFn: async () => {
-      const response = await apiRequest(`/api/wishlist/check/${product.id}`);
-      return response.isInWishlist;
+      const response = await apiRequest("GET", `/api/wishlist/check/${product.id}`);
+      const data = await response.json();
+      return data.isInWishlist;
     },
     enabled: !!user,
   });
 
   // Add to wishlist mutation
   const addToWishlistMutation = useMutation({
-    mutationFn: () => apiRequest(`/api/wishlist/${product.id}`, { method: "POST" }),
+    mutationFn: async () => {
+      const response = await apiRequest("POST", `/api/wishlist/${product.id}`);
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/wishlist"] });
       queryClient.invalidateQueries({ queryKey: ["/api/wishlist/check", product.id] });
@@ -60,7 +64,10 @@ export default function ProductCard({ product, currency, showActions = true, cus
 
   // Remove from wishlist mutation
   const removeFromWishlistMutation = useMutation({
-    mutationFn: () => apiRequest(`/api/wishlist/${product.id}`, { method: "DELETE" }),
+    mutationFn: async () => {
+      const response = await apiRequest("DELETE", `/api/wishlist/${product.id}`);
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/wishlist"] });
       queryClient.invalidateQueries({ queryKey: ["/api/wishlist/check", product.id] });
