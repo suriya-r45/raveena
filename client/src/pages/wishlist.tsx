@@ -7,20 +7,14 @@ import { Link } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
 import { formatPrice } from "@/lib/currency";
 import { toast } from "@/hooks/use-toast";
+import { Product } from "@/../../shared/schema";
 
-interface WishlistItem {
+interface WishlistItemWithProduct {
   id: string;
   userId: string;
   productId: string;
   createdAt: string;
-  product?: {
-    id: string;
-    name: string;
-    price: number;
-    imageUrl?: string;
-    category: string;
-    subCategory?: string;
-  };
+  product?: Product;
 }
 
 export default function WishlistPage() {
@@ -30,7 +24,7 @@ export default function WishlistPage() {
   const { data: wishlistItems = [], isLoading } = useQuery({
     queryKey: ["/api/wishlist"],
     enabled: !!user,
-  }) as { data: WishlistItem[], isLoading: boolean };
+  }) as { data: WishlistItemWithProduct[], isLoading: boolean };
 
   const removeFromWishlistMutation = useMutation({
     mutationFn: async (productId: string) => {
@@ -114,50 +108,58 @@ export default function WishlistPage() {
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {wishlistItems.map((item: WishlistItem) => (
-              <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="relative">
-                  <img
-                    src={item.product?.imageUrl || '/api/placeholder/300/300'}
-                    alt={item.product?.name || 'Product'}
-                    className="w-full h-64 object-cover"
-                  />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="absolute top-2 right-2 h-8 w-8 rounded-full bg-white/80 backdrop-blur-sm text-red-500"
-                    onClick={() => removeFromWishlistMutation.mutate(item.productId)}
-                    disabled={removeFromWishlistMutation.isPending}
-                    data-testid={`button-remove-wishlist-${item.productId}`}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-semibold mb-2 line-clamp-2" data-testid={`text-product-name-${item.productId}`}>
-                    {item.product?.name || 'Unknown Product'}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-2">{item.product?.category}</p>
-                  <p className="text-lg font-bold text-amber-600 mb-4" data-testid={`text-product-price-${item.productId}`}>
-                    {formatPrice(item.product?.price || 0)}
-                  </p>
-                  <div className="flex gap-2">
-                    <Link href={`/product/${item.productId}`} className="flex-1">
-                      <Button variant="outline" className="w-full" data-testid={`button-view-product-${item.productId}`}>
-                        View Details
-                      </Button>
-                    </Link>
-                    <Button 
-                      size="sm" 
-                      className="px-3"
-                      data-testid={`button-add-to-cart-${item.productId}`}
+            {wishlistItems.map((item: WishlistItemWithProduct) => {
+              const product = item.product;
+              const productImage = product?.images && Array.isArray(product.images) && product.images.length > 0 
+                ? product.images[0] 
+                : '/api/placeholder/300/300';
+              const price = product?.priceInr ? parseFloat(product.priceInr) : 0;
+              
+              return (
+                <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <div className="relative">
+                    <img
+                      src={productImage}
+                      alt={product?.name || 'Product'}
+                      className="w-full h-64 object-cover"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="absolute top-2 right-2 h-8 w-8 rounded-full bg-white/80 backdrop-blur-sm text-red-500"
+                      onClick={() => removeFromWishlistMutation.mutate(item.productId)}
+                      disabled={removeFromWishlistMutation.isPending}
+                      data-testid={`button-remove-wishlist-${item.productId}`}
                     >
-                      <ShoppingCart className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold mb-2 line-clamp-2" data-testid={`text-product-name-${item.productId}`}>
+                      {product?.name || 'Unknown Product'}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-2">{product?.category}</p>
+                    <p className="text-lg font-bold text-amber-600 mb-4" data-testid={`text-product-price-${item.productId}`}>
+                      {formatPrice(price, 'INR')}
+                    </p>
+                    <div className="flex gap-2">
+                      <Link href={`/product/${item.productId}`} className="flex-1">
+                        <Button variant="outline" className="w-full" data-testid={`button-view-product-${item.productId}`}>
+                          View Details
+                        </Button>
+                      </Link>
+                      <Button 
+                        size="sm" 
+                        className="px-3"
+                        data-testid={`button-add-to-cart-${item.productId}`}
+                      >
+                        <ShoppingCart className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         )}
       </div>
