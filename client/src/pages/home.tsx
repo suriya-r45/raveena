@@ -27,7 +27,6 @@ import {
 } from '@/components/festival-components';
 import FestivalHomePage from '@/components/festival-home';
 import DailyHomepage from '@/components/daily-homepage';
-import HomepagePreferenceSelector from '@/components/homepage-preference-selector';
 
 interface HomeSectionWithItems extends HomeSection {
   items: HomeSectionItemWithProduct[];
@@ -2199,11 +2198,6 @@ export default function Home() {
         selectedCurrency={selectedCurrency}
         onCurrencyChange={setSelectedCurrency}
       />
-      
-      {/* Homepage Preference Selector - Floating */}
-      <div className="fixed top-20 right-4 z-40">
-        <HomepagePreferenceSelector />
-      </div>
 
       {/* Hero Section - Find Your Perfect Match */}
       <section className="py-8 md:py-12" data-testid="section-hero" style={{ background: 'linear-gradient(135deg, #f8f4f0 0%, #e8ddd4 50%, #d4c5a9 100%)' }}>

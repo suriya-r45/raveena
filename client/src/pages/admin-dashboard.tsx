@@ -24,7 +24,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { Product, Bill } from '@shared/schema';
 import { Currency } from '@/lib/currency';
-import { Package, FileText, TrendingUp, Users, Calculator, DollarSign, Edit, QrCode, Printer, Search, CheckSquare, Square, Plus, Receipt, History, ClipboardList, Tag, BarChart3, Grid3X3, Film, Settings, Crown, Eye, EyeOff, Star, StarOff, X, Bell } from 'lucide-react';
+import { Package, FileText, TrendingUp, Users, Calculator, DollarSign, Edit, QrCode, Printer, Search, CheckSquare, Square, Plus, Receipt, History, ClipboardList, Tag, BarChart3, Grid3X3, Film, Settings, Crown, Eye, EyeOff, Star, StarOff, X, Bell, Layout, Calendar, Sparkles } from 'lucide-react';
 import BarcodeDisplay from '@/components/barcode-display';
 import { useToast } from '@/hooks/use-toast';
 import QRCode from 'qrcode';
@@ -255,100 +255,138 @@ function ProductManagementDialog({ products, onClose }: { products: Product[], o
   );
 }
 
-function SecondaryHomePageToggle() {
+function AdminHomepagePreference() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Query to get the secondary home page setting
-  const { data: secondaryPageSetting, isLoading } = useQuery({
-    queryKey: ['/api/settings/secondary_home_page_enabled'],
+  // Query to get the current homepage preference
+  const { data: homepagePreference, isLoading } = useQuery({
+    queryKey: ['/api/settings/homepage_preference'],
     queryFn: async () => {
       try {
-        const response = await apiRequest('GET', '/api/settings/secondary_home_page_enabled');
-        return response.json();
+        const response = await apiRequest('GET', '/api/settings/homepage_preference');
+        const data = await response.json();
+        return data.value || 'default';
       } catch (error) {
-        // Setting doesn't exist yet, return default
-        return { key: 'secondary_home_page_enabled', value: 'false' };
+        return 'default';
       }
     },
   });
 
-  // Mutation to update the setting
-  const toggleMutation = useMutation({
-    mutationFn: async (enabled: boolean) => {
+  // Mutation to update the homepage preference
+  const updateMutation = useMutation({
+    mutationFn: async (preference: string) => {
       const response = await apiRequest('POST', '/api/settings', {
-        key: 'secondary_home_page_enabled',
-        value: enabled ? 'true' : 'false',
-        description: 'Enable/disable the royal-style secondary home page for special occasions'
+        key: 'homepage_preference',
+        value: preference,
+        description: 'Admin selected homepage layout preference'
       });
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/settings/secondary_home_page_enabled'] });
+    onSuccess: (_, preference) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/settings/homepage_preference'] });
       toast({ 
-        title: "Success", 
-        description: "Secondary home page setting updated successfully" 
+        title: "Homepage Updated", 
+        description: `Successfully switched to ${preference} homepage layout` 
       });
     },
     onError: () => {
       toast({ 
         title: "Error", 
-        description: "Failed to update secondary home page setting" 
+        description: "Failed to update homepage preference",
+        variant: "destructive"
       });
     }
   });
 
-  const isEnabled = secondaryPageSetting?.value === 'true';
-
-  const handleToggle = (checked: boolean) => {
-    toggleMutation.mutate(checked);
-  };
+  const homepageOptions = [
+    {
+      id: 'default',
+      title: 'Default Homepage',
+      description: 'Classic elegant layout with product showcases',
+      icon: Layout,
+      theme: 'Modern luxury with warm gold accents'
+    },
+    {
+      id: 'daily',
+      title: 'Daily Homepage',
+      description: 'Dynamic layouts that change each day of the week',
+      icon: Calendar,
+      theme: 'Royal themes with 3D effects and glass morphism'
+    },
+    {
+      id: 'secondary',
+      title: 'Festival Homepage',
+      description: 'Special occasion layout with countdown timers',
+      icon: Sparkles,
+      theme: 'Ultra-modern festival design with premium animations'
+    }
+  ];
 
   return (
-    <Card className="bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200" data-testid="secondary-home-page-toggle">
+    <Card className="border-blue-200 bg-blue-50/30" data-testid="admin-homepage-preference">
       <CardHeader>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-purple-100 p-2 rounded-lg">
-              <Crown className="h-6 w-6 text-purple-600" />
-            </div>
-            <div>
-              <CardTitle className="text-lg font-semibold text-gray-900" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                Royal Secondary Home Page
-              </CardTitle>
-              <p className="text-sm text-gray-600 mt-1">
-                Enable the premium royal-style home page for special occasions and festivals
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Switch
-              id="secondary-page-toggle"
-              checked={isEnabled}
-              onCheckedChange={handleToggle}
-              disabled={isLoading || toggleMutation.isPending}
-              data-testid="switch-secondary-page"
-            />
-            <Label htmlFor="secondary-page-toggle" className="text-sm font-medium">
-              {isEnabled ? 'Enabled' : 'Disabled'}
-            </Label>
-          </div>
-        </div>
+        <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-2" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+          <Crown className="h-5 w-5 text-blue-600" />
+          Homepage Layout Control
+        </CardTitle>
+        <p className="text-sm text-gray-600 mt-2">
+          Choose which homepage layout your customers will see. Changes take effect immediately.
+        </p>
       </CardHeader>
       <CardContent>
-        <div className="flex items-start gap-3 p-4 bg-purple-50 rounded-lg border border-purple-200">
-          <Settings className="h-5 w-5 text-purple-600 mt-0.5" />
-          <div className="flex-1">
-            <p className="text-sm text-purple-800 font-medium mb-1">
-              Royal Premium Design Features:
-            </p>
-            <ul className="text-xs text-purple-700 space-y-1">
-              <li>• Ultra-luxury premium layout with royal styling</li>
-              <li>• Perfect for festivals, special occasions, and promotions</li>
-              <li>• Single elegant layout (not multiple sections like main page)</li>
-              <li>• Premium gold and royal color scheme</li>
-            </ul>
-          </div>
+        <div className="space-y-4">
+          {homepageOptions.map((option) => {
+            const IconComponent = option.icon;
+            const isSelected = homepagePreference === option.id;
+            const isUpdating = updateMutation.isPending;
+            
+            return (
+              <div
+                key={option.id}
+                className={`p-4 rounded-lg border cursor-pointer transition-all duration-200 ${
+                  isSelected 
+                    ? 'bg-blue-100 border-blue-300 shadow-md' 
+                    : 'bg-white border-gray-200 hover:border-blue-200 hover:bg-blue-50/50'
+                }`}
+                onClick={() => !isUpdating && updateMutation.mutate(option.id)}
+                data-testid={`homepage-option-${option.id}`}
+              >
+                <div className="flex items-start gap-3">
+                  <div className={`p-2 rounded-lg ${isSelected ? 'bg-blue-200' : 'bg-gray-100'}`}>
+                    <IconComponent className={`h-5 w-5 ${isSelected ? 'text-blue-700' : 'text-gray-600'}`} />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className={`font-semibold ${isSelected ? 'text-blue-900' : 'text-gray-900'}`}>
+                        {option.title}
+                      </h3>
+                      {isSelected && (
+                        <span className="px-2 py-1 text-xs bg-blue-600 text-white rounded-full">
+                          Active
+                        </span>
+                      )}
+                    </div>
+                    <p className={`text-sm mb-2 ${isSelected ? 'text-blue-800' : 'text-gray-600'}`}>
+                      {option.description}
+                    </p>
+                    <p className={`text-xs ${isSelected ? 'text-blue-700' : 'text-gray-500'}`}>
+                      Theme: {option.theme}
+                    </p>
+                  </div>
+                  {isUpdating && homepagePreference === option.id && (
+                    <div className="text-xs text-blue-600 mt-1">Updating...</div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+          
+          {isLoading && (
+            <div className="text-center py-4 text-gray-500">
+              Loading current homepage preference...
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
@@ -1294,7 +1332,7 @@ export default function AdminDashboard() {
           </TabsContent>
 
           <TabsContent value="home-sections" className="space-y-6">
-            <SecondaryHomePageToggle />
+            <AdminHomepagePreference />
             <HomeSectionsManagement />
           </TabsContent>
 
