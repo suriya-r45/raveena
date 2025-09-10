@@ -6,6 +6,41 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Mobile Performance & Accessibility Optimizations */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  /* Disable complex transforms for reduced motion */
+  .framer-motion-reduce {
+    transform: none !important;
+  }
+}
+
+/* Mobile Performance Optimizations */
+@media (max-width: 768px) {
+  /* Reduce complex animations on mobile */
+  .mobile-performance-optimized {
+    will-change: auto !important;
+    transform: translateZ(0) !important;
+    backface-visibility: hidden !important;
+  }
+  
+  /* Simplify gradients on mobile */
+  .mobile-simple-gradient {
+    background: linear-gradient(135deg, #f8f4f0 0%, #e8ddd4 100%) !important;
+  }
+  
+  /* Optimize heavy shadows */
+  .mobile-light-shadow {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+  }
+}
+
 /* CSS Variables for Modern Luxury Theme */
 :root {
   --background: hsl(0, 0%, 98%);
