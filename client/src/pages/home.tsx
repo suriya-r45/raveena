@@ -338,10 +338,12 @@ function JewelrySlider() {
 // Royal Secondary Home Page Component
 function RoyalSecondaryHomePage({ 
   allProducts, 
-  selectedCurrency 
+  selectedCurrency,
+  onCurrencyChange
 }: { 
   allProducts: Product[];
   selectedCurrency: Currency;
+  onCurrencyChange: (currency: Currency) => void;
 }) {
   // State for filtering Today's Special Offer section
   const [specialOfferFilters, setSpecialOfferFilters] = useState({
@@ -451,7 +453,7 @@ function RoyalSecondaryHomePage({
              }} />
       </div>
       
-      <Header />
+      <Header selectedCurrency={selectedCurrency} onCurrencyChange={onCurrencyChange} />
       
       {/* Brand Header */}
       <motion.div
@@ -698,7 +700,7 @@ function RoyalSecondaryHomePage({
               
               {/* Products Grid with Enhanced Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {sectionProducts.map((product, index) => (
+                {sectionProducts.filter(product => product != null).map((product, index) => (
                   <motion.div
                     key={product.id}
                     initial={{ opacity: 0, y: 40, scale: 0.9 }}
@@ -1918,6 +1920,11 @@ function renderCountdownSection(section: HomeSectionWithItems) {
 
 export default function Home() {
   const [selectedCurrency, setSelectedCurrency] = useState<Currency>('BHD');
+  
+  // Currency change handler for Header component
+  const handleCurrencyChange = (currency: Currency) => {
+    setSelectedCurrency(currency);
+  };
 
   // Royal layout hooks (moved to top level to avoid conditional hook calls)
   const royalContainerRef = useRef(null);
@@ -3168,7 +3175,7 @@ export default function Home() {
                                 product={section.items[0].product}
                                 currency={selectedCurrency}
                                 showActions={false}
-                                customImageUrl={section.items[0].customImageUrl}
+                                customImageUrl={section.items[0].customImageUrl ?? undefined}
                               />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
                               
@@ -3227,7 +3234,7 @@ export default function Home() {
                                 product={item.product}
                                 currency={selectedCurrency}
                                 showActions={false}
-                                customImageUrl={item.customImageUrl}
+                                customImageUrl={item.customImageUrl ?? undefined}
                               />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
                               
@@ -3279,7 +3286,7 @@ export default function Home() {
                                 product={item.product}
                                 currency={selectedCurrency}
                                 showActions={false}
-                                customImageUrl={item.customImageUrl}
+                                customImageUrl={item.customImageUrl ?? undefined}
                               />
                             </div>
                             <div className="p-4">
@@ -3588,11 +3595,8 @@ export default function Home() {
                       <ProductCard
                         key={item.id}
                         product={item.product}
-                        customImageUrl={item.customImageUrl || undefined}
-                        displayName={item.displayName || undefined}
-                        displayPriceInr={item.displayPriceInr || undefined}
-                        displayPriceBhd={item.displayPriceBhd || undefined}
-                        index={index}
+                        currency={selectedCurrency}
+                        customImageUrl={item.customImageUrl ?? undefined}
                       />
                     </motion.div>
                   ))}
@@ -3839,7 +3843,7 @@ export default function Home() {
                                   product={item.product}
                                   currency={selectedCurrency}
                                   showActions={false}
-                                  customImageUrl={item.customImageUrl}
+                                  customImageUrl={item.customImageUrl ?? undefined}
                                 />
                               </div>
                               
@@ -4126,7 +4130,7 @@ export default function Home() {
                       product={item.product}
                       currency={selectedCurrency}
                       showActions={false}
-                      customImageUrl={item.customImageUrl}
+                      customImageUrl={item.customImageUrl ?? undefined}
                     />
                   </div>
                 ))}
