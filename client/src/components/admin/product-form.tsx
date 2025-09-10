@@ -313,6 +313,7 @@ function ProductForm({ currency }: ProductFormProps) {
     stones: 'None',
     stock: '',
     isNewArrival: false,
+    isFeatured: false,
     isMetalPriceBased: false
   });
 
@@ -533,6 +534,7 @@ function ProductForm({ currency }: ProductFormProps) {
       stones: 'None',
       stock: '',
       isNewArrival: false,
+      isFeatured: false,
       isMetalPriceBased: false
     });
     setSelectedFiles([]);
@@ -804,6 +806,18 @@ function ProductForm({ currency }: ProductFormProps) {
                 />
                 <Label htmlFor="isNewArrival" className="text-sm font-medium text-gray-700" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                   Mark as New Arrival (will appear in New Arrivals section)
+                </Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="isFeatured"
+                  checked={formData.isFeatured === true}
+                  onCheckedChange={(checked) => setFormData({ ...formData, isFeatured: checked === true })}
+                  data-testid="checkbox-featured"
+                />
+                <Label htmlFor="isFeatured" className="text-sm font-medium text-gray-700" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                  Mark as Featured (will appear prominently on daily homepage)
                 </Label>
               </div>
 
