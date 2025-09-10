@@ -6,8 +6,11 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useCart } from '@/lib/cart';
+import { useAuth } from '@/lib/auth';
 import { formatPrice } from '@/lib/currency';
 import { Product } from '@shared/schema';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
 
 interface ProductCardProps {
   product: Product;
@@ -18,11 +21,62 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, currency, showActions = true, customDisplayPrice, customImageUrl }: ProductCardProps) {
-  const [isLiked, setIsLiked] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
   const { addToCart, isInCart, getItemQuantity } = useCart();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [, setLocation] = useLocation();
+  const queryClient = useQueryClient();
+
+  // Check if product is in wishlist
+  const { data: isInWishlist = false } = useQuery({
+    queryKey: ["/api/wishlist/check", product.id],
+    queryFn: async () => {
+      const response = await apiRequest(`/api/wishlist/check/${product.id}`);
+      return response.isInWishlist;
+    },
+    enabled: !!user,
+  });
+
+  // Add to wishlist mutation
+  const addToWishlistMutation = useMutation({
+    mutationFn: () => apiRequest(`/api/wishlist/${product.id}`, { method: "POST" }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/wishlist"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/wishlist/check", product.id] });
+      toast({
+        title: "Added to Wishlist",
+        description: `${product.name} has been added to your wishlist.`,
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to add to wishlist.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Remove from wishlist mutation
+  const removeFromWishlistMutation = useMutation({
+    mutationFn: () => apiRequest(`/api/wishlist/${product.id}`, { method: "DELETE" }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/wishlist"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/wishlist/check", product.id] });
+      toast({
+        title: "Removed from Wishlist",
+        description: `${product.name} has been removed from your wishlist.`,
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to remove from wishlist.",
+        variant: "destructive",
+      });
+    },
+  });
 
   const price = currency === 'BHD' ? parseFloat(product.priceBhd) : parseFloat(product.priceInr);
   const isInCartAlready = isInCart(product.id);
@@ -132,15 +186,24 @@ Could you please provide more details?`;
           variant="ghost"
           size="sm"
           className={`absolute top-2 right-2 h-8 w-8 rounded-full bg-white/80 backdrop-blur-sm transition-colors ${
-            isLiked ? 'text-red-500' : 'text-gray-600 hover:text-red-500'
+            isInWishlist ? 'text-red-500' : 'text-gray-600 hover:text-red-500'
           }`}
           onClick={(e) => {
             e.stopPropagation();
-            setIsLiked(!isLiked);
+            if (!user) {
+              setLocation('/login');
+              return;
+            }
+            if (isInWishlist) {
+              removeFromWishlistMutation.mutate();
+            } else {
+              addToWishlistMutation.mutate();
+            }
           }}
+          disabled={addToWishlistMutation.isPending || removeFromWishlistMutation.isPending}
           data-testid={`button-wishlist-${product.id}`}
         >
-          <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
+          <Heart className={`h-4 w-4 ${isInWishlist ? 'fill-current' : ''}`} />
         </Button>
 
         {/* Quick Actions - Show on Hover (Removed WhatsApp) */}
