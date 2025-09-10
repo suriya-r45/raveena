@@ -2304,40 +2304,49 @@ export default function DailyHomepage({ selectedCurrency }: DailyHomepageProps) 
 
   const products = Array.isArray(allProducts) ? allProducts as Product[] : [];
   
-  // Get current day's products (featured + new arrivals for variety)
-  const currentDayProducts = useMemo(() => {
+  // Separate featured and new arrivals for better customer clarity
+  const { featuredProducts, newArrivalProducts, allDayProducts } = useMemo(() => {
     const featured = products.filter(product => product.isFeatured);
     const newArrivals = products.filter(product => product.isNewArrival);
-    const combined = [...featured, ...newArrivals];
     
-    // Remove duplicates and return up to 12 products
+    // Create combined array with clear identification
+    const combined = [
+      ...featured.map(product => ({ ...product, displayType: 'featured' as const })),
+      ...newArrivals.map(product => ({ ...product, displayType: 'newArrival' as const }))
+    ];
+    
+    // Remove duplicates and prioritize featured products
     const unique = combined.filter((product, index, self) => 
       index === self.findIndex(p => p.id === product.id)
     );
     
-    return unique.slice(0, 12);
+    return {
+      featuredProducts: featured.slice(0, 6),
+      newArrivalProducts: newArrivals.slice(0, 6), 
+      allDayProducts: unique.slice(0, 12)
+    };
   }, [products]);
 
   // Render the appropriate layout based on current day
   const renderDayLayout = () => {
     switch (currentDay) {
       case 0: // Sunday
-        return <SundayLayout products={currentDayProducts} selectedCurrency={selectedCurrency} />;
+        return <SundayLayout products={allDayProducts} selectedCurrency={selectedCurrency} />;
       case 1: // Monday
-        return <MondayLayout products={currentDayProducts} selectedCurrency={selectedCurrency} />;
+        return <MondayLayout products={allDayProducts} selectedCurrency={selectedCurrency} />;
       case 2: // Tuesday
-        return <TuesdayLayout products={currentDayProducts} selectedCurrency={selectedCurrency} />;
+        return <TuesdayLayout products={allDayProducts} selectedCurrency={selectedCurrency} />;
       case 3: // Wednesday
-        return <WednesdayLayout products={currentDayProducts} selectedCurrency={selectedCurrency} />;
+        return <WednesdayLayout products={allDayProducts} selectedCurrency={selectedCurrency} />;
       case 4: // Thursday
-        return <ThursdayLayout products={currentDayProducts} selectedCurrency={selectedCurrency} />;
+        return <ThursdayLayout products={allDayProducts} selectedCurrency={selectedCurrency} />;
       case 5: // Friday
-        return <FridayLayout products={currentDayProducts} selectedCurrency={selectedCurrency} />;
+        return <FridayLayout products={allDayProducts} selectedCurrency={selectedCurrency} />;
       case 6: // Saturday
-        return <SaturdayLayout products={currentDayProducts} selectedCurrency={selectedCurrency} />;
+        return <SaturdayLayout products={allDayProducts} selectedCurrency={selectedCurrency} />;
       default:
         // Fallback to Sunday layout
-        return <SundayLayout products={currentDayProducts} selectedCurrency={selectedCurrency} />;
+        return <SundayLayout products={allDayProducts} selectedCurrency={selectedCurrency} />;
     }
   };
 

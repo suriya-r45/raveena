@@ -188,6 +188,20 @@ Could you please provide more details?`;
           </Badge>
         )}
 
+        {/* Featured Badge */}
+        {product.isFeatured && product.stock > 0 && (
+          <Badge className="absolute top-2 left-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold">
+            ⭐ Featured
+          </Badge>
+        )}
+
+        {/* New Arrival Badge */}
+        {product.isNewArrival && !product.isFeatured && product.stock > 0 && (
+          <Badge className="absolute top-2 left-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold">
+            ✨ New Arrival
+          </Badge>
+        )}
+
         {/* Wishlist Button */}
         <Button
           variant="ghost"
