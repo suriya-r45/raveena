@@ -53,6 +53,81 @@ const ADMIN_CREDENTIALS = {
   password: process.env.ADMIN_PASSWORD || "zxcvbnm"
 };
 
+// Stock Management Helper Functions
+
+/**
+ * Validates that there's sufficient stock for all items in an order
+ */
+async function validateStock(items: Array<{productId: string, quantity: number}>): Promise<{valid: boolean, errors: string[]}> {
+  const errors: string[] = [];
+  
+  for (const item of items) {
+    const product = await storage.getProduct(item.productId);
+    if (!product) {
+      errors.push(`Product ${item.productId} not found`);
+      continue;
+    }
+    
+    if (product.stock < item.quantity) {
+      errors.push(`Insufficient stock for ${product.name}. Available: ${product.stock}, Requested: ${item.quantity}`);
+    }
+  }
+  
+  return {
+    valid: errors.length === 0,
+    errors
+  };
+}
+
+/**
+ * Deducts stock from products after order creation
+ */
+async function deductStock(items: Array<{productId: string, quantity: number}>): Promise<void> {
+  for (const item of items) {
+    const product = await storage.getProduct(item.productId);
+    if (!product) {
+      console.error(`Product ${item.productId} not found during stock deduction`);
+      continue;
+    }
+    
+    const newStock = Math.max(0, product.stock - item.quantity);
+    await storage.updateProduct(item.productId, { stock: newStock });
+    
+    console.log(`[Stock Update] ${product.name}: ${product.stock} → ${newStock} (deducted ${item.quantity})`);
+    
+    // Check for low stock after deduction
+    await checkLowStock(item.productId);
+  }
+}
+
+/**
+ * Checks if a product has low stock and sends alert notifications
+ */
+async function checkLowStock(productId: string): Promise<void> {
+  const product = await storage.getProduct(productId);
+  if (!product) return;
+  
+  const threshold = product.lowStockThreshold || 5;
+  
+  if (product.stock <= threshold) {
+    console.log(`[Low Stock Alert] ${product.name} is running low: ${product.stock} units remaining (threshold: ${threshold})`);
+    
+    // Send low stock notification to admin
+    try {
+      await NotificationService.sendLowStockAlert(
+        product.id,
+        product.name,
+        product.stock,
+        threshold,
+        ADMIN_CREDENTIALS.email,
+        ADMIN_CREDENTIALS.mobile
+      );
+    } catch (error) {
+      console.error(`Failed to send low stock alert for ${product.name}:`, error);
+    }
+  }
+}
+
 // WhatsApp messaging function
 async function sendWelcomeWhatsAppMessage(name: string, phone: string) {
   const message = `✨ Welcome, ${name}! You are now part of the Palaniappa Jewellers legacy, where every jewel is crafted for elegance that lasts generations.`;
@@ -1086,6 +1161,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/bills", async (req, res) => {
     try {
       const billData = insertBillSchema.parse(req.body);
+      
+      // Extract product items for stock validation
+      const items = billData.items.map((item: any) => ({
+        productId: item.productId,
+        quantity: item.quantity
+      }));
+      
+      // Validate stock availability
+      const stockValidation = await validateStock(items);
+      if (!stockValidation.valid) {
+        return res.status(400).json({
+          message: "Insufficient stock",
+          errors: stockValidation.errors
+        });
+      }
+      
       const billCount = (await storage.getAllBills()).length;
       const date = new Date();
       const formattedDate = `${date.getFullYear()}${(date.getMonth() + 1).toString().padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}`;
@@ -1095,6 +1186,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...billData,
         billNumber: billNumber
       } as any);
+      
+      // Deduct stock after successful bill creation
+      try {
+        await deductStock(items);
+        console.log(`[Stock Management] Stock deducted for Bill ${billNumber}`);
+      } catch (stockError) {
+        console.error(`[Stock Management] Failed to deduct stock for Bill ${billNumber}:`, stockError);
+        // Note: Bill is already created, but we log the stock error
+      }
 
       // Send WhatsApp notification to admin about new order
       try {
@@ -1623,6 +1723,23 @@ Premium quality, timeless beauty.`;
   app.post("/api/orders", authenticateToken, async (req, res) => {
     try {
       const orderData = req.body;
+      
+      // Extract product items for stock validation
+      const items = (orderData.items || []).map((item: any) => ({
+        productId: item.productId,
+        quantity: item.quantity
+      }));
+      
+      // Validate stock availability
+      if (items.length > 0) {
+        const stockValidation = await validateStock(items);
+        if (!stockValidation.valid) {
+          return res.status(400).json({
+            message: "Insufficient stock",
+            errors: stockValidation.errors
+          });
+        }
+      }
 
       // Generate order number
       const orderCount = (await storage.getAllBills()).length; // Reuse bill count for now
@@ -1647,6 +1764,17 @@ Premium quality, timeless beauty.`;
         paymentMethod: orderData.paymentMethod || 'CASH',
         items: orderData.items || [],
       });
+
+      // Deduct stock after successful order creation
+      if (items.length > 0) {
+        try {
+          await deductStock(items);
+          console.log(`[Stock Management] Stock deducted for Order ${orderNumber}`);
+        } catch (stockError) {
+          console.error(`[Stock Management] Failed to deduct stock for Order ${orderNumber}:`, stockError);
+          // Note: Order is already created, but we log the stock error
+        }
+      }
 
       // Create a shipment record for order tracking
       try {

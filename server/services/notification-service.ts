@@ -407,6 +407,45 @@ class NotificationService {
     });
   }
 
+  // Send low stock alert notification  
+  public async sendLowStockAlert(
+    productId: string,
+    productName: string,
+    currentStock: number,
+    threshold: number,
+    adminEmail: string,
+    adminPhone: string
+  ): Promise<void> {
+    const templateVariables = {
+      productName,
+      currentStock: currentStock.toString(),
+      threshold: threshold.toString(),
+      productId,
+      dashboardUrl: 'https://your-domain.com/admin/products',
+      companyName: 'Palaniappa Jewellers'
+    };
+
+    // Send email notification to admin
+    const channels: ('email' | 'sms')[] = ['email'];
+    
+    // Also send SMS if configured
+    if (isSmsServiceEnabled) {
+      channels.push('sms');
+    }
+
+    await this.sendNotification({
+      type: 'personalized', // Using personalized type for internal notifications
+      channels,
+      recipientEmail: adminEmail,
+      recipientPhone: adminPhone,
+      recipientName: 'Admin',
+      subject: `🚨 Low Stock Alert: ${productName}`,
+      message: `LOW STOCK ALERT!\n\nProduct: ${productName}\nCurrent Stock: ${currentStock} units\nThreshold: ${threshold} units\n\nPlease restock immediately to avoid stockouts.\n\nView Product: ${templateVariables.dashboardUrl}`,
+      productId,
+      templateVariables
+    });
+  }
+
   // Track user activity for personalization
   public async trackActivity(activity: InsertUserActivity): Promise<void> {
     try {
