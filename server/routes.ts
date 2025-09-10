@@ -18,6 +18,7 @@ import { generateProductCode, generateBarcode, generateQRCode, ProductBarcodeDat
 import { recalculateAllMetalBasedProducts } from "./utils/pricing.js";
 import { createVintageProductImage } from "./utils/vintage-effects.js";
 import sharp from "sharp";
+import { secureLog, devLog, authLog, messageLog } from "./utils/logger.js";
 
 // Initialize Stripe only if key is provided
 let stripe: Stripe | undefined;
@@ -46,12 +47,27 @@ if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
   console.warn('⚠️  Twilio credentials not found. SMS features will be disabled.');
 }
 
-// Admin credentials from environment variables
-const ADMIN_CREDENTIALS = {
-  email: process.env.ADMIN_EMAIL || "admin@palaniappajewellers.com",
-  mobile: process.env.ADMIN_MOBILE || "9597201554",
-  password: process.env.ADMIN_PASSWORD || "zxcvbnm"
+// Admin credentials from environment variables - required for production security
+const ADMIN_CREDENTIALS: { email: string; mobile: string; password: string } = {
+  email: process.env.ADMIN_EMAIL || "",
+  mobile: process.env.ADMIN_MOBILE || "",
+  password: process.env.ADMIN_PASSWORD || ""
 };
+
+// Validate admin credentials are configured
+if (!ADMIN_CREDENTIALS.email || !ADMIN_CREDENTIALS.mobile || !ADMIN_CREDENTIALS.password) {
+  const isDevelopment = process.env.NODE_ENV !== 'production';
+  if (isDevelopment) {
+    // In development, use safe defaults but warn
+    ADMIN_CREDENTIALS.email = ADMIN_CREDENTIALS.email || "admin@palaniappajewellers.com";
+    ADMIN_CREDENTIALS.mobile = ADMIN_CREDENTIALS.mobile || "9597201554";
+    ADMIN_CREDENTIALS.password = ADMIN_CREDENTIALS.password || "dev_admin_password";
+    console.warn('⚠️  Using default admin credentials in development. Set ADMIN_EMAIL, ADMIN_MOBILE, and ADMIN_PASSWORD env vars for production.');
+  } else {
+    // In production, fail fast - no defaults allowed
+    throw new Error("ADMIN_EMAIL, ADMIN_MOBILE, and ADMIN_PASSWORD environment variables must be set in production");
+  }
+}
 
 // Stock Management Helper Functions
 
@@ -93,7 +109,7 @@ async function deductStock(items: Array<{productId: string, quantity: number}>):
     const newStock = Math.max(0, product.stock - item.quantity);
     await storage.updateProduct(item.productId, { stock: newStock });
     
-    console.log(`[Stock Update] ${product.name}: ${product.stock} → ${newStock} (deducted ${item.quantity})`);
+    devLog(`Stock Update - ${product.name}: ${product.stock} → ${newStock} (deducted ${item.quantity})`);
     
     // Check for low stock after deduction
     await checkLowStock(item.productId);
@@ -110,7 +126,7 @@ async function checkLowStock(productId: string): Promise<void> {
   const threshold = product.lowStockThreshold || 5;
   
   if (product.stock <= threshold) {
-    console.log(`[Low Stock Alert] ${product.name} is running low: ${product.stock} units remaining (threshold: ${threshold})`);
+    devLog(`Low Stock Alert - ${product.name} is running low: ${product.stock} units remaining`);
     
     // Send low stock notification to admin
     try {
@@ -139,8 +155,8 @@ async function sendWelcomeWhatsAppMessage(name: string, phone: string) {
   const whatsappUrl = `https://wa.me/${formattedPhone.replace('+', '')}?text=${encodeURIComponent(message)}`;
 
   // For now, we'll log the message. In production, you would integrate with WhatsApp Business API
-  console.log(`WhatsApp welcome message for ${name} (${phone}): ${message}`);
-  console.log(`WhatsApp URL: ${whatsappUrl}`);
+  messageLog('WhatsApp welcome sent', phone, true);
+  devLog(`WhatsApp URL generated for welcome message`);
 
   // Return the URL so it can be used if needed
   return whatsappUrl;
@@ -148,7 +164,7 @@ async function sendWelcomeWhatsAppMessage(name: string, phone: string) {
 
 // Function to send WhatsApp notification to admin for new orders
 async function sendAdminOrderNotification(billData: any) {
-  const adminPhone = "+919597201554"; // Admin WhatsApp number
+  const adminPhone = ADMIN_CREDENTIALS.mobile; // Use admin mobile from env vars
 
   const message = `🔔 NEW ORDER RECEIVED!
 
@@ -175,8 +191,8 @@ async function sendAdminOrderNotification(billData: any) {
 
   try {
     if (!twilioClient) {
-      console.log('[WhatsApp Notification] Twilio not configured, logging notification instead');
-      console.log(`[New Order] Admin notification for Bill ${billData.billNumber}: ${message}`);
+      devLog('WhatsApp Notification - Twilio not configured, notification not sent');
+      messageLog('Admin order notification', 'admin', false);
       return { success: false, error: 'Twilio not configured' };
     }
 
@@ -187,12 +203,12 @@ async function sendAdminOrderNotification(billData: any) {
       to: `whatsapp:${adminPhone}` // Admin WhatsApp number
     });
 
-    console.log(`[Admin WhatsApp] Order notification sent for Bill ${billData.billNumber} - Message SID: ${twilioMessage.sid}`);
+    messageLog('Admin WhatsApp order notification', 'admin', true);
+    devLog(`Admin WhatsApp message sent - SID available`);
     return { success: true, messageSid: twilioMessage.sid };
   } catch (error) {
-    console.error(`[Admin WhatsApp Error] Failed to send order notification:`, error);
-    // Log the notification even if sending fails
-    console.log(`[New Order] Admin notification for Bill ${billData.billNumber}: ${message}`);
+    secureLog('Admin WhatsApp Error - Failed to send order notification', 'error');
+    messageLog('Admin order notification', 'admin', false);
     return { success: false, error: error instanceof Error ? error.message : 'Unknown error occurred' };
   }
 }
@@ -220,10 +236,10 @@ Contact: +919597201554`;
       formattedPhone = '+91' + formattedPhone;
     }
 
-    console.log(`[SMS Debug] Original phone: ${phone}, Formatted phone: ${formattedPhone}`);
+    devLog(`SMS Debug - phone formatting completed`);
 
     if (!twilioClient) {
-      console.log('[SMS Debug] Twilio not configured, skipping SMS send');
+      devLog('SMS Debug - Twilio not configured, skipping SMS send');
       return { success: false, error: 'Twilio not configured' };
     }
 
@@ -233,22 +249,23 @@ Contact: +919597201554`;
       to: formattedPhone
     });
 
-    console.log(`[SMS Sent] OTP ${otp} sent to ${name} (${phone}) - Message SID: ${twilioMessage.sid}`);
-    console.log(`[SMS Details] Status: ${twilioMessage.status}, From: ${process.env.TWILIO_PHONE_NUMBER}, To: ${formattedPhone}`);
+    messageLog('OTP SMS sent', phone, true);
+    devLog(`SMS Details - Status: ${twilioMessage.status}`);
 
     // Check message status after a brief delay
     setTimeout(async () => {
       try {
         const messageStatus = await twilioClient!.messages(twilioMessage.sid).fetch();
-        console.log(`[SMS Status Update] Message ${twilioMessage.sid} status: ${messageStatus.status}, Error: ${messageStatus.errorMessage || 'None'}`);
+        devLog(`SMS Status Update - status: ${messageStatus.status}`);
       } catch (error) {
-        console.log(`[SMS Status Error] Could not fetch status: ${error}`);
+        secureLog(`SMS Status Error - Could not fetch status`, 'error');
       }
     }, 5000);
 
     return { success: true, messageSid: twilioMessage.sid };
   } catch (error) {
-    console.error(`[SMS Error] Failed to send OTP to ${phone}:`, error);
+    messageLog('OTP SMS send failed', phone, false);
+    secureLog('SMS Error - Failed to send OTP', 'error');
     return { success: false, error: error instanceof Error ? error.message : 'Unknown error occurred' };
   }
 }
@@ -303,9 +320,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
   app.post("/api/auth/login", async (req, res) => {
     try {
-      console.log('Login request body:', req.body);
+      devLog('Login request received');
       const { email, password } = loginSchema.parse(req.body);
-      console.log('Parsed email:', email, 'password length:', password?.length);
+      devLog(`Login attempt for email type: ${typeof email}`);
 
       // Check for admin credentials (email or mobile)
       if ((email === ADMIN_CREDENTIALS.email || email === ADMIN_CREDENTIALS.mobile) && password === ADMIN_CREDENTIALS.password) {
@@ -334,7 +351,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ user: { id: user.id, email: user.email, role: user.role, name: user.name }, token });
     } catch (error) {
-      console.log('Login validation error:', error);
+      secureLog('Login validation error occurred', 'error');
       res.status(400).json({ message: "Invalid request data" });
     }
   });
@@ -358,7 +375,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         try {
           await sendWelcomeWhatsAppMessage(userData.name, userData.phone);
         } catch (error) {
-          console.error('Failed to send WhatsApp message:', error);
+          secureLog('WhatsApp welcome send failed', 'error');
           // Continue with registration even if WhatsApp fails
         }
       }
@@ -414,7 +431,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         phone: phone
       });
     } catch (error) {
-      console.error("Error sending OTP:", error);
+      secureLog('Error sending OTP', 'error');
       res.status(500).json({ message: "Failed to send OTP" });
     }
   });
@@ -459,7 +476,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: "OTP verified successfully, you are now logged in!"
       });
     } catch (error) {
-      console.error("Error verifying OTP:", error);
+      secureLog('Error verifying OTP', 'error');
       res.status(500).json({ message: "Failed to verify OTP" });
     }
   });
@@ -1379,9 +1396,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Deduct stock after successful bill creation
       try {
         await deductStock(items);
-        console.log(`[Stock Management] Stock deducted for Bill ${billNumber}`);
+        secureLog('Stock Management - Stock deducted for bill', 'info');
       } catch (stockError) {
-        console.error(`[Stock Management] Failed to deduct stock for Bill ${billNumber}:`, stockError);
+        secureLog('Stock Management - Failed to deduct stock for bill', 'error');
         // Note: Bill is already created, but we log the stock error
       }
 
@@ -1391,9 +1408,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           ...bill,
           ...billData
         });
-        console.log(`[New Order] Admin notification sent for Bill ${billNumber}`);
+        secureLog('New Order - Admin notification sent for bill', 'info');
       } catch (error) {
-        console.error(`[New Order] Failed to send admin notification for Bill ${billNumber}:`, error);
+        secureLog('New Order - Failed to send admin notification for bill', 'error');
         // Don't fail the order creation if notification fails
       }
 
@@ -1406,9 +1423,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           billData.customerPhone,
           billData.customerName
         );
-        console.log(`[Customer Notification] Order confirmation sent for Bill ${billNumber}`);
+        secureLog('Customer Notification - Order confirmation sent for bill', 'info');
       } catch (error) {
-        console.error(`[Customer Notification] Failed to send order confirmation for Bill ${billNumber}:`, error);
+        secureLog('Customer Notification - Failed to send order confirmation for bill', 'error');
         // Don't fail the order creation if notification fails
       }
 
@@ -1502,9 +1519,8 @@ Premium quality, timeless beauty.`;
       const whatsappUrl = `https://wa.me/${phoneNumber.startsWith('91') ? phoneNumber : '91' + phoneNumber}?text=${encodeURIComponent(message)}`;
 
       // Log for production integration
-      console.log(`[WhatsApp Bill] Sending bill ${bill.billNumber} to ${bill.customerName} (${bill.customerPhone})`);
-      console.log(`[WhatsApp URL] ${whatsappUrl}`);
-      console.log(`[PDF URL] ${pdfUrl}`);
+      messageLog('WhatsApp bill sent', bill.customerPhone, true);
+      devLog(`WhatsApp URL and PDF URL generated for bill`);
 
       res.json({
         success: true,
@@ -1514,7 +1530,7 @@ Premium quality, timeless beauty.`;
         messagePreview: message
       });
     } catch (error) {
-      console.error("Error preparing bill for WhatsApp:", error);
+      secureLog('Error preparing bill for WhatsApp', 'error');
       res.status(500).json({ message: "Failed to prepare bill for WhatsApp" });
     }
   });
@@ -1958,9 +1974,9 @@ Premium quality, timeless beauty.`;
       if (items.length > 0) {
         try {
           await deductStock(items);
-          console.log(`[Stock Management] Stock deducted for Order ${orderNumber}`);
+          secureLog('Stock Management - Stock deducted for order', 'info');
         } catch (stockError) {
-          console.error(`[Stock Management] Failed to deduct stock for Order ${orderNumber}:`, stockError);
+          secureLog('Stock Management - Failed to deduct stock for order', 'error');
           // Note: Order is already created, but we log the stock error
         }
       }
@@ -2008,9 +2024,9 @@ Premium quality, timeless beauty.`;
           ...bill,
           ...orderData
         });
-        console.log(`[New Order] Admin notification sent for Order ${orderNumber}`);
+        secureLog('New Order - Admin notification sent for order', 'info');
       } catch (error) {
-        console.error(`[New Order] Failed to send admin notification for Order ${orderNumber}:`, error);
+        secureLog('New Order - Failed to send admin notification for order', 'error');
         // Don't fail the order creation if notification fails
       }
 
@@ -2023,9 +2039,9 @@ Premium quality, timeless beauty.`;
           orderData.customerPhone,
           orderData.customerName
         );
-        console.log(`[Customer Notification] Order confirmation sent for Order ${orderNumber}`);
+        secureLog('Customer Notification - Order confirmation sent for order', 'info');
       } catch (error) {
-        console.error(`[Customer Notification] Failed to send order confirmation for Order ${orderNumber}:`, error);
+        secureLog('Customer Notification - Failed to send order confirmation for order', 'error');
         // Don't fail the order creation if notification fails
       }
 
@@ -2356,7 +2372,7 @@ For any queries, please contact us.`;
 
       res.json({ whatsappUrl, message });
     } catch (error) {
-      console.error('Error sending to WhatsApp:', error);
+      secureLog('Error sending to WhatsApp', 'error');
       res.status(500).json({ error: 'Failed to send to WhatsApp' });
     }
   });

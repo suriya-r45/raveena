@@ -15,6 +15,15 @@ const __dirname = dirname(__filename);
 
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
+// Helper function to mask sensitive information in logs
+function maskSensitiveInfo(str: string): string {
+  return str.replace(/DATABASE_URL: [^\s]+/g, 'DATABASE_URL: [MASKED]')
+            .replace(/password@[^\s\/]+/g, 'password@[MASKED]')
+            .replace(/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/gi, '[UUID-MASKED]');
+}
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -27,7 +36,9 @@ app.use((req, res, next) => {
 
   const originalResJson = res.json;
   res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
+    if (isDevelopment) {
+      capturedJsonResponse = bodyJson;
+    }
     return originalResJson.apply(res, [bodyJson, ...args]);
   };
 
@@ -35,8 +46,15 @@ app.use((req, res, next) => {
     const duration = Date.now() - start;
     if (pathName.startsWith("/api")) {
       let logLine = `${req.method} ${pathName} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+      
+      // Only log response bodies in development
+      if (isDevelopment && capturedJsonResponse) {
+        const responseStr = JSON.stringify(capturedJsonResponse);
+        if (responseStr.length > 100) {
+          logLine += ` :: ${responseStr.slice(0, 97)}...`;
+        } else {
+          logLine += ` :: ${responseStr}`;
+        }
       }
 
       if (logLine.length > 80) {
@@ -63,8 +81,21 @@ app.use("/attached_assets", express.static(path.join(__dirname, "../attached_ass
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
-    res.status(status).json({ message });
-    throw err;
+    
+    // Log error details only in development
+    if (isDevelopment) {
+      log(`Error ${status}: ${message}`);
+      console.error(err.stack);
+    } else {
+      log(`Error ${status}: ${message}`);
+    }
+    
+    // Send response if not already sent
+    if (!res.headersSent) {
+      res.status(status).json({ message });
+    }
+    
+    // Do not rethrow the error to prevent process crash
   });
 
   // Setup Vite in dev mode, or serve static in prod
@@ -88,7 +119,14 @@ app.use("/attached_assets", express.static(path.join(__dirname, "../attached_ass
   const port = parseInt(process.env.PORT || '5000', 10);
 
   app.listen(port, "0.0.0.0", () => {
-    log(`Server is running on port ${port}`);
+    const serverMessage = `Server is running on port ${port}`;
+    if (isDevelopment) {
+      // Show full database info in development
+      const dbInfo = process.env.DATABASE_URL ? 'Database connected' : 'No database configured';
+      log(`${serverMessage} (${dbInfo})`);
+    } else {
+      log(serverMessage);
+    }
   });
 
 })();
