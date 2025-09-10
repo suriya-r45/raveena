@@ -61,7 +61,7 @@ if (!ADMIN_CREDENTIALS.email || !ADMIN_CREDENTIALS.mobile || !ADMIN_CREDENTIALS.
     // In development, use safe defaults but warn
     ADMIN_CREDENTIALS.email = ADMIN_CREDENTIALS.email || "admin@palaniappajewellers.com";
     ADMIN_CREDENTIALS.mobile = ADMIN_CREDENTIALS.mobile || "9597201554";
-    ADMIN_CREDENTIALS.password = ADMIN_CREDENTIALS.password || "dev_admin_password";
+    ADMIN_CREDENTIALS.password = ADMIN_CREDENTIALS.password || "zxcvbnm";
     console.warn('⚠️  Using default admin credentials in development. Set ADMIN_EMAIL, ADMIN_MOBILE, and ADMIN_PASSWORD env vars for production.');
   } else {
     // In production, fail fast - no defaults allowed
