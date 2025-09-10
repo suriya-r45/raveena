@@ -1,4 +1,4 @@
-import { users, products, bills, cartItems, orders, estimates, categories, homeSections, homeSectionItems, shippingZones, shippingMethods, shipments, deliveryAttempts, videos, appSettings, notificationTemplates, notificationPreferences, notifications, notificationCampaigns, userActivity, type User, type InsertUser, type Product, type InsertProduct, type Bill, type InsertBill, type CartItemRow, type InsertCartItem, type Order, type InsertOrder, type CartItem, type Estimate, type InsertEstimate, type Category, type InsertCategory, type HomeSection, type InsertHomeSection, type HomeSectionItem, type InsertHomeSectionItem, type ShippingZone, type ShippingMethod, type Shipment, type DeliveryAttempt, type Video, type AppSetting, type InsertAppSetting, type NotificationTemplate, type InsertNotificationTemplate, type NotificationPreferences, type InsertNotificationPreferences, type Notification, type InsertNotification, type NotificationCampaign, type InsertNotificationCampaign, type UserActivity, type InsertUserActivity } from "@shared/schema";
+import { users, products, bills, cartItems, wishlistItems, orders, estimates, categories, homeSections, homeSectionItems, shippingZones, shippingMethods, shipments, deliveryAttempts, videos, appSettings, notificationTemplates, notificationPreferences, notifications, notificationCampaigns, userActivity, type User, type InsertUser, type Product, type InsertProduct, type Bill, type InsertBill, type CartItemRow, type InsertCartItem, type WishlistItem, type InsertWishlistItem, type Order, type InsertOrder, type CartItem, type Estimate, type InsertEstimate, type Category, type InsertCategory, type HomeSection, type InsertHomeSection, type HomeSectionItem, type InsertHomeSectionItem, type ShippingZone, type ShippingMethod, type Shipment, type DeliveryAttempt, type Video, type AppSetting, type InsertAppSetting, type NotificationTemplate, type InsertNotificationTemplate, type NotificationPreferences, type InsertNotificationPreferences, type Notification, type InsertNotification, type NotificationCampaign, type InsertNotificationCampaign, type UserActivity, type InsertUserActivity } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, like, and, gte, lte, isNull, or } from "drizzle-orm";
 import bcrypt from "bcryptjs";
@@ -38,6 +38,12 @@ export interface IStorage {
   updateCartItem(id: string, quantity: number): Promise<CartItemRow | undefined>;
   removeFromCart(id: string): Promise<boolean>;
   clearCart(sessionId?: string, userId?: string): Promise<boolean>;
+
+  // Wishlist operations
+  getWishlistItems(userId: string): Promise<WishlistItem[]>;
+  addToWishlist(userId: string, productId: string): Promise<WishlistItem>;
+  removeFromWishlist(userId: string, productId: string): Promise<boolean>;
+  isInWishlist(userId: string, productId: string): Promise<boolean>;
 
   // Order operations
   getAllOrders(): Promise<Order[]>;
@@ -1283,6 +1289,100 @@ export class DatabaseStorage implements IStorage {
       .where(eq(userActivity.activityType, activityType))
       .orderBy(desc(userActivity.createdAt))
       .limit(limit);
+  }
+
+  // Wishlist operations
+  async getWishlistItems(userId: string): Promise<WishlistItem[]> {
+    const wishlistResults = await db.select()
+      .from(wishlistItems)
+      .leftJoin(products, eq(wishlistItems.productId, products.id))
+      .where(eq(wishlistItems.userId, userId))
+      .orderBy(desc(wishlistItems.createdAt));
+    
+    return wishlistResults.map(result => ({
+      ...result.wishlist_items,
+      product: result.products || undefined
+    })) as WishlistItem[];
+  }
+
+  async addToWishlist(userId: string, productId: string): Promise<WishlistItem> {
+    // Check if item already exists in wishlist
+    const existing = await db.select()
+      .from(wishlistItems)
+      .where(and(eq(wishlistItems.userId, userId), eq(wishlistItems.productId, productId)));
+    
+    if (existing.length > 0) {
+      return existing[0] as WishlistItem;
+    }
+
+    const [newWishlistItem] = await db.insert(wishlistItems)
+      .values({ userId, productId })
+      .returning();
+    return newWishlistItem as WishlistItem;
+  }
+
+  async removeFromWishlist(userId: string, productId: string): Promise<boolean> {
+    const result = await db.delete(wishlistItems)
+      .where(and(eq(wishlistItems.userId, userId), eq(wishlistItems.productId, productId)));
+    return (result.rowCount || 0) > 0;
+  }
+
+  async isInWishlist(userId: string, productId: string): Promise<boolean> {
+    const [item] = await db.select()
+      .from(wishlistItems)
+      .where(and(eq(wishlistItems.userId, userId), eq(wishlistItems.productId, productId)));
+    return !!item;
+  }
+
+  // Cart operations - implement missing methods
+  async getCartItems(sessionId?: string, userId?: string): Promise<CartItem[]> {
+    const whereConditions = [];
+    if (sessionId) whereConditions.push(eq(cartItems.sessionId, sessionId));
+    if (userId) whereConditions.push(eq(cartItems.userId, userId));
+    
+    if (whereConditions.length === 0) return [];
+
+    const cartResults = await db.select()
+      .from(cartItems)
+      .leftJoin(products, eq(cartItems.productId, products.id))
+      .where(or(...whereConditions))
+      .orderBy(desc(cartItems.createdAt));
+    
+    return cartResults.map(result => ({
+      ...result.cart_items,
+      product: result.products || undefined
+    })) as CartItem[];
+  }
+
+  async addToCart(item: InsertCartItem): Promise<CartItemRow> {
+    const [newCartItem] = await db.insert(cartItems)
+      .values(item)
+      .returning();
+    return newCartItem;
+  }
+
+  async updateCartItem(id: string, quantity: number): Promise<CartItemRow | undefined> {
+    const [updatedItem] = await db.update(cartItems)
+      .set({ quantity, updatedAt: new Date() })
+      .where(eq(cartItems.id, id))
+      .returning();
+    return updatedItem || undefined;
+  }
+
+  async removeFromCart(id: string): Promise<boolean> {
+    const result = await db.delete(cartItems).where(eq(cartItems.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  async clearCart(sessionId?: string, userId?: string): Promise<boolean> {
+    const whereConditions = [];
+    if (sessionId) whereConditions.push(eq(cartItems.sessionId, sessionId));
+    if (userId) whereConditions.push(eq(cartItems.userId, userId));
+    
+    if (whereConditions.length === 0) return false;
+
+    const result = await db.delete(cartItems).where(or(...whereConditions));
+    return (result.rowCount || 0) > 0;
   }
 }
 

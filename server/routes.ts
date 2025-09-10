@@ -637,6 +637,195 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ==============================
+  // WISHLIST ROUTES
+  // ==============================
+
+  // Get user's wishlist items
+  app.get("/api/wishlist", authenticateToken, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const wishlistItems = await storage.getWishlistItems(userId);
+      res.json(wishlistItems);
+    } catch (error) {
+      console.error('Error fetching wishlist:', error);
+      res.status(500).json({ message: "Failed to fetch wishlist" });
+    }
+  });
+
+  // Add product to wishlist
+  app.post("/api/wishlist/:productId", authenticateToken, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const { productId } = req.params;
+
+      // Check if product exists
+      const product = await storage.getProduct(productId);
+      if (!product) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+
+      // Check if already in wishlist
+      const isInWishlist = await storage.isInWishlist(userId, productId);
+      if (isInWishlist) {
+        return res.status(400).json({ message: "Product already in wishlist" });
+      }
+
+      const wishlistItem = await storage.addToWishlist(userId, productId);
+      res.status(201).json(wishlistItem);
+    } catch (error) {
+      console.error('Error adding to wishlist:', error);
+      res.status(500).json({ message: "Failed to add to wishlist" });
+    }
+  });
+
+  // Remove product from wishlist
+  app.delete("/api/wishlist/:productId", authenticateToken, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const { productId } = req.params;
+
+      const removed = await storage.removeFromWishlist(userId, productId);
+      if (!removed) {
+        return res.status(404).json({ message: "Item not found in wishlist" });
+      }
+
+      res.json({ message: "Item removed from wishlist" });
+    } catch (error) {
+      console.error('Error removing from wishlist:', error);
+      res.status(500).json({ message: "Failed to remove from wishlist" });
+    }
+  });
+
+  // Check if product is in user's wishlist
+  app.get("/api/wishlist/check/:productId", authenticateToken, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const { productId } = req.params;
+
+      const isInWishlist = await storage.isInWishlist(userId, productId);
+      res.json({ isInWishlist });
+    } catch (error) {
+      console.error('Error checking wishlist:', error);
+      res.status(500).json({ message: "Failed to check wishlist" });
+    }
+  });
+
+  // ==============================
+  // CART ROUTES
+  // ==============================
+
+  // Get user's cart items
+  app.get("/api/cart", async (req: any, res) => {
+    try {
+      const sessionId = req.session?.id;
+      const userId = req.user?.id;
+
+      const cartItems = await storage.getCartItems(sessionId, userId);
+      res.json(cartItems);
+    } catch (error) {
+      console.error('Error fetching cart:', error);
+      res.status(500).json({ message: "Failed to fetch cart" });
+    }
+  });
+
+  // Add item to cart
+  app.post("/api/cart", async (req: any, res) => {
+    try {
+      const { productId, quantity = 1 } = req.body;
+      const sessionId = req.session?.id;
+      const userId = req.user?.id;
+
+      if (!productId) {
+        return res.status(400).json({ message: "Product ID is required" });
+      }
+
+      // Check if product exists
+      const product = await storage.getProduct(productId);
+      if (!product) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+
+      // Check stock availability
+      if (product.stock < quantity) {
+        return res.status(400).json({
+          message: "Insufficient stock",
+          available: product.stock,
+          requested: quantity
+        });
+      }
+
+      const cartItem = await storage.addToCart({
+        productId,
+        quantity,
+        sessionId,
+        userId
+      });
+
+      res.status(201).json(cartItem);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      res.status(500).json({ message: "Failed to add to cart" });
+    }
+  });
+
+  // Update cart item quantity
+  app.patch("/api/cart/:id", async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      const { quantity } = req.body;
+
+      if (!quantity || quantity < 1) {
+        return res.status(400).json({ message: "Valid quantity is required" });
+      }
+
+      const updatedItem = await storage.updateCartItem(id, quantity);
+      if (!updatedItem) {
+        return res.status(404).json({ message: "Cart item not found" });
+      }
+
+      res.json(updatedItem);
+    } catch (error) {
+      console.error('Error updating cart item:', error);
+      res.status(500).json({ message: "Failed to update cart item" });
+    }
+  });
+
+  // Remove item from cart
+  app.delete("/api/cart/:id", async (req: any, res) => {
+    try {
+      const { id } = req.params;
+
+      const removed = await storage.removeFromCart(id);
+      if (!removed) {
+        return res.status(404).json({ message: "Cart item not found" });
+      }
+
+      res.json({ message: "Item removed from cart" });
+    } catch (error) {
+      console.error('Error removing from cart:', error);
+      res.status(500).json({ message: "Failed to remove from cart" });
+    }
+  });
+
+  // Clear user's cart
+  app.delete("/api/cart", async (req: any, res) => {
+    try {
+      const sessionId = req.session?.id;
+      const userId = req.user?.id;
+
+      const cleared = await storage.clearCart(sessionId, userId);
+      if (!cleared) {
+        return res.status(404).json({ message: "No cart items found" });
+      }
+
+      res.json({ message: "Cart cleared successfully" });
+    } catch (error) {
+      console.error('Error clearing cart:', error);
+      res.status(500).json({ message: "Failed to clear cart" });
+    }
+  });
+
   // Product routes
   app.get("/api/products", async (req, res) => {
     try {
