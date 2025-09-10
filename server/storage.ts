@@ -257,8 +257,15 @@ export class DatabaseStorage implements IStorage {
     return result.rowCount !== null && result.rowCount > 0;
   }
 
-  async authenticateUser(email: string, password: string): Promise<User | null> {
-    const user = await this.getUserByEmail(email);
+  async authenticateUser(emailOrPhone: string, password: string): Promise<User | null> {
+    // Try to find user by email first
+    let user = await this.getUserByEmail(emailOrPhone);
+    
+    // If not found by email, try by phone number
+    if (!user) {
+      user = await this.getUserByPhone(emailOrPhone);
+    }
+    
     if (!user) return null;
 
     const isValid = await bcrypt.compare(password, user.password);
