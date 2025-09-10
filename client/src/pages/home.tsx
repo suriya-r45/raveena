@@ -26,6 +26,8 @@ import {
   SeasonalCollection
 } from '@/components/festival-components';
 import FestivalHomePage from '@/components/festival-home';
+import DailyHomepage from '@/components/daily-homepage';
+import HomepagePreferenceSelector from '@/components/homepage-preference-selector';
 
 interface HomeSectionWithItems extends HomeSection {
   items: HomeSectionItemWithProduct[];
@@ -1985,7 +1987,7 @@ export default function Home() {
     refetchInterval: 2000, // Auto-refetch every 2 seconds to catch admin updates
   });
 
-  // Fetch secondary home page setting
+  // Fetch secondary home page setting (for backward compatibility)
   const { data: secondaryPageSetting } = useQuery({
     queryKey: ['/api/settings/secondary_home_page_enabled'],
     queryFn: async () => {
@@ -2001,7 +2003,24 @@ export default function Home() {
     refetchOnWindowFocus: true,
   });
 
+  // Fetch homepage preference setting (new system)
+  const { data: homepagePreference } = useQuery({
+    queryKey: ['/api/settings/homepage_preference'],
+    queryFn: async () => {
+      try {
+        const response = await apiRequest('GET', '/api/settings/homepage_preference');
+        const data = await response.json();
+        return data.value || 'default';
+      } catch (error) {
+        return 'default';
+      }
+    },
+    staleTime: 10000,
+    refetchOnWindowFocus: true,
+  });
+
   const isSecondaryPageEnabled = secondaryPageSetting?.value === 'true';
+  const currentHomepageType = homepagePreference || 'default';
 
   // Simple filtering for home page (not used directly but keeps type consistency)
   const filteredProducts = useMemo(() => {
@@ -2164,8 +2183,12 @@ export default function Home() {
     }
   };
 
-  // If secondary page is enabled, show ultra-modern festival layout
-  if (isSecondaryPageEnabled) {
+  // Handle homepage preference system
+  if (currentHomepageType === 'daily') {
+    return <DailyHomepage selectedCurrency={selectedCurrency} />;
+  }
+  
+  if (currentHomepageType === 'secondary' || isSecondaryPageEnabled) {
     return <FestivalHomePage />;
   }
 
