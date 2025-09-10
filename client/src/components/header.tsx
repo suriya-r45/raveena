@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { User, LogOut, Heart, ShoppingCart, Menu } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
+import { useQuery } from '@tanstack/react-query';
 import { Currency, CURRENCY_NAMES } from '@/lib/currency';
 import CartButton from '@/components/cart/cart-button';
 import MobileMenu from '@/components/mobile-menu';
@@ -19,6 +20,12 @@ export default function Header({ selectedCurrency, onCurrencyChange }: HeaderPro
   const [location] = useLocation();
   const { user, logout, isAdmin } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Get wishlist count
+  const { data: wishlistItems = [] } = useQuery({
+    queryKey: ["/api/wishlist"],
+    enabled: !!user,
+  });
 
   const handleLogout = () => {
     logout();
@@ -164,9 +171,18 @@ export default function Header({ selectedCurrency, onCurrencyChange }: HeaderPro
               </div>
 
               {/* Wishlist Heart */}
-              <button className="p-0.5 md:p-2 hover:bg-gray-50 rounded-lg">
-                <Heart className="h-3 w-3 md:h-6 md:w-6 text-gray-800" />
-              </button>
+              <Link href="/wishlist">
+                <div className="relative">
+                  <button className="p-0.5 md:p-2 hover:bg-gray-50 rounded-lg transition-colors duration-200" data-testid="button-wishlist">
+                    <Heart className="h-3 w-3 md:h-6 md:w-6 text-gray-800" />
+                  </button>
+                  {user && wishlistItems.length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center min-w-[16px] text-[10px] font-medium" data-testid="badge-wishlist-count">
+                      {wishlistItems.length > 99 ? '99+' : wishlistItems.length}
+                    </span>
+                  )}
+                </div>
+              </Link>
 
               {/* Cart with Badge */}
               <div className="relative">

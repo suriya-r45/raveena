@@ -16,6 +16,7 @@ import { EstimatesPage } from "@/pages/estimates";
 import CollectionsPage from "@/pages/collections";
 import QRScanResult from "@/pages/qr-scan-result";
 import AddProduct from "@/pages/AddProduct";
+import WishlistPage from "@/pages/wishlist";
 import { AuthProvider } from "./lib/auth";
 import { CartProvider } from "./lib/cart";
 
@@ -74,6 +75,7 @@ function Router() {
       <Route path="/collections" component={() => <CollectionsPage />} />
       <Route path="/product/:id" component={ProductDetails} />
       <Route path="/cart" component={Cart} />
+      <Route path="/wishlist" component={WishlistPage} />
       <Route path="/checkout" component={Checkout} />
       <Route path="/order-success" component={OrderSuccess} />
       <Route path="/qr-scan" component={QRScanResult} />
