@@ -59,6 +59,7 @@ function SundayLayout({ products, selectedCurrency }: { products: Product[], sel
   const [currentSlide, setCurrentSlide] = useState(0);
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 500], [0, 150]);
+  const opacity = useTransform(scrollY, [0, 300], [1, 0.7]);
 
   const divineImages = [jewelryImage1, jewelryImage2, jewelryImage3];
 
@@ -71,40 +72,47 @@ function SundayLayout({ products, selectedCurrency }: { products: Product[], sel
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Divine Background */}
+      {/* Enhanced Divine Background */}
       <motion.div 
         className="absolute inset-0"
-        style={{ y }}
+        style={{ y, opacity }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50" />
-        <div className="absolute inset-0 bg-gradient-to-t from-amber-100/50 via-transparent to-yellow-100/30" />
+        {/* Multiple Gradient Layers for Depth */}
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-900 via-yellow-800 to-orange-900" />
+        <div className="absolute inset-0 bg-gradient-to-t from-amber-700/80 via-transparent to-yellow-600/60" />
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-300/20 to-transparent" />
         
-        {/* Divine Light Rays */}
+        {/* Dramatic Light Rays */}
         <div className="absolute inset-0">
-          {[...Array(12)].map((_, i) => (
+          {[...Array(18)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute top-0 left-1/2 w-px h-full origin-top"
+              className="absolute top-0 left-1/2 w-1 h-full origin-top"
               style={{
-                background: `linear-gradient(to bottom, rgba(251, 191, 36, ${0.1 + (i % 3) * 0.1}), transparent)`,
-                transform: `translateX(-50%) rotate(${i * 30}deg)`,
+                background: `linear-gradient(to bottom, 
+                  rgba(251, 191, 36, ${0.4 + (i % 4) * 0.2}), 
+                  rgba(245, 158, 11, ${0.3 + (i % 3) * 0.1}),
+                  transparent)`,
+                transform: `translateX(-50%) rotate(${i * 20}deg)`,
+                filter: 'blur(1px)',
               }}
               animate={{
-                opacity: [0.3, 0.8, 0.3],
-                scaleY: [0.8, 1.2, 0.8],
+                opacity: [0.2, 1, 0.2],
+                scaleY: [0.5, 1.5, 0.5],
+                scaleX: [0.5, 2, 0.5],
               }}
               transition={{
-                duration: 8 + i * 0.5,
+                duration: 6 + i * 0.3,
                 repeat: Infinity,
-                delay: i * 0.2,
+                delay: i * 0.1,
               }}
             />
           ))}
         </div>
 
-        {/* Floating Divine Elements */}
+        {/* Floating Divine Orbs */}
         <div className="absolute inset-0">
-          {[...Array(20)].map((_, i) => (
+          {[...Array(30)].map((_, i) => (
             <motion.div
               key={i}
               className="absolute"
@@ -113,19 +121,50 @@ function SundayLayout({ products, selectedCurrency }: { products: Product[], sel
                 top: `${Math.random() * 100}%`,
               }}
               animate={{
-                y: [-30, -80, -30],
+                y: [-50, -120, -50],
+                x: [-20, 20, -20],
                 rotate: [0, 360],
-                scale: [0.5, 1.2, 0.5],
-                opacity: [0, 0.8, 0],
+                scale: [0.3, 1.8, 0.3],
+                opacity: [0, 1, 0],
               }}
               transition={{
-                duration: 10 + Math.random() * 5,
+                duration: 12 + Math.random() * 8,
                 repeat: Infinity,
-                delay: Math.random() * 3,
+                delay: Math.random() * 5,
               }}
             >
-              <Sun className="w-4 h-4 text-amber-400/40" />
+              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-300 to-yellow-200 shadow-2xl" 
+                style={{
+                  filter: 'blur(2px)',
+                  boxShadow: '0 0 30px rgba(251, 191, 36, 0.8)',
+                }}
+              />
             </motion.div>
+          ))}
+        </div>
+
+        {/* Divine Particles */}
+        <div className="absolute inset-0">
+          {[...Array(50)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 bg-amber-200 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                filter: 'blur(0.5px)',
+              }}
+              animate={{
+                y: [-100, -200],
+                opacity: [0, 1, 0],
+                scale: [0, 2, 0],
+              }}
+              transition={{
+                duration: 8 + Math.random() * 4,
+                repeat: Infinity,
+                delay: Math.random() * 10,
+              }}
+            />
           ))}
         </div>
       </motion.div>
@@ -155,17 +194,24 @@ function SundayLayout({ products, selectedCurrency }: { products: Product[], sel
                 </motion.div>
 
                 <motion.h1
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1, delay: 0.4 }}
-                  className="text-6xl lg:text-8xl font-black mb-6 leading-tight"
-                  style={{ fontFamily: 'Cormorant Garamond, serif' }}
+                  initial={{ opacity: 0, y: 30, scale: 0.8 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 1.5, delay: 0.4, type: "spring", stiffness: 100 }}
+                  className="text-7xl lg:text-9xl font-black mb-8 leading-tight relative"
+                  style={{ 
+                    fontFamily: 'Cormorant Garamond, serif',
+                    textShadow: '0 10px 30px rgba(0,0,0,0.5)'
+                  }}
                 >
-                  <span className="bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-700 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-amber-200 via-yellow-100 to-amber-300 bg-clip-text text-transparent drop-shadow-2xl relative">
+                    <span className="absolute inset-0 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 bg-clip-text text-transparent blur-sm opacity-60 animate-pulse">Divine</span>
                     Divine
                   </span>
                   <br />
-                  <span className="text-amber-900">Elegance</span>
+                  <span className="text-white drop-shadow-2xl relative">
+                    <span className="absolute inset-0 text-amber-200 blur-sm opacity-40 animate-pulse">Elegance</span>
+                    Elegance
+                  </span>
                 </motion.h1>
 
                 <motion.p
@@ -211,18 +257,20 @@ function SundayLayout({ products, selectedCurrency }: { products: Product[], sel
                 className="relative"
               >
                 <div className="relative aspect-square max-w-lg mx-auto">
-                  {/* Divine Glow */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-amber-400/30 to-yellow-400/30 rounded-full blur-3xl transform scale-150" />
+                  {/* Enhanced Divine Glow */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-amber-400/50 to-yellow-400/50 rounded-full blur-3xl transform scale-150 animate-pulse" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-amber-300/30 to-yellow-300/30 rounded-full blur-2xl transform scale-125" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 rounded-full blur-xl transform scale-100" />
                   
-                  <div className="relative z-10 aspect-square rounded-3xl overflow-hidden border-4 border-amber-200/50 shadow-2xl">
+                  <div className="relative z-10 aspect-square rounded-3xl overflow-hidden border-4 border-amber-300/70 shadow-2xl" style={{boxShadow: '0 25px 50px rgba(0,0,0,0.5), 0 0 100px rgba(251, 191, 36, 0.3)'}}>
                     <AnimatePresence mode="wait">
                       <motion.img
                         key={currentSlide}
                         src={divineImages[currentSlide]}
                         alt="Divine Collection"
                         className="w-full h-full object-cover"
-                        initial={{ opacity: 0, scale: 1.1 }}
-                        animate={{ opacity: 1, scale: 1 }}
+                        initial={{ opacity: 0, scale: 1.2, rotate: 5 }}
+                        animate={{ opacity: 1, scale: 1, rotate: 0 }}
                         exit={{ opacity: 0, scale: 0.9 }}
                         transition={{ duration: 0.8 }}
                       />
@@ -302,7 +350,8 @@ function SundayLayout({ products, selectedCurrency }: { products: Product[], sel
 function MondayLayout({ products, selectedCurrency }: { products: Product[], selectedCurrency: Currency }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { scrollY } = useScroll();
-  const opacity = useTransform(scrollY, [0, 300], [1, 0]);
+  const opacity = useTransform(scrollY, [0, 300], [1, 0.8]);
+  const scale = useTransform(scrollY, [0, 500], [1, 1.1]);
 
   const royalImages = [royalGoldImage, goldCollectionImage, bridalCollectionsImage];
 
@@ -315,27 +364,41 @@ function MondayLayout({ products, selectedCurrency }: { products: Product[], sel
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Royal Background */}
+      {/* Enhanced Royal Background */}
       <motion.div 
         className="absolute inset-0"
-        style={{ opacity }}
+        style={{ opacity, scale }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900" />
-        <div className="absolute inset-0 bg-gradient-to-t from-purple-800/50 via-transparent to-blue-800/30" />
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-950 via-indigo-950 to-violet-950" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-purple-800/70 via-indigo-700/40 to-violet-600/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-500/10 to-transparent" />
         
-        {/* Royal Pattern */}
-        <div className="absolute inset-0 opacity-10">
+        {/* Royal Damask Pattern */}
+        <div className="absolute inset-0 opacity-15">
           <div 
             className="w-full h-full"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M30 0l30 30-30 30L0 30z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.6'%3E%3Cpath d='M60 0c16.569 0 30 13.431 30 30s-13.431 30-30 30S30 46.569 30 30 43.431 0 60 0zm0 15c-8.284 0-15 6.716-15 15s6.716 15 15 15 15-6.716 15-15-6.716-15-15-15z'/%3E%3Cpath d='M30 60l30-30-30-30-30 30z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
             }}
           />
         </div>
 
-        {/* Royal Sparkles */}
+        {/* Royal Shimmer */}
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-300/20 to-transparent"
+          animate={{
+            x: [-1000, 1000],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        />
+
+        {/* Royal Crown Constellation */}
         <div className="absolute inset-0">
-          {[...Array(25)].map((_, i) => (
+          {[...Array(35)].map((_, i) => (
             <motion.div
               key={i}
               className="absolute"
@@ -344,18 +407,51 @@ function MondayLayout({ products, selectedCurrency }: { products: Product[], sel
                 top: `${Math.random() * 100}%`,
               }}
               animate={{
-                scale: [0, 1, 0],
-                rotate: [0, 180, 360],
+                scale: [0, 2, 0],
+                rotate: [0, 360],
                 opacity: [0, 1, 0],
               }}
               transition={{
-                duration: 3 + Math.random() * 2,
+                duration: 4 + Math.random() * 3,
                 repeat: Infinity,
-                delay: Math.random() * 5,
+                delay: Math.random() * 8,
               }}
             >
-              <Diamond className="w-3 h-3 text-purple-300/60" />
+              <div className="relative">
+                <Crown className="w-6 h-6 text-purple-200/80" style={{filter: 'drop-shadow(0 0 10px rgba(147, 51, 234, 0.8))'}} />
+                <div className="absolute inset-0 animate-ping">
+                  <Crown className="w-6 h-6 text-purple-300/40" />
+                </div>
+              </div>
             </motion.div>
+          ))}
+        </div>
+
+        {/* Royal Orbs */}
+        <div className="absolute inset-0">
+          {[...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-12 h-12 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                background: 'linear-gradient(45deg, rgba(147, 51, 234, 0.4), rgba(99, 102, 241, 0.2))',
+                filter: 'blur(4px)',
+                boxShadow: '0 0 50px rgba(147, 51, 234, 0.5)',
+              }}
+              animate={{
+                y: [-100, -200, -100],
+                x: [-30, 30, -30],
+                scale: [0.5, 1.5, 0.5],
+                opacity: [0, 0.8, 0],
+              }}
+              transition={{
+                duration: 15 + Math.random() * 10,
+                repeat: Infinity,
+                delay: Math.random() * 8,
+              }}
+            />
           ))}
         </div>
       </motion.div>
@@ -385,17 +481,44 @@ function MondayLayout({ products, selectedCurrency }: { products: Product[], sel
                 </motion.div>
 
                 <motion.h1
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1, delay: 0.4 }}
-                  className="text-6xl lg:text-8xl font-black mb-6 leading-tight"
-                  style={{ fontFamily: 'Cormorant Garamond, serif' }}
+                  initial={{ opacity: 0, y: 50, scale: 0.5 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 2, delay: 0.4, type: "spring", stiffness: 50 }}
+                  className="text-8xl lg:text-10xl font-black mb-8 leading-tight relative"
+                  style={{ 
+                    fontFamily: 'Cormorant Garamond, serif',
+                    textShadow: '0 20px 40px rgba(0,0,0,0.8)'
+                  }}
                 >
-                  <span className="bg-gradient-to-r from-purple-400 via-violet-400 to-indigo-400 bg-clip-text text-transparent">
+                  <motion.span 
+                    className="bg-gradient-to-r from-purple-200 via-violet-100 to-indigo-200 bg-clip-text text-transparent drop-shadow-2xl relative block"
+                    animate={{
+                      textShadow: [
+                        '0 0 20px rgba(147, 51, 234, 0.8)',
+                        '0 0 40px rgba(147, 51, 234, 1)',
+                        '0 0 20px rgba(147, 51, 234, 0.8)',
+                      ]
+                    }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                  >
+                    <span className="absolute inset-0 bg-gradient-to-r from-purple-400 via-violet-400 to-indigo-400 bg-clip-text text-transparent blur-sm opacity-50 animate-pulse">Royal</span>
                     Royal
-                  </span>
+                  </motion.span>
                   <br />
-                  <span className="text-white drop-shadow-lg">Majesty</span>
+                  <motion.span 
+                    className="text-white drop-shadow-2xl relative block"
+                    animate={{
+                      textShadow: [
+                        '0 0 30px rgba(255, 255, 255, 0.8)',
+                        '0 0 60px rgba(255, 255, 255, 1)',
+                        '0 0 30px rgba(255, 255, 255, 0.8)',
+                      ]
+                    }}
+                    transition={{ duration: 4, repeat: Infinity, delay: 1 }}
+                  >
+                    <span className="absolute inset-0 text-purple-200 blur-sm opacity-60 animate-pulse">Majesty</span>
+                    Majesty
+                  </motion.span>
                 </motion.h1>
 
                 <motion.p
@@ -441,18 +564,30 @@ function MondayLayout({ products, selectedCurrency }: { products: Product[], sel
                 className="relative"
               >
                 <div className="relative aspect-square max-w-lg mx-auto">
-                  {/* Royal Aura */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 to-indigo-500/30 rounded-full blur-3xl transform scale-150" />
+                  {/* Enhanced Royal Aura */}
+                  <motion.div 
+                    className="absolute inset-0 bg-gradient-to-r from-purple-500/40 to-indigo-500/40 rounded-full blur-3xl transform scale-150"
+                    animate={{
+                      scale: [1.5, 1.8, 1.5],
+                      opacity: [0.4, 0.7, 0.4],
+                    }}
+                    transition={{
+                      duration: 4,
+                      repeat: Infinity,
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-400/30 to-violet-400/30 rounded-full blur-2xl transform scale-125 animate-pulse" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-full blur-xl transform scale-100" />
                   
-                  <div className="relative z-10 aspect-square rounded-3xl overflow-hidden border-4 border-purple-300/30 shadow-2xl">
+                  <div className="relative z-10 aspect-square rounded-3xl overflow-hidden border-4 border-purple-400/60 shadow-2xl" style={{boxShadow: '0 30px 60px rgba(0,0,0,0.6), 0 0 120px rgba(147, 51, 234, 0.4), inset 0 0 60px rgba(147, 51, 234, 0.1)'}}>
                     <AnimatePresence mode="wait">
                       <motion.img
                         key={currentSlide}
                         src={royalImages[currentSlide]}
                         alt="Royal Collection"
                         className="w-full h-full object-cover"
-                        initial={{ opacity: 0, scale: 1.1 }}
-                        animate={{ opacity: 1, scale: 1 }}
+                        initial={{ opacity: 0, scale: 1.3, rotateY: 90 }}
+                        animate={{ opacity: 1, scale: 1, rotateY: 0 }}
                         exit={{ opacity: 0, scale: 0.9 }}
                         transition={{ duration: 0.8 }}
                       />
