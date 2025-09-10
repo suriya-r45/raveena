@@ -672,6 +672,7 @@ function TuesdayLayout({ products, selectedCurrency }: { products: Product[], se
   const [currentSlide, setCurrentSlide] = useState(0);
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 500], [0, 100]);
+  const rotate = useTransform(scrollY, [0, 500], [0, 360]);
 
   const luxeImages = [diamondCollectionImage, earringsLuxuryImage, ringsLuxuryImage];
 
@@ -684,27 +685,60 @@ function TuesdayLayout({ products, selectedCurrency }: { products: Product[], se
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Modern Luxe Background */}
+      {/* Enhanced Modern Luxe Background */}
       <motion.div 
         className="absolute inset-0"
         style={{ y }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-gray-900 to-black" />
-        <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/20 via-transparent to-teal-900/20" />
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-slate-950 to-gray-950" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-emerald-900/40 via-teal-800/20 to-cyan-900/30" />
+        <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-emerald-600/10 to-transparent" />
         
-        {/* Modern Grid */}
-        <div className="absolute inset-0 opacity-5">
-          <div 
+        {/* Cyber Grid */}
+        <div className="absolute inset-0 opacity-15">
+          <motion.div 
             className="w-full h-full"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.3'%3E%3Cpath d='M0 0h100v1H0zM0 20h100v1H0zM0 40h100v1H0zM0 60h100v1H0zM0 80h100v1H0z'/%3E%3Cpath d='M0 0v100h1V0zM20 0v100h1V0zM40 0v100h1V0zM60 0v100h1V0zM80 0v100h1V0z'/%3E%3C/g%3E%3C/svg%3E")`,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%2310b981' stroke-width='0.5' stroke-opacity='0.8'%3E%3Cpath d='M0 0h50v50H0z'/%3E%3Cpath d='M25 0v50M0 25h50'/%3E%3C/g%3E%3C/svg%3E")`,
+            }}
+            animate={{
+              backgroundPosition: ['0 0', '50px 50px', '0 0'],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: 'linear',
             }}
           />
         </div>
 
-        {/* Floating Geometric Shapes */}
+        {/* Digital Waves */}
         <div className="absolute inset-0">
-          {[...Array(15)].map((_, i) => (
+          {[...Array(5)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-full h-1 bg-gradient-to-r from-transparent via-emerald-400/30 to-transparent"
+              style={{
+                top: `${20 + i * 15}%`,
+                filter: 'blur(1px)',
+              }}
+              animate={{
+                x: [-1000, 1000],
+                opacity: [0, 1, 0],
+              }}
+              transition={{
+                duration: 8 + i * 2,
+                repeat: Infinity,
+                delay: i * 1.5,
+                ease: 'linear',
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Cyber Cubes */}
+        <div className="absolute inset-0">
+          {[...Array(25)].map((_, i) => (
             <motion.div
               key={i}
               className="absolute"
@@ -713,25 +747,57 @@ function TuesdayLayout({ products, selectedCurrency }: { products: Product[], se
                 top: `${Math.random() * 100}%`,
               }}
               animate={{
-                x: [-20, 20, -20],
-                y: [-30, 30, -30],
-                rotate: [0, 360],
-                scale: [0.5, 1.5, 0.5],
-                opacity: [0, 0.6, 0],
+                x: [-40, 40, -40],
+                y: [-60, 60, -60],
+                rotateX: [0, 360],
+                rotateY: [0, 360],
+                scale: [0.3, 2, 0.3],
+                opacity: [0, 0.8, 0],
               }}
               transition={{
-                duration: 8 + Math.random() * 4,
+                duration: 12 + Math.random() * 8,
                 repeat: Infinity,
-                delay: Math.random() * 3,
+                delay: Math.random() * 5,
               }}
             >
               <div 
-                className="w-4 h-4 border border-emerald-400/40 transform rotate-45"
+                className="w-8 h-8 border-2 border-emerald-400/60 transform rotate-45 relative"
                 style={{
-                  background: i % 2 === 0 ? 'rgba(52, 211, 153, 0.1)' : 'transparent'
+                  background: 'linear-gradient(45deg, rgba(16, 185, 129, 0.2), rgba(20, 184, 166, 0.1))',
+                  boxShadow: '0 0 30px rgba(16, 185, 129, 0.4), inset 0 0 20px rgba(20, 184, 166, 0.2)',
+                  filter: 'blur(0.5px)',
                 }}
-              />
+              >
+                <div className="absolute inset-2 border border-emerald-300/40 animate-pulse" />
+              </div>
             </motion.div>
+          ))}
+        </div>
+
+        {/* Digital Particles */}
+        <div className="absolute inset-0">
+          {[...Array(40)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 bg-emerald-300 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                filter: 'blur(0.5px)',
+                boxShadow: '0 0 10px rgba(16, 185, 129, 0.8)',
+              }}
+              animate={{
+                y: [-150, -300],
+                x: [0, Math.random() * 100 - 50],
+                opacity: [0, 1, 0],
+                scale: [0, 3, 0],
+              }}
+              transition={{
+                duration: 10 + Math.random() * 5,
+                repeat: Infinity,
+                delay: Math.random() * 15,
+              }}
+            />
           ))}
         </div>
       </motion.div>
@@ -761,17 +827,49 @@ function TuesdayLayout({ products, selectedCurrency }: { products: Product[], se
                 </motion.div>
 
                 <motion.h1
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1, delay: 0.4 }}
-                  className="text-6xl lg:text-8xl font-black mb-6 leading-tight"
-                  style={{ fontFamily: 'Inter, sans-serif' }}
+                  initial={{ opacity: 0, y: 50, rotateX: 90 }}
+                  animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                  transition={{ duration: 2, delay: 0.4, type: "spring", stiffness: 60 }}
+                  className="text-8xl lg:text-10xl font-black mb-8 leading-tight relative"
+                  style={{ 
+                    fontFamily: 'Inter, sans-serif',
+                    textShadow: '0 20px 40px rgba(0,0,0,0.9)',
+                    perspective: '1000px'
+                  }}
                 >
-                  <span className="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
-                    Modern
-                  </span>
+                  <motion.span 
+                    className="bg-gradient-to-r from-emerald-200 via-teal-100 to-cyan-200 bg-clip-text text-transparent drop-shadow-2xl relative block"
+                    animate={{
+                      textShadow: [
+                        '0 0 30px rgba(16, 185, 129, 0.8)',
+                        '0 0 60px rgba(16, 185, 129, 1)',
+                        '0 0 30px rgba(16, 185, 129, 0.8)',
+                      ]
+                    }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                  >
+                    <span className="absolute inset-0 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent blur-sm opacity-60 animate-pulse">Modern</span>
+                    <span className="relative inline-block" style={{transform: 'rotateY(0deg)'}}>
+                      Modern
+                    </span>
+                  </motion.span>
                   <br />
-                  <span className="text-white drop-shadow-lg">Luxe</span>
+                  <motion.span 
+                    className="text-white drop-shadow-2xl relative block"
+                    animate={{
+                      textShadow: [
+                        '0 0 40px rgba(255, 255, 255, 0.8)',
+                        '0 0 80px rgba(255, 255, 255, 1)',
+                        '0 0 40px rgba(255, 255, 255, 0.8)',
+                      ]
+                    }}
+                    transition={{ duration: 4, repeat: Infinity, delay: 1.5 }}
+                  >
+                    <span className="absolute inset-0 text-emerald-200 blur-sm opacity-50 animate-pulse">Luxe</span>
+                    <span className="relative inline-block" style={{transform: 'rotateY(0deg)'}}>
+                      Luxe
+                    </span>
+                  </motion.span>
                 </motion.h1>
 
                 <motion.p
@@ -817,18 +915,41 @@ function TuesdayLayout({ products, selectedCurrency }: { products: Product[], se
                 className="relative"
               >
                 <div className="relative aspect-square max-w-lg mx-auto">
-                  {/* Modern Glow */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-2xl blur-3xl transform scale-125" />
+                  {/* Cyber Glow */}
+                  <motion.div 
+                    className="absolute inset-0 bg-gradient-to-r from-emerald-400/40 to-teal-400/40 rounded-2xl blur-3xl transform scale-125"
+                    animate={{
+                      scale: [1.25, 1.5, 1.25],
+                      opacity: [0.4, 0.8, 0.4],
+                      rotate: [0, 360],
+                    }}
+                    transition={{
+                      duration: 6,
+                      repeat: Infinity,
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/30 to-emerald-400/30 rounded-2xl blur-2xl transform scale-100 animate-pulse" />
+                  <motion.div 
+                    className="absolute inset-0 bg-gradient-to-r from-teal-500/20 to-cyan-500/20 rounded-2xl blur-xl transform scale-75"
+                    animate={{
+                      scale: [0.75, 1, 0.75],
+                      rotate: [0, -360],
+                    }}
+                    transition={{
+                      duration: 8,
+                      repeat: Infinity,
+                    }}
+                  />
                   
-                  <div className="relative z-10 aspect-square rounded-2xl overflow-hidden border border-emerald-400/30 shadow-2xl backdrop-blur-sm">
+                  <div className="relative z-10 aspect-square rounded-2xl overflow-hidden border-2 border-emerald-400/50 shadow-2xl backdrop-blur-sm" style={{boxShadow: '0 40px 80px rgba(0,0,0,0.7), 0 0 150px rgba(16, 185, 129, 0.3), inset 0 0 80px rgba(16, 185, 129, 0.1)'}}>
                     <AnimatePresence mode="wait">
                       <motion.img
                         key={currentSlide}
                         src={luxeImages[currentSlide]}
                         alt="Modern Luxe Collection"
                         className="w-full h-full object-cover"
-                        initial={{ opacity: 0, scale: 1.1 }}
-                        animate={{ opacity: 1, scale: 1 }}
+                        initial={{ opacity: 0, scale: 1.2, rotateY: 180, filter: 'hue-rotate(90deg)' }}
+                        animate={{ opacity: 1, scale: 1, rotateY: 0, filter: 'hue-rotate(0deg)' }}
                         exit={{ opacity: 0, scale: 0.9 }}
                         transition={{ duration: 0.8 }}
                       />
@@ -928,8 +1049,9 @@ function WednesdayLayout({ products, selectedCurrency }: { products: Product[], 
         className="absolute inset-0"
         style={{ y }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900" />
-        <div className="absolute inset-0 bg-gradient-to-t from-blue-800/40 via-transparent to-indigo-800/30" />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-950 via-indigo-950 to-slate-950" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-blue-800/60 via-indigo-700/30 to-slate-600/40" />
+        <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-blue-500/15 to-transparent" />
         
         {/* Classic Patterns */}
         <div className="absolute inset-0 opacity-8">
@@ -941,9 +1063,9 @@ function WednesdayLayout({ products, selectedCurrency }: { products: Product[], 
           />
         </div>
 
-        {/* Elegant Sparkles */}
+        {/* Classic Constellation */}
         <div className="absolute inset-0">
-          {[...Array(18)].map((_, i) => (
+          {[...Array(28)].map((_, i) => (
             <motion.div
               key={i}
               className="absolute"
@@ -952,18 +1074,51 @@ function WednesdayLayout({ products, selectedCurrency }: { products: Product[], 
                 top: `${Math.random() * 100}%`,
               }}
               animate={{
-                scale: [0, 1.5, 0],
+                scale: [0, 2.5, 0],
                 rotate: [0, 360],
-                opacity: [0, 0.8, 0],
+                opacity: [0, 1, 0],
               }}
               transition={{
-                duration: 6 + Math.random() * 3,
+                duration: 8 + Math.random() * 4,
                 repeat: Infinity,
-                delay: Math.random() * 4,
+                delay: Math.random() * 6,
               }}
             >
-              <Star className="w-3 h-3 text-blue-300/50" />
+              <div className="relative">
+                <Star className="w-5 h-5 text-blue-200/80" style={{filter: 'drop-shadow(0 0 15px rgba(59, 130, 246, 0.9))'}} />
+                <div className="absolute inset-0 animate-ping">
+                  <Star className="w-5 h-5 text-blue-300/50" />
+                </div>
+              </div>
             </motion.div>
+          ))}
+        </div>
+
+        {/* Classic Orbs */}
+        <div className="absolute inset-0">
+          {[...Array(15)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-10 h-10 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                background: 'linear-gradient(45deg, rgba(59, 130, 246, 0.3), rgba(99, 102, 241, 0.2))',
+                filter: 'blur(3px)',
+                boxShadow: '0 0 40px rgba(59, 130, 246, 0.6)',
+              }}
+              animate={{
+                y: [-80, -160, -80],
+                x: [-25, 25, -25],
+                scale: [0.4, 1.8, 0.4],
+                opacity: [0, 0.9, 0],
+              }}
+              transition={{
+                duration: 12 + Math.random() * 8,
+                repeat: Infinity,
+                delay: Math.random() * 6,
+              }}
+            />
           ))}
         </div>
       </motion.div>
@@ -993,17 +1148,44 @@ function WednesdayLayout({ products, selectedCurrency }: { products: Product[], 
                 </motion.div>
 
                 <motion.h1
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1, delay: 0.4 }}
-                  className="text-6xl lg:text-8xl font-black mb-6 leading-tight"
-                  style={{ fontFamily: 'Cormorant Garamond, serif' }}
+                  initial={{ opacity: 0, y: 40, scale: 0.7 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 1.8, delay: 0.4, type: "spring", stiffness: 80 }}
+                  className="text-8xl lg:text-10xl font-black mb-8 leading-tight relative"
+                  style={{ 
+                    fontFamily: 'Cormorant Garamond, serif',
+                    textShadow: '0 15px 30px rgba(0,0,0,0.7)'
+                  }}
                 >
-                  <span className="bg-gradient-to-r from-blue-300 via-indigo-300 to-blue-400 bg-clip-text text-transparent">
+                  <motion.span 
+                    className="bg-gradient-to-r from-blue-200 via-indigo-100 to-slate-200 bg-clip-text text-transparent drop-shadow-2xl relative block"
+                    animate={{
+                      textShadow: [
+                        '0 0 25px rgba(59, 130, 246, 0.8)',
+                        '0 0 50px rgba(59, 130, 246, 1)',
+                        '0 0 25px rgba(59, 130, 246, 0.8)',
+                      ]
+                    }}
+                    transition={{ duration: 4, repeat: Infinity }}
+                  >
+                    <span className="absolute inset-0 bg-gradient-to-r from-blue-400 via-indigo-400 to-slate-400 bg-clip-text text-transparent blur-sm opacity-50 animate-pulse">Elegant</span>
                     Elegant
-                  </span>
+                  </motion.span>
                   <br />
-                  <span className="text-white drop-shadow-lg">Classic</span>
+                  <motion.span 
+                    className="text-white drop-shadow-2xl relative block"
+                    animate={{
+                      textShadow: [
+                        '0 0 35px rgba(255, 255, 255, 0.8)',
+                        '0 0 70px rgba(255, 255, 255, 1)',
+                        '0 0 35px rgba(255, 255, 255, 0.8)',
+                      ]
+                    }}
+                    transition={{ duration: 5, repeat: Infinity, delay: 2 }}
+                  >
+                    <span className="absolute inset-0 text-blue-200 blur-sm opacity-40 animate-pulse">Classic</span>
+                    Classic
+                  </motion.span>
                 </motion.h1>
 
                 <motion.p
@@ -1162,8 +1344,9 @@ function ThursdayLayout({ products, selectedCurrency }: { products: Product[], s
         className="absolute inset-0"
         style={{ y }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-rose-900 via-pink-900 to-red-900" />
-        <div className="absolute inset-0 bg-gradient-to-t from-rose-800/50 via-transparent to-pink-800/30" />
+        <div className="absolute inset-0 bg-gradient-to-br from-rose-950 via-pink-950 to-red-950" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-rose-800/70 via-pink-700/40 to-red-600/50" />
+        <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-rose-500/20 to-transparent" />
         
         {/* Vintage Patterns */}
         <div className="absolute inset-0 opacity-10">
@@ -1175,9 +1358,9 @@ function ThursdayLayout({ products, selectedCurrency }: { products: Product[], s
           />
         </div>
 
-        {/* Romantic Hearts */}
+        {/* Romantic Hearts Constellation */}
         <div className="absolute inset-0">
-          {[...Array(20)].map((_, i) => (
+          {[...Array(35)].map((_, i) => (
             <motion.div
               key={i}
               className="absolute"
@@ -1186,21 +1369,72 @@ function ThursdayLayout({ products, selectedCurrency }: { products: Product[], s
                 top: `${Math.random() * 100}%`,
               }}
               animate={{
-                y: [-25, -60, -25],
+                y: [-40, -100, -40],
                 rotate: [0, 360],
-                scale: [0.4, 1.3, 0.4],
-                opacity: [0, 0.7, 0],
+                scale: [0.2, 2.8, 0.2],
+                opacity: [0, 1, 0],
               }}
               transition={{
-                duration: 8 + Math.random() * 4,
+                duration: 10 + Math.random() * 6,
                 repeat: Infinity,
-                delay: Math.random() * 6,
+                delay: Math.random() * 8,
               }}
             >
-              <Heart className="w-4 h-4 text-rose-300/60" />
+              <div className="relative">
+                <Heart className="w-6 h-6 text-rose-200/90" style={{filter: 'drop-shadow(0 0 20px rgba(244, 63, 94, 1))'}} />
+                <div className="absolute inset-0 animate-ping">
+                  <Heart className="w-6 h-6 text-pink-300/60" />
+                </div>
+                <div className="absolute inset-0 animate-pulse delay-500">
+                  <Heart className="w-6 h-6 text-red-300/40" />
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>
+
+        {/* Romantic Petals */}
+        <div className="absolute inset-0">
+          {[...Array(25)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-8 h-8 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                background: 'linear-gradient(45deg, rgba(244, 63, 94, 0.4), rgba(236, 72, 153, 0.3))',
+                filter: 'blur(4px)',
+                boxShadow: '0 0 50px rgba(244, 63, 94, 0.7)',
+              }}
+              animate={{
+                y: [-60, -140, -60],
+                x: [-40, 40, -40],
+                rotate: [0, 360],
+                scale: [0.3, 2.2, 0.3],
+                opacity: [0, 0.8, 0],
+              }}
+              transition={{
+                duration: 14 + Math.random() * 10,
+                repeat: Infinity,
+                delay: Math.random() * 8,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Rose Shimmer */}
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-rose-300/30 to-transparent"
+          animate={{
+            x: [-1200, 1200],
+            opacity: [0, 0.6, 0],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        />
       </motion.div>
 
       {/* Main Content */}
@@ -1228,17 +1462,46 @@ function ThursdayLayout({ products, selectedCurrency }: { products: Product[], s
                 </motion.div>
 
                 <motion.h1
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1, delay: 0.4 }}
-                  className="text-6xl lg:text-8xl font-black mb-6 leading-tight"
-                  style={{ fontFamily: 'Cormorant Garamond, serif' }}
+                  initial={{ opacity: 0, y: 60, scale: 0.6 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 2.5, delay: 0.4, type: "spring", stiffness: 60 }}
+                  className="text-8xl lg:text-10xl font-black mb-8 leading-tight relative"
+                  style={{ 
+                    fontFamily: 'Cormorant Garamond, serif',
+                    textShadow: '0 20px 40px rgba(0,0,0,0.8)'
+                  }}
                 >
-                  <span className="bg-gradient-to-r from-rose-300 via-pink-300 to-rose-400 bg-clip-text text-transparent">
+                  <motion.span 
+                    className="bg-gradient-to-r from-rose-200 via-pink-100 to-red-200 bg-clip-text text-transparent drop-shadow-2xl relative block"
+                    animate={{
+                      textShadow: [
+                        '0 0 30px rgba(244, 63, 94, 0.9)',
+                        '0 0 60px rgba(244, 63, 94, 1.2)',
+                        '0 0 30px rgba(244, 63, 94, 0.9)',
+                      ],
+                      scale: [1, 1.02, 1],
+                    }}
+                    transition={{ duration: 3.5, repeat: Infinity }}
+                  >
+                    <span className="absolute inset-0 bg-gradient-to-r from-rose-400 via-pink-400 to-red-400 bg-clip-text text-transparent blur-sm opacity-60 animate-pulse">Vintage</span>
                     Vintage
-                  </span>
+                  </motion.span>
                   <br />
-                  <span className="text-white drop-shadow-lg">Romance</span>
+                  <motion.span 
+                    className="text-white drop-shadow-2xl relative block"
+                    animate={{
+                      textShadow: [
+                        '0 0 40px rgba(255, 182, 193, 0.8)',
+                        '0 0 80px rgba(255, 182, 193, 1)',
+                        '0 0 40px rgba(255, 182, 193, 0.8)',
+                      ],
+                      scale: [1, 1.01, 1],
+                    }}
+                    transition={{ duration: 4.5, repeat: Infinity, delay: 1.8 }}
+                  >
+                    <span className="absolute inset-0 text-rose-200 blur-sm opacity-50 animate-pulse">Romance</span>
+                    Romance
+                  </motion.span>
                 </motion.h1>
 
                 <motion.p
@@ -1397,8 +1660,9 @@ function FridayLayout({ products, selectedCurrency }: { products: Product[], sel
         className="absolute inset-0"
         style={{ y }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-slate-900 to-black" />
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-800/60 via-transparent to-slate-800/40" />
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-950 to-slate-950" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-gray-800/80 via-slate-700/40 to-zinc-600/60" />
+        <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-white/5 to-transparent" />
         
         {/* Modern Grid */}
         <div className="absolute inset-0 opacity-8">
@@ -1410,9 +1674,9 @@ function FridayLayout({ products, selectedCurrency }: { products: Product[], sel
           />
         </div>
 
-        {/* Digital Elements */}
+        {/* Holographic Cubes */}
         <div className="absolute inset-0">
-          {[...Array(12)].map((_, i) => (
+          {[...Array(20)].map((_, i) => (
             <motion.div
               key={i}
               className="absolute"
@@ -1421,20 +1685,83 @@ function FridayLayout({ products, selectedCurrency }: { products: Product[], sel
                 top: `${Math.random() * 100}%`,
               }}
               animate={{
-                x: [-30, 30, -30],
-                y: [-40, 40, -40],
-                rotate: [0, 90, 180, 270, 360],
-                scale: [0.3, 1.8, 0.3],
-                opacity: [0, 0.9, 0],
+                x: [-60, 60, -60],
+                y: [-80, 80, -80],
+                rotateX: [0, 360],
+                rotateY: [0, 360],
+                rotateZ: [0, 360],
+                scale: [0.2, 3, 0.2],
+                opacity: [0, 1, 0],
               }}
               transition={{
-                duration: 10 + Math.random() * 5,
+                duration: 15 + Math.random() * 10,
                 repeat: Infinity,
-                delay: Math.random() * 3,
+                delay: Math.random() * 5,
               }}
             >
-              <div className="w-6 h-6 border-2 border-white/30 transform rotate-45 bg-gradient-to-br from-gray-400/20 to-white/10" />
+              <div 
+                className="w-12 h-12 border-2 border-white/50 transform rotate-45 relative"
+                style={{
+                  background: 'linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(156, 163, 175, 0.2))',
+                  boxShadow: '0 0 40px rgba(255, 255, 255, 0.6), inset 0 0 30px rgba(255, 255, 255, 0.1)',
+                  filter: 'blur(0.5px)',
+                }}
+              >
+                <div className="absolute inset-3 border border-white/30 animate-ping" />
+                <div className="absolute inset-1 border border-white/20 animate-pulse" />
+              </div>
             </motion.div>
+          ))}
+        </div>
+
+        {/* Neon Scanlines */}
+        <div className="absolute inset-0">
+          {[...Array(8)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-full h-px bg-gradient-to-r from-transparent via-white/40 to-transparent"
+              style={{
+                top: `${10 + i * 12}%`,
+                filter: 'blur(0.5px)',
+                boxShadow: '0 0 10px rgba(255, 255, 255, 0.8)',
+              }}
+              animate={{
+                opacity: [0.2, 1, 0.2],
+                scaleX: [0.5, 1.5, 0.5],
+              }}
+              transition={{
+                duration: 4 + i * 0.5,
+                repeat: Infinity,
+                delay: i * 0.3,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Cyber Particles */}
+        <div className="absolute inset-0">
+          {[...Array(60)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 bg-white rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                filter: 'blur(0.5px)',
+                boxShadow: '0 0 15px rgba(255, 255, 255, 0.9)',
+              }}
+              animate={{
+                y: [-200, -400],
+                x: [0, Math.random() * 200 - 100],
+                opacity: [0, 1, 0],
+                scale: [0, 4, 0],
+              }}
+              transition={{
+                duration: 12 + Math.random() * 8,
+                repeat: Infinity,
+                delay: Math.random() * 20,
+              }}
+            />
           ))}
         </div>
       </motion.div>
@@ -1464,17 +1791,51 @@ function FridayLayout({ products, selectedCurrency }: { products: Product[], sel
                 </motion.div>
 
                 <motion.h1
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1, delay: 0.4 }}
-                  className="text-6xl lg:text-8xl font-black mb-6 leading-tight"
-                  style={{ fontFamily: 'Inter, sans-serif' }}
+                  initial={{ opacity: 0, y: 80, scale: 0.4, rotateX: 90 }}
+                  animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+                  transition={{ duration: 3, delay: 0.4, type: "spring", stiffness: 40 }}
+                  className="text-8xl lg:text-10xl font-black mb-8 leading-tight relative"
+                  style={{ 
+                    fontFamily: 'Inter, sans-serif',
+                    textShadow: '0 25px 50px rgba(0,0,0,0.9)',
+                    perspective: '1000px'
+                  }}
                 >
-                  <span className="bg-gradient-to-r from-gray-200 via-white to-gray-300 bg-clip-text text-transparent">
+                  <motion.span 
+                    className="bg-gradient-to-r from-gray-100 via-white to-zinc-200 bg-clip-text text-transparent drop-shadow-2xl relative block"
+                    animate={{
+                      textShadow: [
+                        '0 0 40px rgba(255, 255, 255, 0.9)',
+                        '0 0 80px rgba(255, 255, 255, 1.2)',
+                        '0 0 40px rgba(255, 255, 255, 0.9)',
+                      ],
+                      filter: [
+                        'drop-shadow(0 0 20px rgba(255,255,255,0.8))',
+                        'drop-shadow(0 0 40px rgba(255,255,255,1))',
+                        'drop-shadow(0 0 20px rgba(255,255,255,0.8))',
+                      ]
+                    }}
+                    transition={{ duration: 2.5, repeat: Infinity }}
+                  >
+                    <span className="absolute inset-0 bg-gradient-to-r from-gray-300 via-white to-zinc-300 bg-clip-text text-transparent blur-sm opacity-60 animate-pulse">Contemporary</span>
                     Contemporary
-                  </span>
+                  </motion.span>
                   <br />
-                  <span className="text-white drop-shadow-lg">Edge</span>
+                  <motion.span 
+                    className="text-white drop-shadow-2xl relative block"
+                    animate={{
+                      textShadow: [
+                        '0 0 50px rgba(255, 255, 255, 0.8)',
+                        '0 0 100px rgba(255, 255, 255, 1)',
+                        '0 0 50px rgba(255, 255, 255, 0.8)',
+                      ],
+                      scale: [1, 1.03, 1],
+                    }}
+                    transition={{ duration: 3.5, repeat: Infinity, delay: 1.2 }}
+                  >
+                    <span className="absolute inset-0 text-gray-200 blur-sm opacity-70 animate-pulse">Edge</span>
+                    Edge
+                  </motion.span>
                 </motion.h1>
 
                 <motion.p
@@ -1631,8 +1992,9 @@ function SaturdayLayout({ products, selectedCurrency }: { products: Product[], s
         className="absolute inset-0"
         style={{ y }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-red-900 via-amber-900 to-yellow-900" />
-        <div className="absolute inset-0 bg-gradient-to-t from-red-800/50 via-transparent to-amber-800/40" />
+        <div className="absolute inset-0 bg-gradient-to-br from-red-950 via-amber-950 to-yellow-950" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-red-800/80 via-amber-700/50 to-yellow-600/70" />
+        <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-amber-500/25 to-transparent" />
         
         {/* Heritage Patterns */}
         <div className="absolute inset-0 opacity-12">
@@ -1644,9 +2006,9 @@ function SaturdayLayout({ products, selectedCurrency }: { products: Product[], s
           />
         </div>
 
-        {/* Royal Jewels */}
+        {/* Royal Jewel Crown */}
         <div className="absolute inset-0">
-          {[...Array(16)].map((_, i) => (
+          {[...Array(40)].map((_, i) => (
             <motion.div
               key={i}
               className="absolute"
@@ -1655,21 +2017,73 @@ function SaturdayLayout({ products, selectedCurrency }: { products: Product[], s
                 top: `${Math.random() * 100}%`,
               }}
               animate={{
-                y: [-35, -70, -35],
-                rotate: [0, 180, 360],
-                scale: [0.6, 1.4, 0.6],
-                opacity: [0, 0.8, 0],
+                y: [-70, -150, -70],
+                rotate: [0, 360],
+                scale: [0.1, 3.5, 0.1],
+                opacity: [0, 1, 0],
               }}
               transition={{
-                duration: 9 + Math.random() * 4,
+                duration: 12 + Math.random() * 8,
                 repeat: Infinity,
-                delay: Math.random() * 7,
+                delay: Math.random() * 10,
               }}
             >
-              <Gem className="w-5 h-5 text-amber-300/60" />
+              <div className="relative">
+                <Crown className="w-8 h-8 text-amber-200/90" style={{filter: 'drop-shadow(0 0 25px rgba(245, 158, 11, 1.2))'}} />
+                <div className="absolute inset-0 animate-ping">
+                  <Crown className="w-8 h-8 text-yellow-300/70" />
+                </div>
+                <div className="absolute inset-0 animate-pulse delay-300">
+                  <Gem className="w-8 h-8 text-amber-300/50" />
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>
+
+        {/* Golden Orbs */}
+        <div className="absolute inset-0">
+          {[...Array(30)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-16 h-16 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                background: 'linear-gradient(45deg, rgba(245, 158, 11, 0.5), rgba(251, 191, 36, 0.4))',
+                filter: 'blur(5px)',
+                boxShadow: '0 0 80px rgba(245, 158, 11, 0.8)',
+              }}
+              animate={{
+                y: [-100, -200, -100],
+                x: [-50, 50, -50],
+                rotate: [0, 360],
+                scale: [0.2, 2.5, 0.2],
+                opacity: [0, 0.9, 0],
+              }}
+              transition={{
+                duration: 18 + Math.random() * 12,
+                repeat: Infinity,
+                delay: Math.random() * 10,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Golden Shimmer */}
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-300/40 to-transparent"
+          animate={{
+            x: [-1500, 1500],
+            opacity: [0, 0.8, 0],
+            scaleY: [0.5, 1.5, 0.5],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        />
       </motion.div>
 
       {/* Main Content */}
@@ -1697,17 +2111,51 @@ function SaturdayLayout({ products, selectedCurrency }: { products: Product[], s
                 </motion.div>
 
                 <motion.h1
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1, delay: 0.4 }}
-                  className="text-6xl lg:text-8xl font-black mb-6 leading-tight"
-                  style={{ fontFamily: 'Cormorant Garamond, serif' }}
+                  initial={{ opacity: 0, y: 100, scale: 0.3, rotateY: 180 }}
+                  animate={{ opacity: 1, y: 0, scale: 1, rotateY: 0 }}
+                  transition={{ duration: 3.5, delay: 0.4, type: "spring", stiffness: 50 }}
+                  className="text-9xl lg:text-11xl font-black mb-8 leading-tight relative"
+                  style={{ 
+                    fontFamily: 'Cormorant Garamond, serif',
+                    textShadow: '0 30px 60px rgba(0,0,0,0.9)'
+                  }}
                 >
-                  <span className="bg-gradient-to-r from-amber-300 via-yellow-300 to-amber-400 bg-clip-text text-transparent">
+                  <motion.span 
+                    className="bg-gradient-to-r from-amber-200 via-yellow-100 to-gold-200 bg-clip-text text-transparent drop-shadow-2xl relative block"
+                    animate={{
+                      textShadow: [
+                        '0 0 50px rgba(245, 158, 11, 1)',
+                        '0 0 100px rgba(245, 158, 11, 1.5)',
+                        '0 0 50px rgba(245, 158, 11, 1)',
+                      ],
+                      filter: [
+                        'drop-shadow(0 0 30px rgba(245,158,11,0.9))',
+                        'drop-shadow(0 0 60px rgba(245,158,11,1.2))',
+                        'drop-shadow(0 0 30px rgba(245,158,11,0.9))',
+                      ],
+                      scale: [1, 1.05, 1],
+                    }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                  >
+                    <span className="absolute inset-0 bg-gradient-to-r from-amber-400 via-yellow-400 to-gold-400 bg-clip-text text-transparent blur-sm opacity-70 animate-pulse">Royal</span>
                     Royal
-                  </span>
+                  </motion.span>
                   <br />
-                  <span className="text-white drop-shadow-lg">Heritage</span>
+                  <motion.span 
+                    className="text-white drop-shadow-2xl relative block"
+                    animate={{
+                      textShadow: [
+                        '0 0 60px rgba(255, 215, 0, 0.8)',
+                        '0 0 120px rgba(255, 215, 0, 1)',
+                        '0 0 60px rgba(255, 215, 0, 0.8)',
+                      ],
+                      scale: [1, 1.04, 1],
+                    }}
+                    transition={{ duration: 4, repeat: Infinity, delay: 1.5 }}
+                  >
+                    <span className="absolute inset-0 text-amber-200 blur-sm opacity-60 animate-pulse">Heritage</span>
+                    Heritage
+                  </motion.span>
                 </motion.h1>
 
                 <motion.p
