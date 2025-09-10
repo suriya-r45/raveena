@@ -55,6 +55,15 @@ export const products = pgTable("products", {
   goldRateAtCreation: decimal("gold_rate_at_creation", { precision: 10, scale: 2 }), // Gold rate when product was created
   barcode: text("barcode"), // Generated barcode string
   barcodeImageUrl: text("barcode_image_url"), // Path to barcode image
+  lowStockThreshold: integer("low_stock_threshold").default(5), // Alert when stock goes below this
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Wishlist Table for customer saved items
+export const wishlistItems = pgTable("wishlist_items", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  productId: varchar("product_id").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -137,12 +146,14 @@ export const usersRelations = relations(users, ({ many }) => ({
   bills: many(bills),
   orders: many(orders),
   cartItems: many(cartItems),
+  wishlistItems: many(wishlistItems),
 }));
 
 export const productsRelations = relations(products, ({ many }) => ({
   billItems: many(bills),
   orderItems: many(orders),
   cartItems: many(cartItems),
+  wishlistItems: many(wishlistItems),
 }));
 
 export const billsRelations = relations(bills, ({ one }) => ({
@@ -166,6 +177,17 @@ export const cartItemsRelations = relations(cartItems, ({ one }) => ({
   }),
   product: one(products, {
     fields: [cartItems.productId],
+    references: [products.id],
+  }),
+}));
+
+export const wishlistItemsRelations = relations(wishlistItems, ({ one }) => ({
+  user: one(users, {
+    fields: [wishlistItems.userId],
+    references: [users.id],
+  }),
+  product: one(products, {
+    fields: [wishlistItems.productId],
     references: [products.id],
   }),
 }));
@@ -1118,6 +1140,11 @@ export const insertCartItemSchema = z.object({
   quantity: z.number().min(1).default(1),
 });
 
+export const insertWishlistItemSchema = z.object({
+  userId: z.string(),
+  productId: z.string(),
+});
+
 export const insertOrderSchema = z.object({
   customerName: z.string(),
   customerEmail: z.string().email(),
@@ -1198,6 +1225,7 @@ export type InsertUser = z.infer<typeof insertUserSchema>;
 export type InsertProduct = z.infer<typeof insertProductSchema>;
 export type InsertBill = z.infer<typeof insertBillSchema>;
 export type InsertCartItem = z.infer<typeof insertCartItemSchema>;
+export type InsertWishlistItem = z.infer<typeof insertWishlistItemSchema>;
 export type InsertOrder = z.infer<typeof insertOrderSchema>;
 // Custom Home Page Sections Table
 export const homeSections = pgTable("home_sections", {
@@ -1296,6 +1324,7 @@ export type HomeSection = typeof homeSections.$inferSelect;
 export type HomeSectionItem = typeof homeSectionItems.$inferSelect;
 export type AppSetting = typeof appSettings.$inferSelect;
 export type CartItemRow = typeof cartItems.$inferSelect;
+export type WishlistItem = typeof wishlistItems.$inferSelect;
 
 // NOTIFICATION SYSTEM TYPES
 export type NotificationTemplate = typeof notificationTemplates.$inferSelect;
