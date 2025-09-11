@@ -25,6 +25,7 @@ export interface IStorage {
   // Product operations
   getAllProducts(): Promise<Product[]>;
   getProduct(id: string): Promise<Product | undefined>;
+  getProductByCode(productCode: string): Promise<Product | undefined>;
   getProductsByCategory(category: string): Promise<Product[]>;
   searchProducts(query: string, filters?: ProductFilters): Promise<Product[]>;
   getFeaturedProducts(): Promise<Product[]>;
@@ -347,6 +348,11 @@ export class DatabaseStorage implements IStorage {
 
   async getProduct(id: string): Promise<Product | undefined> {
     const [product] = await db.select().from(products).where(and(eq(products.id, id), eq(products.isActive, true)));
+    return product || undefined;
+  }
+
+  async getProductByCode(productCode: string): Promise<Product | undefined> {
+    const [product] = await db.select().from(products).where(and(eq(products.productCode, productCode), eq(products.isActive, true)));
     return product || undefined;
   }
 

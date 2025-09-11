@@ -15,6 +15,7 @@ import { MetalRatesService } from "./services/testmetalRatesService.js";
 import NotificationService from "./services/notification-service.js";
 import twilio from "twilio";
 import { generateProductCode, generateBarcode, generateQRCode, ProductBarcodeData } from "./utils/barcode.js";
+import { generateStunningProductCard, generateStandaloneProductPage } from "./utils/product-card-generator.js";
 import { recalculateAllMetalBasedProducts } from "./utils/pricing.js";
 import { createVintageProductImage } from "./utils/vintage-effects.js";
 import sharp from "sharp";
@@ -3609,6 +3610,111 @@ For any queries, please contact us.`;
   });
 
   // === END NOTIFICATION API ROUTES ===
+
+  // === BARCODE SCANNING API ROUTES ===
+  
+  // Barcode scanning endpoint - displays product information like QR codes
+  app.get("/api/scan/barcode/:productCode", async (req, res) => {
+    try {
+      const { productCode } = req.params;
+      
+      // Find the product by product code
+      const product = await storage.getProductByCode(productCode);
+      if (!product) {
+        return res.status(404).json({ error: 'Product not found' });
+      }
+
+      // Create product data for display (same format as QR codes)
+      const barcodeData: ProductBarcodeData = {
+        productCode,
+        productName: product.name,
+        purity: product.purity || '22K',
+        grossWeight: `${product.grossWeight} g`,
+        netWeight: `${product.netWeight} g`,
+        stones: product.stones || 'None',
+        goldRate: product.goldRateAtCreation ? `₹${product.goldRateAtCreation} / g` : 'N/A',
+        approxPrice: `₹${product.priceInr.toLocaleString('en-IN')} (excluding charges)`
+      };
+
+      // Generate beautiful product card (same as QR codes)
+      const productCardPath = await generateStunningProductCard({
+        productData: barcodeData,
+        productImagePath: product.images?.[0],
+        backgroundStyle: 'luxury-gold'
+      });
+
+      // Return both the product card path and product data
+      res.json({
+        success: true,
+        productCode,
+        product: barcodeData,
+        cardImagePath: productCardPath,
+        message: 'Product information retrieved successfully'
+      });
+
+      console.log(`📊 Barcode scan successful for product: ${productCode}`);
+
+    } catch (error) {
+      console.error('Error processing barcode scan:', error);
+      res.status(500).json({ error: 'Failed to process barcode scan' });
+    }
+  });
+
+  // Alternative barcode scan endpoint that returns HTML page directly (like QR codes)
+  app.get("/scan/barcode/:productCode", async (req, res) => {
+    try {
+      const { productCode } = req.params;
+      
+      // Find the product by product code
+      const product = await storage.getProductByCode(productCode);
+      if (!product) {
+        return res.status(404).send(`
+          <html>
+            <head><title>Product Not Found</title></head>
+            <body style="font-family: Inter, sans-serif; text-align: center; padding: 50px;">
+              <h1>Product Not Found</h1>
+              <p>Product with code "${productCode}" not found.</p>
+              <p>Please check the barcode and try again.</p>
+            </body>
+          </html>
+        `);
+      }
+
+      // Create product data for display
+      const barcodeData: ProductBarcodeData = {
+        productCode,
+        productName: product.name,
+        purity: product.purity || '22K',
+        grossWeight: `${product.grossWeight} g`,
+        netWeight: `${product.netWeight} g`,
+        stones: product.stones || 'None',
+        goldRate: product.goldRateAtCreation ? `₹${product.goldRateAtCreation} / g` : 'N/A',
+        approxPrice: `₹${product.priceInr.toLocaleString('en-IN')} (excluding charges)`
+      };
+
+      // Generate standalone product page (like QR codes do)
+      const productPageHtml = await generateStandaloneProductPage(barcodeData, product.images?.[0]);
+      
+      res.setHeader('Content-Type', 'text/html');
+      res.send(productPageHtml);
+
+      console.log(`📊 Barcode scan page generated for product: ${productCode}`);
+
+    } catch (error) {
+      console.error('Error generating barcode scan page:', error);
+      res.status(500).send(`
+        <html>
+          <head><title>Error</title></head>
+          <body style="font-family: Inter, sans-serif; text-align: center; padding: 50px;">
+            <h1>Error</h1>
+            <p>Failed to load product information. Please try again.</p>
+          </body>
+        </html>
+      `);
+    }
+  });
+
+  // === END BARCODE SCANNING API ROUTES ===
 
   // QR codes now contain text-only data, no URL redirects needed
   // Customers can scan QR codes directly to see product information

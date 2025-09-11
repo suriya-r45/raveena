@@ -2,6 +2,7 @@ import JsBarcode from 'jsbarcode';
 import QRCode from 'qrcode';
 import fs from 'fs';
 import path from 'path';
+import { createCanvas } from 'canvas';
 import { db } from '../db.js';
 import { products } from '../../shared/schema.js';
 import { sql } from 'drizzle-orm';
@@ -295,11 +296,34 @@ export async function generateBarcode(data: string, productCode: string): Promis
       fs.mkdirSync(uploadsDir, { recursive: true });
     }
 
-    // For now, just return the product code without file I/O for better performance
-    // The actual barcode rendering will be done on the frontend
-    const filename = `barcode-${productCode.replace(/[^a-zA-Z0-9]/g, '_')}-${Date.now()}.txt`;
+    // Create canvas for barcode generation
+    const canvas = createCanvas(400, 100);
     
-    // Skip file writing for better performance - return virtual path
+    // Generate barcode using jsbarcode with the product code
+    JsBarcode(canvas, productCode, {
+      format: "CODE128",
+      width: 2,
+      height: 80,
+      displayValue: true,
+      fontSize: 14,
+      textMargin: 2,
+      font: "Inter",
+      fontOptions: "bold",
+      textAlign: "center",
+      textPosition: "bottom",
+      background: "#ffffff",
+      lineColor: "#000000",
+      margin: 10
+    });
+
+    // Save barcode image
+    const filename = `barcode-${productCode.replace(/[^a-zA-Z0-9]/g, '_')}-${Date.now()}.png`;
+    const imagePath = path.join(uploadsDir, filename);
+    
+    const buffer = canvas.toBuffer('image/png');
+    fs.writeFileSync(imagePath, buffer);
+
+    console.log(`📊 Barcode generated successfully for product: ${productCode}`);
     return {
       barcode: productCode,
       imagePath: `/uploads/barcodes/${filename}`
