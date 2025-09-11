@@ -83,7 +83,7 @@ export function BarcodeDisplay({ product, className }: BarcodeDisplayProps) {
         printWindow.document.write(`
           <html>
             <head>
-              <title>Product Barcode - ${product.name}</title>
+              <title>Product QR Code - ${product.name}</title>
               <style>
                 @page {
                   size: A4;
@@ -211,7 +211,7 @@ export function BarcodeDisplay({ product, className }: BarcodeDisplayProps) {
         printWindow.document.write(`
           <html>
             <head>
-              <title>Product Barcode - ${product.name}</title>
+              <title>Product QR Code - ${product.name}</title>
               <style>
                 body { font-family: Arial, sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
                 .barcode-container { border: 3px solid #000; border-radius: 15px; padding: 30px; width: 400px; text-align: center; background: white; position: relative; }
@@ -249,7 +249,7 @@ export function BarcodeDisplay({ product, className }: BarcodeDisplayProps) {
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
           <QrCode className="h-5 w-5" />
-          Product Codes (Barcode & QR)
+          Product QR Code
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -283,17 +283,6 @@ export function BarcodeDisplay({ product, className }: BarcodeDisplayProps) {
             Gross Weight : {grossWeight}
           </div>
           
-          {/* Barcode Image (if available) */}
-          {product.barcodeImageUrl && (
-            <div className="flex justify-center mb-4">
-              <img 
-                src={product.barcodeImageUrl} 
-                alt={`Barcode for ${product.productCode}`}
-                className="border border-gray-300 rounded bg-white p-2"
-                style={{ maxWidth: '200px', height: 'auto' }}
-              />
-            </div>
-          )}
 
           {/* QR Code */}
           <div className="flex justify-center mb-4">
@@ -313,7 +302,7 @@ export function BarcodeDisplay({ product, className }: BarcodeDisplayProps) {
           className="w-full mt-4"
         >
           <Printer className="h-4 w-4 mr-2" />
-          Print Barcode
+          Print QR Code
         </Button>
       </CardContent>
     </Card>
