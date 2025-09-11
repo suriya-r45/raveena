@@ -249,7 +249,7 @@ export function BarcodeDisplay({ product, className }: BarcodeDisplayProps) {
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
           <QrCode className="h-5 w-5" />
-          Product QR Code
+          Product Codes (Barcode & QR)
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -283,6 +283,18 @@ export function BarcodeDisplay({ product, className }: BarcodeDisplayProps) {
             Gross Weight : {grossWeight}
           </div>
           
+          {/* Barcode Image (if available) */}
+          {product.barcodeImageUrl && (
+            <div className="flex justify-center mb-4">
+              <img 
+                src={product.barcodeImageUrl} 
+                alt={`Barcode for ${product.productCode}`}
+                className="border border-gray-300 rounded bg-white p-2"
+                style={{ maxWidth: '200px', height: 'auto' }}
+              />
+            </div>
+          )}
+
           {/* QR Code */}
           <div className="flex justify-center mb-4">
             <canvas ref={qrCodeRef} style={{ width: '150px', height: '150px' }}></canvas>
