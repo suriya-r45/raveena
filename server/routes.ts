@@ -3633,7 +3633,7 @@ For any queries, please contact us.`;
         netWeight: `${product.netWeight} g`,
         stones: product.stones || 'None',
         goldRate: product.goldRateAtCreation ? `₹${product.goldRateAtCreation} / g` : 'N/A',
-        approxPrice: `₹${product.priceInr.toLocaleString('en-IN')} (excluding charges)`
+        approxPrice: `₹${parseFloat(product.priceInr).toLocaleString('en-IN')} (excluding charges)`
       };
 
       // Generate beautiful product card (same as QR codes)
@@ -3689,7 +3689,7 @@ For any queries, please contact us.`;
         netWeight: `${product.netWeight} g`,
         stones: product.stones || 'None',
         goldRate: product.goldRateAtCreation ? `₹${product.goldRateAtCreation} / g` : 'N/A',
-        approxPrice: `₹${product.priceInr.toLocaleString('en-IN')} (excluding charges)`
+        approxPrice: `₹${parseFloat(product.priceInr).toLocaleString('en-IN')} (excluding charges)`
       };
 
       // Generate standalone product page (like QR codes do)
