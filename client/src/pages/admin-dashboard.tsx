@@ -26,6 +26,7 @@ import { Product, Bill } from '@shared/schema';
 import { Currency } from '@/lib/currency';
 import { Package, FileText, TrendingUp, Users, Calculator, DollarSign, Edit, QrCode, Printer, Search, CheckSquare, Square, Plus, Receipt, History, ClipboardList, Tag, BarChart3, Grid3X3, Film, Settings, Crown, Eye, EyeOff, Star, StarOff, X, Bell, Layout, Calendar, Sparkles } from 'lucide-react';
 import BarcodeDisplay from '@/components/barcode-display';
+import { BarcodeOnly } from '@/components/barcode-only';
 import { useToast } from '@/hooks/use-toast';
 import QRCode from 'qrcode';
 
@@ -402,7 +403,7 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const tabParam = urlParams.get('tab');
-    if (tabParam === 'products' || tabParam === 'billing' || tabParam === 'bills' || tabParam === 'estimates' || tabParam === 'categories' || tabParam === 'pricing' || tabParam === 'barcodes' || tabParam === 'home-sections' || tabParam === 'orders' || tabParam === 'metal-rates' || tabParam === 'videos' || tabParam === 'users') {
+    if (tabParam === 'products' || tabParam === 'billing' || tabParam === 'bills' || tabParam === 'estimates' || tabParam === 'categories' || tabParam === 'pricing' || tabParam === 'barcodes' || tabParam === 'barcodes-only' || tabParam === 'home-sections' || tabParam === 'orders' || tabParam === 'metal-rates' || tabParam === 'videos' || tabParam === 'users') {
       return tabParam;
     }
     return 'products';
@@ -550,7 +551,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const tabParam = urlParams.get('tab');
-    if (tabParam === 'products' || tabParam === 'billing' || tabParam === 'bills' || tabParam === 'estimates' || tabParam === 'categories' || tabParam === 'pricing' || tabParam === 'barcodes' || tabParam === 'home-sections' || tabParam === 'orders' || tabParam === 'metal-rates' || tabParam === 'videos' || tabParam === 'users') {
+    if (tabParam === 'products' || tabParam === 'billing' || tabParam === 'bills' || tabParam === 'estimates' || tabParam === 'categories' || tabParam === 'pricing' || tabParam === 'barcodes' || tabParam === 'barcodes-only' || tabParam === 'home-sections' || tabParam === 'orders' || tabParam === 'metal-rates' || tabParam === 'videos' || tabParam === 'users') {
       setActiveTab(tabParam);
     }
   }, []);
@@ -560,7 +561,7 @@ export default function AdminDashboard() {
     const handlePopState = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const tabParam = urlParams.get('tab');
-      if (tabParam === 'products' || tabParam === 'billing' || tabParam === 'bills' || tabParam === 'estimates' || tabParam === 'categories' || tabParam === 'pricing' || tabParam === 'barcodes' || tabParam === 'home-sections' || tabParam === 'orders' || tabParam === 'metal-rates' || tabParam === 'videos' || tabParam === 'users') {
+      if (tabParam === 'products' || tabParam === 'billing' || tabParam === 'bills' || tabParam === 'estimates' || tabParam === 'categories' || tabParam === 'pricing' || tabParam === 'barcodes' || tabParam === 'barcodes-only' || tabParam === 'home-sections' || tabParam === 'orders' || tabParam === 'metal-rates' || tabParam === 'videos' || tabParam === 'users') {
         setActiveTab(tabParam);
       }
     };
@@ -573,7 +574,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const tabParam = urlParams.get('tab');
-    if (tabParam === 'products' || tabParam === 'billing' || tabParam === 'bills' || tabParam === 'estimates' || tabParam === 'categories' || tabParam === 'pricing' || tabParam === 'barcodes' || tabParam === 'home-sections' || tabParam === 'orders' || tabParam === 'metal-rates' || tabParam === 'videos' || tabParam === 'users') {
+    if (tabParam === 'products' || tabParam === 'billing' || tabParam === 'bills' || tabParam === 'estimates' || tabParam === 'categories' || tabParam === 'pricing' || tabParam === 'barcodes' || tabParam === 'barcodes-only' || tabParam === 'home-sections' || tabParam === 'orders' || tabParam === 'metal-rates' || tabParam === 'videos' || tabParam === 'users') {
       setActiveTab(tabParam);
     }
   }, [location]);
@@ -778,6 +779,17 @@ export default function AdminDashboard() {
                     <BarChart3 className="h-3 w-3 mr-1" />
                     Pricing
                   </TabsTrigger>
+                  <TabsTrigger value="barcodes-only" data-testid="tab-barcodes-only" className="text-xs font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 data-[state=active]:bg-amber-50 data-[state=active]:text-amber-700 data-[state=active]:shadow-md transition-all duration-300 px-3 py-2 rounded-lg min-h-[40px] flex items-center justify-center border border-gray-200 data-[state=active]:border-amber-300 whitespace-nowrap flex-shrink-0">
+                    <svg className="h-3 w-3 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                      <rect x="2" y="6" width="2" height="12"/>
+                      <rect x="6" y="6" width="1" height="12"/>
+                      <rect x="9" y="6" width="1" height="12"/>
+                      <rect x="12" y="6" width="2" height="12"/>
+                      <rect x="16" y="6" width="1" height="12"/>
+                      <rect x="19" y="6" width="2" height="12"/>
+                    </svg>
+                    Barcodes
+                  </TabsTrigger>
                   <TabsTrigger value="barcodes" data-testid="tab-barcodes" className="text-xs font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 data-[state=active]:bg-amber-50 data-[state=active]:text-amber-700 data-[state=active]:shadow-md transition-all duration-300 px-3 py-2 rounded-lg min-h-[40px] flex items-center justify-center border border-gray-200 data-[state=active]:border-amber-300 whitespace-nowrap flex-shrink-0">
                     <QrCode className="h-3 w-3 mr-1" />
                     QR Codes
@@ -837,10 +849,21 @@ export default function AdminDashboard() {
                   </TabsTrigger>
                 </TabsList>
                 {/* Second row - Management features */}
-                <TabsList className="grid w-full grid-cols-4 bg-white border border-gray-200 shadow-sm h-auto p-2 rounded-xl">
+                <TabsList className="grid w-full grid-cols-5 bg-white border border-gray-200 shadow-sm h-auto p-2 rounded-xl">
                   <TabsTrigger value="pricing" data-testid="tab-pricing" className="text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 data-[state=active]:bg-amber-50 data-[state=active]:text-amber-700 data-[state=active]:shadow-md transition-all duration-300 px-3 py-3 mx-1 rounded-lg min-h-[48px] flex items-center justify-center border border-gray-200 data-[state=active]:border-amber-300">
                     <BarChart3 className="h-4 w-4 mr-2" />
                     Pricing
+                  </TabsTrigger>
+                  <TabsTrigger value="barcodes-only" data-testid="tab-barcodes-only" className="text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 data-[state=active]:bg-amber-50 data-[state=active]:text-amber-700 data-[state=active]:shadow-md transition-all duration-300 px-3 py-3 mx-1 rounded-lg min-h-[48px] flex items-center justify-center border border-gray-200 data-[state=active]:border-amber-300">
+                    <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                      <rect x="2" y="6" width="2" height="12"/>
+                      <rect x="6" y="6" width="1" height="12"/>
+                      <rect x="9" y="6" width="1" height="12"/>
+                      <rect x="12" y="6" width="2" height="12"/>
+                      <rect x="16" y="6" width="1" height="12"/>
+                      <rect x="19" y="6" width="2" height="12"/>
+                    </svg>
+                    Barcodes
                   </TabsTrigger>
                   <TabsTrigger value="barcodes" data-testid="tab-barcodes" className="text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 data-[state=active]:bg-amber-50 data-[state=active]:text-amber-700 data-[state=active]:shadow-md transition-all duration-300 px-3 py-3 mx-1 rounded-lg min-h-[48px] flex items-center justify-center border border-gray-200 data-[state=active]:border-amber-300">
                     <QrCode className="h-4 w-4 mr-2" />
@@ -881,7 +904,7 @@ export default function AdminDashboard() {
             <div className="hidden lg:block">
               <div className="space-y-3">
                 {/* First row - Primary features */}
-                <TabsList className="grid w-full grid-cols-7 bg-white border border-gray-200 shadow-sm h-auto p-2 rounded-xl">
+                <TabsList className="grid w-full grid-cols-8 bg-white border border-gray-200 shadow-sm h-auto p-2 rounded-xl">
                   <TabsTrigger value="products" data-testid="tab-products" className="text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 data-[state=active]:bg-amber-50 data-[state=active]:text-amber-700 data-[state=active]:shadow-md transition-all duration-300 px-4 py-3 mx-1 rounded-lg min-h-[52px] flex items-center justify-center border border-gray-200 data-[state=active]:border-amber-300">
                     <Plus className="h-4 w-4 mr-2" />
                     Products
@@ -905,6 +928,17 @@ export default function AdminDashboard() {
                   <TabsTrigger value="pricing" data-testid="tab-pricing" className="text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 data-[state=active]:bg-amber-50 data-[state=active]:text-amber-700 data-[state=active]:shadow-md transition-all duration-300 px-4 py-3 mx-1 rounded-lg min-h-[52px] flex items-center justify-center border border-gray-200 data-[state=active]:border-amber-300">
                     <BarChart3 className="h-4 w-4 mr-2" />
                     Pricing
+                  </TabsTrigger>
+                  <TabsTrigger value="barcodes-only" data-testid="tab-barcodes-only" className="text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 data-[state=active]:bg-amber-50 data-[state=active]:text-amber-700 data-[state=active]:shadow-md transition-all duration-300 px-4 py-3 mx-1 rounded-lg min-h-[52px] flex items-center justify-center border border-gray-200 data-[state=active]:border-amber-300">
+                    <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                      <rect x="2" y="6" width="2" height="12"/>
+                      <rect x="6" y="6" width="1" height="12"/>
+                      <rect x="9" y="6" width="1" height="12"/>
+                      <rect x="12" y="6" width="2" height="12"/>
+                      <rect x="16" y="6" width="1" height="12"/>
+                      <rect x="19" y="6" width="2" height="12"/>
+                    </svg>
+                    Barcodes
                   </TabsTrigger>
                   <TabsTrigger value="barcodes" data-testid="tab-barcodes" className="text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 data-[state=active]:bg-amber-50 data-[state=active]:text-amber-700 data-[state=active]:shadow-md transition-all duration-300 px-4 py-3 mx-1 rounded-lg min-h-[52px] flex items-center justify-center border border-gray-200 data-[state=active]:border-amber-300">
                     <QrCode className="h-4 w-4 mr-2" />
@@ -1324,6 +1358,41 @@ export default function AdminDashboard() {
                           </Button>
                         </div>
                       )}
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="barcodes-only" className="space-y-6">
+            <Card data-testid="card-barcodes-only">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                    <rect x="2" y="6" width="2" height="12"/>
+                    <rect x="6" y="6" width="1" height="12"/>
+                    <rect x="9" y="6" width="1" height="12"/>
+                    <rect x="12" y="6" width="2" height="12"/>
+                    <rect x="16" y="6" width="1" height="12"/>
+                    <rect x="19" y="6" width="2" height="12"/>
+                  </svg>
+                  Product Barcodes
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {products.length === 0 ? (
+                    <p className="text-gray-500" data-testid="text-no-products">No products available.</p>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {products.map((product) => (
+                        <BarcodeOnly 
+                          key={product.id} 
+                          product={product} 
+                          className="w-full"
+                        />
+                      ))}
                     </div>
                   )}
                 </div>
